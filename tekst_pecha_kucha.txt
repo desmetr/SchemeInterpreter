@@ -1,0 +1,23 @@
+Slide 1:
+
+Goeiemiddag, wij zijn Ajaya Adhikari, Rafael De Smet en Koen Pauwels, bachelorstudenten van de Universiteit Antwerpen. Ons onderzoeksgebied is de toepassing van automatentheorie in het dagelijks leven. Vandaag stellen we u een concept voor om ziekenhuizen makkelijker te kunnen beheren.
+
+
+Slide 2:
+
+In het echte leven zijn er een heleboel complexe systemen die uit een verzameling actoren bestaan die met elkaar interageren. Een voorbeeld van zo'n systeem is een ziekenhuis. De acties van de actoren in een ziekenhuis, zoals artsen, patiënten en administratief medewerkers, hangen zowel af van hun eigen onafhankelijke beslissingen als de beslissingen van andere actoren in het ziekenhuis.
+
+
+Slide 3:
+
+Ons onderzoek is erop gericht zulke systemen in kaart te brengen en beheersbaar te houden, waarbij we gebruik maken van de werktuigen die de automatentheorie ons aanbiedt. In het specifieke geval van het ziekenhuis zullen we bijvoorbeeld de verschillende actoren voorstellen als met elkaar interagerende automaten.
+
+
+Slide 4 (maatschappelijk nut):
+
+Op deze manier kunnen we met HSS een vrij eenvoudig gecentraliseerd systeem op eender welk moment kunnen zien waar de actoren hun tijd aan besteden. Zo is het bijvoorbeeld makkelijker om pijnpunten en tekortkomingen in de organisatie van het ziekenhuis te identificeren en de efficiëntie op te drijven.
+
+
+Slide 5 (actoren: de patiënt):
+
+
