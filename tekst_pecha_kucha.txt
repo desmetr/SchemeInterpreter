@@ -53,7 +53,6 @@ Artsen worden hier voorgesteld als vrij eenvoudige automaten die ofwel aan het w
 Het systeem combineert deze automaten door ze op een abstracte manier met elkaar te verbinden. We zorgen ervoor dat de acties van een zekere automaat zowel effect kunnen uitoefenen op die automaat zelf, op andere automaten of eventueel op de gegevensstructuren die het systeem ondersteunen.
 
 
-
 [Ajay]Slide 12 (input):
 
 Om het systeem flexibel te houden, zijn de automaten niet ingebakken in de software, maar kunnen ze worden gedefinieerd aan de hand van aanpasbare bestanden. Het is mogelijk dat de organisatie die wij als ontwikkelaars in gedachten hebben niet overeenkomt met de realitiet van een ziekenhuis, in dat geval moet het mogelijk zijn dat de gebruikers zelf hun situatie kunnen configureren.
@@ -95,19 +94,3 @@ Met HSS verwachten wij dat we aan de basis kunnen staan van een structurele en s
 [Rafael]Slide 20 (besluit):
 
 Bedankt voor uw aandacht en vertrouwen in HSS. Ik denk dat we allen beseffen dat we hier op een historisch keerpunt staan op het gebied van volksgezondheid, en dat we binnen enkele jaren zullen denken in termen van voor en na HSS.
-
-
-
-
-
-
-
-***
-
-
-Doelstellingen 1: 
-Ziekenhuizen zijn complexe omgevingen met veel onverwachte gebeurtenissen, waardoor het moeilijk is om op een gegeven moment een accuraat beeld te vormen van de huidige toestand. Het personeel kan, bijvoorbeeld, zelden een accurate schatting geven wanneer een zekere patient een dokter kan zien. De patient ervaart dit vaak als oncomfortabel.
-
-
-Doelstellingen 2: 
-Ons systeem zorgt ervoor dat men op elk gegeven moment van de toestand van het ziekenhuis en al zijn raderwerk een ruw overzicht heeft. Hierdoor hopen we dat communicatie tussen medisch personeel onderling, en communicatie tussen personeel en patienten, minder tijd in beslag neemt en duidelijker is.
