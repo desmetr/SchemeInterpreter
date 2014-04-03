@@ -1,39 +1,112 @@
-Slide 1:
+[Ajay]Slide 1:
 
 Goeiemiddag, wij zijn Ajaya Adhikari, Rafael De Smet en Koen Pauwels, bachelorstudenten van de Universiteit Antwerpen. Ons onderzoeksgebied is de toepassing van automatentheorie in het dagelijks leven. Vandaag stellen we u een concept voor om ziekenhuizen makkelijker te kunnen beheren.
 
 
-Slide 2:
+[Rafael]Slide 2:
 
-In het echte leven zijn er een heleboel complexe systemen die uit een verzameling actoren bestaan die met elkaar interageren. Een voorbeeld van zo'n systeem is een ziekenhuis. De acties van de actoren in een ziekenhuis, zoals artsen, patiënten en administratief medewerkers, hangen zowel af van hun eigen onafhankelijke beslissingen als de beslissingen van andere actoren in het ziekenhuis.
+In het echte leven zijn er een heleboel complexe systemen die uit een verzameling actoren bestaan die met elkaar interageren. Een voorbeeld van zo'n systeem is een ziekenhuis. De acties van de actoren in een ziekenhuis, zoals artsen, patienten en administratief medewerkers, hangen zowel af van hun eigen onafhankelijke beslissingen als de beslissingen van andere actoren in het ziekenhuis.
 
 
-Slide 3:
+[Koen]Slide 3:
 
 Ons onderzoek is erop gericht zulke systemen in kaart te brengen en beheersbaar te houden, waarbij we gebruik maken van de werktuigen die de automatentheorie ons aanbiedt. In het specifieke geval van het ziekenhuis zullen we bijvoorbeeld de verschillende actoren voorstellen als met elkaar interagerende automaten.
 
 
-Slide 4 (maatschappelijk nut):
+[Ajay]Slide 4 (maatschappelijk nut):
 
-Op deze manier kunnen we met HSS een vrij eenvoudig gecentraliseerd systeem op eender welk moment kunnen zien waar de actoren hun tijd aan besteden. Zo is het bijvoorbeeld makkelijker om pijnpunten en tekortkomingen in de organisatie van het ziekenhuis te identificeren en de efficiëntie op te drijven.
+Op deze manier kunnen we met HSS een vrij eenvoudig gecentraliseerd systeem op eender welk moment kunnen zien waar de actoren hun tijd aan besteden. Zo is het bijvoorbeeld makkelijker om pijnpunten en tekortkomingen in de organisatie van het ziekenhuis te identificeren en de efficientie op te drijven.
 
 
-Slide 5 (de actoren):
+[Rafael]Slide 5 (de actoren):
 
-Slide 6 (de patiënt):
+In het eerste prototype simuleren we de werking van het ziekenhuis als de interactie tussen drie categorieen van actoren: de patienten, de artsen en de balie/administratie. Voor elke categorie voorzien we een specifiek ontworpen automaat. We kiezen dus voor de eenvoudige voorstelling van de actor als de hoeksteen van het grotere, complexere systeem.
 
-Slide 7 (de arts):
 
-Slide 8 (de balie/administratie):
+[Koen]Slide 6 (de patient):
 
-Slide 9 (interacties):
+De simulatie van een patient begint wanneer hij het hospitaal binnenkomt. In de eerste versie worden enkel niet-spoedgevallen behandeld. Hij meldt zich aan aan de balie, en dit is de laatste onafhankelijke actie die hij neemt. Verder wordt zijn toestand vrijwel geheel bepaald door de acties van de andere actoren.
 
-Slide 10 (input):
 
-Slide 11 (output):
+[Ajay]Slide 7 (de balie/administratie):
 
-Slide 12-14 (mogelijke uitbreidingen):
+De balie zelf bevat slechts 2 toestanden, namelijk wachtend op een patient en verwerken van een patient. De acties van de balie/administratie hebben echter voornamelijk impact op de andere actoren van het ziekenhuis. Zo past de administratie de agenda's van de dokters aan, verwijst ze de patient door naar de wachtkamer, enzovoorts.
 
-Slide 15-17 (fase 1):
 
-Slide 18-20 (leuteren):
+[Rafael]Slide 8 (de arts):
+
+Artsen worden hier voorgesteld als vrij eenvoudige automaten die ofwel aan het werk zijn, ofwel aan het wachten op een patient, ofwel thuis zijn. Hun acties hebben impact op de toestand van de patienten die ze behandelen. De patienten kunnen door hun acties genezen en ontslagen worden (een accepttoestand), of de behandeling kan falen, in welk geval de patient in een van de andere accepttoestanden kan komen: overleden of ongenezen.
+
+
+[Koen]Slide 9 (interacties):
+
+Het systeem combineert deze automaten door ze op een abstracte manier met elkaar te verbinden. We zorgen ervoor dat de acties van een zekere automaat zowel effect kunnen uitoefenen op die automaat zelf, op andere automaten of eventueel op de gegevensstructuren die het systeem ondersteunen.
+
+
+[Ajay]Slide 10 (input):
+
+Om het systeem flexibel te houden, zijn de automaten niet ingebakken in de software, maar kunnen ze worden gedefinieerd aan de hand van aanpasbare bestanden. Het is mogelijk dat de organisatie die wij als ontwikkelaars in gedachten hebben niet overeenkomt met de realitiet van een ziekenhuis, in dat geval moet het mogelijk zijn dat de gebruikers zelf hun situatie kunnen configureren.
+
+
+[Rafael]Slide 11 (output):
+
+In het prototype zullen we de output voorlopig beperken tot een rapport van de toestanden die de actoren doorlopen hebben. Uiteindelijk zouden we graag de transitie maken naar een aan het ziekenhuis aangepaste ruimtelijke voorstelling, waar de positie van alle actoren zichtbaar is, met een geautomatiseerde simulatie die de werkelijkheid zo goed mogelijk probeert te benaderen.
+
+
+[Koen]Slide 12 (uitbreidingen - spoed):
+
+De meest prioritaire uitbreiding die we willen realiseren is het onderscheid tussen spoedgevallen en niet-spoedgevallen, essentieel om een waarheidsgetrouwe weergave van het ziekenhuis te realiseren. Niet-spoed patienten worden in een gewone queue geplaatst, maar spoedpatienten moeten in een priority queue geplaatst worden aan de hand van de ernst en tijdgevoeligheid van hun verwondingen.
+
+
+[Ajay]Slide 13 (uitbreidingen - agenda van dokters):
+
+In het eerste prototype is de agenda van de artsen volledig afhankelijk van de beslissingen van de administratie. Het zou realistischer zijn als artsen zelf ook kunnen plannen om terug te keren naar een patient die onder observatie staat. De communicatie hiervan met de balie gebeurt dan op een geautomatiseerde manier.
+
+
+[Rafael]Slide 14 (uitbreidingen - algemeen realistischer beeld van het ziekenhuis):
+
+Het prototype gaat van een aantal vereenvoudigende veronderstellingen uit zodat het niet onmiddellijk toepasbaar is in de werkelijkheid. Zo hebben we nog geen rekening gehouden met een eventuele wachtrij aan de balie, hebben we nog geen onderscheid gemaakt tussen patienten met of zonder afspraak en hebben we de mogelijkheid dat alle kamers van het ziekenhuis bezet zijn niet in overweging genomen. Bij verder uitbreiding addresseren we deze problemen.
+
+
+[Rafael] Slide 15 (fase 1 - epsilon-NFA naar DFA):
+
+Om ons project te realiseren, hebben we nood aan enkele algoritmes die het werken met automaten vergemakkelijken.
+
+
+[Koen] Slide 16 (fase 1 - table filling algorithm):
+
+In het eerste prototype zijn de automaten eenvoudig en kunnen ze makkelijk handmatig geoptimaliseerd worden. Naarmate de complexiteit van de simulatie stijgt, is dit niet noodzakelijk meer mogelijk. 
+
+
+[Ajay] Slide 17 (fase 1 - DFA naar regex):
+
+
+[Koen]Slide 18 (voor HSS):
+
+Momenteel kampen ziekenhuizen met een grote varieteit aan organisatorische problemen, zoals overwerkt personeel, lange wachttijden, administratieve rompslomp, zelfmoordneigingen en middelenmisbruik onder dokters, enzovoorts. Patienten komen hierdoor, in hun al verzwakte toestand, in een nodeloos stresserende situatie terecht, waardoor de maatschappij een hypotheek neemt op de volksgezondheid.
+
+
+[Ajay]Slide 19 (na HSS):
+
+Met HSS verwachten wij dat we aan de basis kunnen staan van een structurele en systematische hervorming van het gezondheidssysteem die het gros, zoniet alle, van deze problemen voorgoed van de baan veegt.
+
+
+[Rafael]Slide 20 (besluit):
+
+Bedankt voor uw aandacht en vertrouwen in HSS. Ik denk dat we allen beseffen dat we hier op een historisch keerpunt staan op het gebied van volksgezondheid, en dat we binnen enkele jaren zullen denken in termen van voor en na HSS.
+
+
+
+
+
+
+
+***
+
+
+Doelstellingen 1: 
+Ziekenhuizen zijn complexe omgevingen met veel onverwachte gebeurtenissen, waardoor het moeilijk is om op een gegeven moment een accuraat beeld te vormen van de huidige toestand. Het personeel kan, bijvoorbeeld, zelden een accurate schatting geven wanneer een zekere patient een dokter kan zien. De patient ervaart dit vaak als oncomfortabel.
+
+
+Doelstellingen 2: 
+Ons systeem zorgt ervoor dat men op elk gegeven moment van de toestand van het ziekenhuis en al zijn raderwerk een ruw overzicht heeft. Hierdoor hopen we dat communicatie tussen medisch personeel onderling, en communicatie tussen personeel en patienten, minder tijd in beslag neemt en duidelijker is.
