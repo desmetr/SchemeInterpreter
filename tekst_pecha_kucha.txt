@@ -78,7 +78,8 @@ In het eerste prototype is de agenda van de artsen volledig afhankelijk van de b
 Het prototype gaat van een aantal vereenvoudigende veronderstellingen uit zodat het niet onmiddellijk toepasbaar is in de werkelijkheid. Zo hebben we nog geen rekening gehouden met een eventuele wachtrij aan de balie, hebben we nog geen onderscheid gemaakt tussen patienten met of zonder afspraak en hebben we de mogelijkheid dat alle kamers van het ziekenhuis bezet zijn niet in overweging genomen. Bij verder uitbreiding addresseren we deze problemen.
 
 
-[Rafael] Slide 17 (fase 1 - epsilon-NFA naar DFA):
+[Ajay] Slide 17 (fase 1 - epsilon-NFA naar DFA):
+Voor de toepassing gaan 3 algoritmen implementen. Ten eerste een epsilon-NFA omzetten in een DFA door de modified subset constructie. Ten tweede het minimaliseren van een DFA door toepassen van de tablefilling algoritme en ten derde het omzetten van een reguliere expressie in een epsilon-NFA.
 
 
 [Koen]Slide 18 (voor HSS):
