@@ -1,0 +1,37 @@
+/*
+ * Automaton.h
+ *
+ *  Created on: Apr 10, 2014
+ *      Author: ajay
+ */
+
+#ifndef AUTOMATON_H_
+#define AUTOMATON_H_
+#include <map>
+#include <set>
+#include <vector>
+#include <string>
+
+struct State {
+	std::map<char, std::set<int> > transitions;
+	bool acceptState;
+};
+
+class Automaton {
+protected:
+// Attributes used in subclasses.
+	std::vector<State> states;
+	std::set<char> alphabet;
+
+public:
+	Automaton();
+	virtual ~Automaton();
+
+// Methods.
+	virtual bool readChar(char theChar) = 0;
+	virtual bool readString(std::string theString) = 0;
+	virtual bool readUntilAccepted(std::string theString) = 0;
+	virtual bool accepted() = 0;
+};
+
+#endif /* AUTOMATON_H_ */

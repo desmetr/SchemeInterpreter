@@ -1,0 +1,24 @@
+/*
+ * Automaton.h
+ *
+ *  Created on: Apr 10, 2014
+ *      Author: ajay
+ */
+
+#ifndef AUTOMATON_H_
+#define AUTOMATON_H_
+#include <map>
+#include <set>
+struct State {
+	std::map<char, std::set<int> > transitions;
+};
+
+class Automaton {
+public:
+	Automaton();
+	virtual ~Automaton();
+};
+
+
+
+#endif /* AUTOMATON_H_ */

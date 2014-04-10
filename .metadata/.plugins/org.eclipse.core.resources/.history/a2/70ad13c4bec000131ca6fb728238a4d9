@@ -1,0 +1,18 @@
+/*
+ * Automaton.cpp
+ *
+ *  Created on: Apr 10, 2014
+ *      Author: ajay
+ */
+
+#include "Automaton.h"
+
+Automaton::Automaton() {
+	// TODO Auto-generated constructor stub
+
+}
+
+Automaton::~Automaton() {
+	// TODO Auto-generated destructor stub
+}
+

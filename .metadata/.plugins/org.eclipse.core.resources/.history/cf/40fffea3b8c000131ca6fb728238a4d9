@@ -1,0 +1,17 @@
+/*
+ * Automaton.h
+ *
+ *  Created on: Apr 10, 2014
+ *      Author: ajay
+ */
+
+#ifndef AUTOMATON_H_
+#define AUTOMATON_H_
+
+class Automaton {
+public:
+	Automaton();
+	virtual ~Automaton();
+};
+
+#endif /* AUTOMATON_H_ */

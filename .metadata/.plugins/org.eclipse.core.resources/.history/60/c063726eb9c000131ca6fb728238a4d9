@@ -1,0 +1,25 @@
+/*
+ * Automaton.h
+ *
+ *  Created on: Apr 10, 2014
+ *      Author: ajay
+ */
+
+#ifndef AUTOMATON_H_
+#define AUTOMATON_H_
+using namespace std;
+
+class Automaton {
+public:
+	Automaton();
+	virtual ~Automaton();
+};
+
+class State {
+public:
+	map<>
+	State();
+	virtual ~State();
+};
+
+#endif /* AUTOMATON_H_ */

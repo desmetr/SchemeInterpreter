@@ -1,0 +1,37 @@
+/*
+ * DFA.cpp
+ *
+ *  Created on: Apr 10, 2014
+ *      Author: ajay
+ */
+
+#include "DFA.h"
+
+DFA::DFA() {
+	// TODO Auto-generated constructor stub
+
+}
+
+DFA::~DFA() {
+	// TODO Auto-generated destructor stub
+}
+
+bool DFA::readChar(char theChar) {
+
+	return NULL;
+}
+
+bool DFA::readString(std::string theString) {
+
+	return NULL;
+}
+
+bool DFA::readUntilAccepted(std::string theString) {
+
+	return NULL;
+}
+
+bool DFA::accepted() {
+
+	return NULL;
+}

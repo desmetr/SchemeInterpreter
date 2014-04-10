@@ -1,0 +1,15 @@
+17:13:29 **** Incremental Build of configuration Debug for project Scheme_Interpreter ****
+make all 
+Building file: ../DFA.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"DFA.d" -MT"DFA.d" -o "DFA.o" "../DFA.cpp"
+Finished building: ../DFA.cpp
+ 
+Building target: Scheme_Interpreter
+Invoking: Cross G++ Linker
+g++  -o "Scheme_Interpreter"  ./Automaton.o ./DFA.o ./main.o   
+Finished building target: Scheme_Interpreter
+ 
+
+17:13:30 Build Finished (took 717ms)
+

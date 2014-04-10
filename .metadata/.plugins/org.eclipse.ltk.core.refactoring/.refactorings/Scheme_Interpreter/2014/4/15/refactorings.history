@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;Scheme_Interpreter/Automata.cpp&apos; to &apos;Automaton.cpp&apos;" description="Rename resource &apos;Automata.cpp&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Automata.cpp" name="Automaton.cpp" stamp="1397138174700" updateReferences="true"/>&#x0A;<refactoring comment="Rename resource &apos;Scheme_Interpreter/Automata.h&apos; to &apos;Automaton.h&apos;" description="Rename resource &apos;Automata.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Automata.h" name="Automaton.h" stamp="1397138181848" updateReferences="true"/>
+</session>

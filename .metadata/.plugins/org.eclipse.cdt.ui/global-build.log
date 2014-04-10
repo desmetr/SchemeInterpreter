@@ -1,0 +1,78 @@
+17:10:10 **** Incremental Build of configuration Debug for project Scheme_Interpreter ****
+make all 
+Building file: ../DFA.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"DFA.d" -MT"DFA.d" -o "DFA.o" "../DFA.cpp"
+Finished building: ../DFA.cpp
+ 
+Building file: ../main.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"main.d" -MT"main.d" -o "main.o" "../main.cpp"
+Finished building: ../main.cpp
+ 
+Building target: Scheme_Interpreter
+Invoking: Cross G++ Linker
+g++  -o "Scheme_Interpreter"  ./Automaton.o ./DFA.o ./main.o   
+Finished building target: Scheme_Interpreter
+ 
+17:10:13 **** Incremental Build of configuration Debug for project Scheme_Interpreter ****
+make all 
+make: Nothing to be done for `all'.
+17:10:27 **** Incremental Build of configuration Debug for project Scheme_Interpreter ****
+make all 
+Building file: ../main.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"main.d" -MT"main.d" -o "main.o" "../main.cpp"
+Finished building: ../main.cpp
+ 
+Building target: Scheme_Interpreter
+Invoking: Cross G++ Linker
+g++  -o "Scheme_Interpreter"  ./Automaton.o ./DFA.o ./main.o   
+Finished building target: Scheme_Interpreter
+ 
+17:11:21 **** Incremental Build of configuration Debug for project Scheme_Interpreter ****
+make all 
+Building file: ../main.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"main.d" -MT"main.d" -o "main.o" "../main.cpp"
+Finished building: ../main.cpp
+ 
+Building target: Scheme_Interpreter
+Invoking: Cross G++ Linker
+g++  -o "Scheme_Interpreter"  ./Automaton.o ./DFA.o ./main.o   
+Finished building target: Scheme_Interpreter
+ 
+17:13:02 **** Incremental Build of configuration Debug for project Scheme_Interpreter ****
+make all 
+Building file: ../Automaton.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"Automaton.d" -MT"Automaton.d" -o "Automaton.o" "../Automaton.cpp"
+Finished building: ../Automaton.cpp
+ 
+Building file: ../DFA.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"DFA.d" -MT"DFA.d" -o "DFA.o" "../DFA.cpp"
+Finished building: ../DFA.cpp
+ 
+Building file: ../main.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"main.d" -MT"main.d" -o "main.o" "../main.cpp"
+Finished building: ../main.cpp
+ 
+Building target: Scheme_Interpreter
+Invoking: Cross G++ Linker
+g++  -o "Scheme_Interpreter"  ./Automaton.o ./DFA.o ./main.o   
+Finished building target: Scheme_Interpreter
+ 
+17:13:29 **** Incremental Build of configuration Debug for project Scheme_Interpreter ****
+make all 
+Building file: ../DFA.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"DFA.d" -MT"DFA.d" -o "DFA.o" "../DFA.cpp"
+Finished building: ../DFA.cpp
+ 
+Building target: Scheme_Interpreter
+Invoking: Cross G++ Linker
+g++  -o "Scheme_Interpreter"  ./Automaton.o ./DFA.o ./main.o   
+Finished building target: Scheme_Interpreter
+ 

@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">&#x0A;<refactoring comment="Delete 2 resources" deleteContents="false" description="Delete 2 resources" element1="/Scheme_Interpreter/Automaton.cpp" element2="/Scheme_Interpreter/Automaton.h" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="2" stamp="1397138195085"/>&#x0A;<refactoring comment="Delete 2 resources" deleteContents="false" description="Delete 2 resources" element1="/Scheme_Interpreter/State.cpp" element2="/Scheme_Interpreter/State.h" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="2" stamp="1397138896797"/>
+</session>

@@ -1,0 +1,17 @@
+/*
+ * DFA.h
+ *
+ *  Created on: Apr 10, 2014
+ *      Author: ajay
+ */
+
+#ifndef DFA_H_
+#define DFA_H_
+
+class DFA {
+public:
+	DFA();
+	virtual ~DFA();
+};
+
+#endif /* DFA_H_ */

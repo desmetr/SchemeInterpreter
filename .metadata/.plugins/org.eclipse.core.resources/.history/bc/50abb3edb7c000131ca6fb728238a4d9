@@ -1,0 +1,17 @@
+/*
+ * Automata.h
+ *
+ *  Created on: Apr 10, 2014
+ *      Author: ajay
+ */
+
+#ifndef AUTOMATA_H_
+#define AUTOMATA_H_
+
+class Automata {
+public:
+	Automata();
+	virtual ~Automata();
+};
+
+#endif /* AUTOMATA_H_ */
