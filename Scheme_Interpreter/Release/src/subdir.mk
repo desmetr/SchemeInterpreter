@@ -4,29 +4,29 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../Automaton.cpp \
-../DFA.cpp \
-../eNFA.cpp \
-../main.cpp 
+../src/Automaton.cpp \
+../src/DFA.cpp \
+../src/eNFA.cpp \
+../src/main.cpp 
 
 OBJS += \
-./Automaton.o \
-./DFA.o \
-./eNFA.o \
-./main.o 
+./src/Automaton.o \
+./src/DFA.o \
+./src/eNFA.o \
+./src/main.o 
 
 CPP_DEPS += \
-./Automaton.d \
-./DFA.d \
-./eNFA.d \
-./main.d 
+./src/Automaton.d \
+./src/DFA.d \
+./src/eNFA.d \
+./src/main.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-%.o: ../%.cpp
+src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross G++ Compiler'
-	g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	g++ -O3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
