@@ -8,11 +8,11 @@
 #ifndef ENFA_H_
 #define ENFA_H_
 
-/*#include <set>
+#include <set>
+#include <string>
 #include "Automaton.h"
 
-
-class eNFA: public Automaton {
+class eNFA: public Automaton< std::string,std::set<int> > {
 private:
 	std::set<int> currentState;
 
@@ -21,6 +21,6 @@ public:
 	virtual ~eNFA();
 
 	static std::set<int> eclose(const State& theState);
-};*/
+};
 
 #endif /* ENFA_H_ */
