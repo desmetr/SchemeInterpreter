@@ -37,13 +37,6 @@ public:
 	, alphabet(alphabet)
 	{}
 	virtual ~Automaton() {}
-
-// Methods.
-	virtual bool readChar(char theChar) = 0;
-	virtual bool readString(const std::string& theString) = 0;
-	virtual bool readUntilAccepted(const std::string& theString) = 0;
-	virtual bool accepted() = 0;
-	virtual void reset() = 0;
 };
 
 #endif /* AUTOMATON_H_ */

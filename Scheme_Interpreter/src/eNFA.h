@@ -17,10 +17,10 @@ private:
 	std::set<int> currentState;
 
 public:
-	eNFA(const std::vector<State>& states, const std::set<char>& alphabet);
+	eNFA(const std::vector<State<std::string,std::set<int> > >& states, const std::set<char>& alphabet);
 	virtual ~eNFA();
 
-	static std::set<int> eclose(const State& theState);
+	static std::set<int> eclose(const State<std::string,std::set<int>>& theState);
 };
 
 #endif /* ENFA_H_ */
