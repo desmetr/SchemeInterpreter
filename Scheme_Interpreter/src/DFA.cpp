@@ -6,15 +6,59 @@
  */
 
 #include "DFA.h"
-
+static int callctr = 0;
 DFA::DFA(const std::vector<State<char,int> >& states, const std::set<char>& alphabet)
 : Automaton(states, alphabet)
 {
 	currentState = 0;
+    minimize();
 }
 
 DFA::~DFA() {
 	// TODO Auto-generated destructor stub
+}
+
+void DFA::minimize() {
+    // tests whether two indices refer to distinguishable states
+    // pairsToIgnore contains pairs that have been encountered but whose 
+    // distinguishability has not yet been determined (we ignore them to avoid
+    // entering an infinite recursion)
+    TestDistinguishabilityType testDistinguishability = memoize(
+        TestDistinguishabilityType([&](int i, int j, 
+                                   std::set< std::set<int> >& pairsToIgnore) 
+        {
+            std::cout << i << "," << j << std::endl;
+            if (i == j) {
+                pairsToIgnore.erase({i,j});
+                return false;
+            } else if (states[i].acceptState != states[j].acceptState) {
+                pairsToIgnore.erase({i,j});
+                return true;
+            } else {
+                pairsToIgnore.insert({i,j});
+                bool result = any(alphabet, [&](char c) {
+                    int nextI = states[i].transitions.at(c);
+                    int nextJ = states[j].transitions.at(c);
+                    //if the next pair to examine has already been encountered
+                    //in this specific search, ignore this pair by returning
+                    //false without memoizing the result
+                    if (pairsToIgnore.find({nextI,nextJ}) 
+                            != pairsToIgnore.end()) return false;
+                    return testDistinguishability(nextI, nextJ, pairsToIgnore);
+                });
+                pairsToIgnore.erase({i,j});
+                return result;
+            }
+        }));
+    std::vector<State<char,int>> minimizedStates;
+    for (int i = 0; i < states.size(); i++) {
+        for (int j = i+1; j < states.size(); j++) {
+            std::set< std::set<int> > pairsToIgnore;
+            if (!testDistinguishability(i, j, pairsToIgnore)) {
+                //std::cout << i << ", " << j << std::endl;
+            }
+        }
+    }
 }
 
 bool DFA::readChar(char theChar) {
@@ -98,7 +142,3 @@ std::ostream& operator<< (std::ostream &out, DFA &dfa){
 	out<<"}"<<std::endl;
 	return out;
 }
-
-
-
-

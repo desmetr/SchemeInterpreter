@@ -72,8 +72,89 @@ void getProductautomaat(){
 
 }
 
+void testMinimization() {
+    set<char> alphabet = {'0', '1'};
+    vector<State<char,int> > states(5);
+
+    // A
+    states[0].acceptState = true;
+    states[0].transitions['0'] = 0;
+    states[0].transitions['1'] = 1;
+
+    // B
+    states[1].acceptState = false;
+    states[1].transitions['0'] = 0;
+    states[1].transitions['1'] = 1;
+
+    // C
+    states[2].acceptState = true;
+    states[2].transitions['0'] = 3;
+    states[2].transitions['1'] = 4;
+
+    // D
+    states[3].acceptState = true;
+    states[3].transitions['0'] = 3;
+    states[3].transitions['1'] = 4;
+
+    // E
+    states[4].acceptState = false;
+    states[4].transitions['0'] = 2;
+    states[4].transitions['1'] = 4;
+
+    DFA test(states, alphabet);
+    
+
+    cout << "____________" << endl << endl;
+
+    vector<State<char,int> > states2(8);
+
+    // A
+    states2[0].acceptState = false;
+    states2[0].transitions['0'] = 1;
+    states2[0].transitions['1'] = 5;
+
+    // B
+    states2[1].acceptState = false;
+    states2[1].transitions['0'] = 6;
+    states2[1].transitions['1'] = 2;
+
+    // C
+    states2[2].acceptState = true;
+    states2[2].transitions['0'] = 0;
+    states2[2].transitions['1'] = 2;
+
+    // D
+    states2[3].acceptState = false;
+    states2[3].transitions['0'] = 2;
+    states2[3].transitions['1'] = 6;
+
+    // E
+    states2[4].acceptState = false;
+    states2[4].transitions['0'] = 7;
+    states2[4].transitions['1'] = 5;
+
+    // F
+    states2[5].acceptState = false;
+    states2[5].transitions['0'] = 2;
+    states2[5].transitions['1'] = 6;
+    
+    // G
+    states2[6].acceptState = false;
+    states2[6].transitions['0'] = 6;
+    states2[6].transitions['1'] = 4;
+
+    // H
+    states2[7].acceptState = false;
+    states2[7].transitions['0'] = 6;
+    states2[7].transitions['1'] = 2;
+
+    DFA(states2, alphabet);
+    // fuck yea het werkt
+}
+
 int main() {
-	getProductautomaat();
-	cout<<"end"<<endl;
-	return 0;
+	//getProductautomaat();
+	//cout<<"end"<<endl;
+	//return 0;
+    testMinimization();
 }
