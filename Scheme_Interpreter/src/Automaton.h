@@ -29,10 +29,10 @@ class Automaton {
 protected:
 // Attributes used in subclasses.
 	std::vector<State<keyType,valueType> > states;
-	std::set<char> alphabet;
+	std::set<keyType> alphabet;
 
 public:
-	Automaton(std::vector<State<keyType,valueType> > states, std::set<char> alphabet)
+	Automaton(std::vector<State<keyType,valueType> > states, std::set<keyType> alphabet)
 	: states(states)
 	, alphabet(alphabet)
 	{}

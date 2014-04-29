@@ -6,14 +6,55 @@
  */
 
 #include "DFA.h"
+#include "eNFA.h"
 #include <iostream>
 #include <map>
 #include <utility>
 
 using namespace std;
 
+
+void checkOutputEnfa(){
+	set<string> alph = {"a", "b", ""};
+	vector<State<string,set<int>> > states;
+	states.push_back(State<string,set<int>>());
+	set<int> set1 = {1,2};
+	states[0].transitions[""] = set1;
+	states[0].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	set<int> set2 = {3};
+	states[1].transitions["a"] = set2;
+	states[1].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	set<int> set3 = {4};
+	states[2].transitions["b"] = set3;
+	states[2].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	set<int> set4 = {5};
+	states[3].transitions[""] = set4;
+	states[3].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	set<int> set5 = {5};
+	states[4].transitions[""] = set5;
+	states[4].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	states[5].acceptState = true;
+
+	eNFA eNFA(states, alph);
+
+	ofstream ofStream1;
+	ofStream1.open("eNFA1.dot");
+	ofStream1<<eNFA;
+	ofStream1.close();
+
+}
+
 void getProductautomaat(){
-	cout<<"lala1"<<endl;
 	set<char> alph = {'0', '1'};
 	vector<State<char,int> > states;
 	states.push_back(State<char,int>());
@@ -62,9 +103,7 @@ void getProductautomaat(){
 	ofStream2<<dfa2;
 	ofStream2.close();
 
-	cout<<"lala2"<<endl;
 	DFA dfa3 = dfa1*dfa2;
-	cout<<"lala3"<<endl;
 	ofstream ofStream3;
 	ofStream3.open("productautomaat.dot");
 	ofStream3<<dfa3;
@@ -73,7 +112,7 @@ void getProductautomaat(){
 }
 
 int main() {
-	getProductautomaat();
+	checkOutputEnfa();
 	cout<<"end"<<endl;
 	return 0;
 }
