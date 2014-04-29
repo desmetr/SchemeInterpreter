@@ -8,13 +8,21 @@
 #ifndef DFA_H_
 #define DFA_H_
 #include "Automaton.h"
+#include "generic.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <map>
+#include <utility>
+#include <functional>
+
+typedef std::function<bool(int,int,std::set<std::set<int>>&)> 
+    TestDistinguishabilityType;
 
 class DFA: public Automaton<char,int> {
 private:
 	int currentState;
+    void minimize();
 
 public:
 	DFA(const std::vector<State<char,int>>& states, const std::set<char>& alphabet);
