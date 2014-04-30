@@ -13,6 +13,24 @@
 
 using namespace std;
 
+void checkregexPLUSregex(){
+	eNFA enfa1 = geteNFA("a");
+
+	eNFA enfa2 = geteNFA("c");
+
+
+	eNFA enfa3 = enfa1+enfa2;
+	eNFA enfa4 = *enfa3;
+	eNFA enfa5 = enfa4^enfa1;
+	eNFA enfa6 = enfa5^enfa3;
+
+	ofstream ofStream3;
+	ofStream3.open("eNFAregexPLUSregex.dot");
+	ofStream3<<enfa6;
+	ofStream3.close();
+
+}
+
 
 void checkOutputEnfa(){
 	set<string> alph = {"a", "b", ""};
@@ -192,7 +210,7 @@ void testMinimization() {
 }
 
 int main() {
-	checkOutputEnfa();
+	checkregexPLUSregex();
 	cout<<"end"<<endl;
 	return 0;
 
