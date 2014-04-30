@@ -11,7 +11,6 @@ DFA::DFA(const std::vector<State<char,int> >& states, const std::set<char>& alph
 : Automaton(states, alphabet)
 {
 	currentState = 0;
-    minimize();
 }
 
 DFA::~DFA() {
@@ -27,7 +26,6 @@ void DFA::minimize() {
         TestDistinguishabilityType([&](int i, int j, 
                                    std::set< std::set<int> >& pairsToIgnore) 
         {
-            std::cout << i << "," << j << std::endl;
             if (i == j) {
                 pairsToIgnore.erase({i,j});
                 return false;
@@ -50,12 +48,17 @@ void DFA::minimize() {
                 return result;
             }
         }));
+    // TODO eigenlijke minimalisatie
     std::vector<State<char,int>> minimizedStates;
+    std::vector<std::set<int>> equivalenceClasses;
+    //auto findEquivalenceClass = [&](int i) {
+        
+    //}
     for (int i = 0; i < states.size(); i++) {
         for (int j = i+1; j < states.size(); j++) {
             std::set< std::set<int> > pairsToIgnore;
             if (!testDistinguishability(i, j, pairsToIgnore)) {
-                //std::cout << i << ", " << j << std::endl;
+                
             }
         }
     }

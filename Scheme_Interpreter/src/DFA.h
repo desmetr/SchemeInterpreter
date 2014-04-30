@@ -22,7 +22,6 @@ typedef std::function<bool(int,int,std::set<std::set<int>>&)>
 class DFA: public Automaton<char,int> {
 private:
 	int currentState;
-    void minimize();
 
 public:
 	DFA(const std::vector<State<char,int>>& states, const std::set<char>& alphabet);
@@ -33,6 +32,7 @@ public:
 	bool readUntilAccepted(const std::string& theString);
 	bool accepted();
 	void reset();
+    void minimize();
 	friend DFA operator*(const DFA &DFA1, const DFA &DFA2);		//geeft de productautomaat terug van DFA1 en DFA2
 	friend std::ostream& operator<< (std::ostream &out, DFA &cPoint);
 };
