@@ -11,6 +11,7 @@
 #include <set>
 #include <string>
 #include "Automaton.h"
+#include <iostream>
 using namespace std;
 
 class eNFA: public Automaton< std::string,std::set<int> > {
@@ -23,11 +24,13 @@ public:
 
 	static std::set<int> eclose(const State<std::string,std::set<int>>& theState);
 	eNFA regexToeNFA(std::string regex);
-	eNFA regexPLUSregex(eNFA enfa1, eNFA enfa2);
-	eNFA regexMAALregex(eNFA enfa1, eNFA enfa2);
-	eNFA regexSTER(eNFA enfa);
 
 	friend std::ostream& operator<< (std::ostream &out, eNFA &enfa);
+	friend eNFA operator^(const eNFA &enfa1, const eNFA &enfa2);		//regex.regex
+	friend eNFA operator+(const eNFA &enfa1, const eNFA &enfa2);		//regex+regex
+	eNFA operator*();													//regex*
 };
+
+eNFA geteNFA(string alphabet);
 
 #endif /* ENFA_H_ */

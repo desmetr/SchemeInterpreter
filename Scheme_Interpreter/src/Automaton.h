@@ -17,6 +17,9 @@ template<typename keyType, typename valueType>
 struct State {
 	std::map<keyType, valueType> transitions;
 	bool acceptState;
+	State(){
+		acceptState=false;
+	}
 };
 
 /*struct State {

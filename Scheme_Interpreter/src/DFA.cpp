@@ -6,7 +6,7 @@
  */
 
 #include "DFA.h"
-static int callctr = 0;
+//static int callctr = 0;
 DFA::DFA(const std::vector<State<char,int> >& states, const std::set<char>& alphabet)
 : Automaton(states, alphabet)
 {

@@ -26,7 +26,64 @@ eNFA eNFA::regexToeNFA(std::string regex) {
 
 }
 
-eNFA eNFA::regexPLUSregex(eNFA enfa1, eNFA enfa2) {
+eNFA eNFA::operator *() {
+	std::vector<State<string,set<int>>> states;
+
+	State<string,set<int>> headState;
+	std::set<int> reach1 = {1,(this->states.size()+1)};
+
+	headState.transitions[""]=reach1;
+	states.push_back(headState);
+
+	for(vector<State<string,set<int>>>::iterator state = this->states.begin() ; state!=this->states.end() ; state++){
+		State<string,set<int>> newState;
+		for(map<string,set<int>>::iterator transition = state->transitions.begin() ; transition!=state->transitions.end() ; transition++){
+			set<int> newSet;
+			for(set<int>::iterator index = transition->second.begin() ; index!=transition->second.end() ; index++){
+				newSet.insert((*index)+1);
+			}
+			newState.transitions[transition->first]=newSet;
+		}
+		states.push_back(newState);
+	}
+	cout<<"trala"<<endl;
+
+	State<string,set<int>> tailState;
+	tailState.acceptState=true;
+	states.push_back(tailState);
+
+	states.at(states.size()-2).acceptState=false;
+
+	set<int> set2= {(states.size()-1),1};
+	states.at(states.size()-2).transitions[""]=set2;
+	eNFA neweNFA(states,this->alphabet);
+	return neweNFA;
+
+}
+
+eNFA operator ^(const eNFA &enfa1, const eNFA &enfa2) {
+	vector<State<string,set<int>>> newStates = enfa1.states;
+	newStates.insert(newStates.end(),enfa2.states.begin(),enfa2.states.end());
+	set<string> newAlph = enfa1.alphabet;
+	newAlph.insert(enfa2.alphabet.begin(),enfa2.alphabet.end());
+	for(int i=enfa1.states.size() ; i<newStates.size() ; i++){
+		for(map<string,set<int>>::iterator transition = newStates.at(i).transitions.begin() ; transition!=newStates.at(i).transitions.end() ; transition++){
+			set<int> newSet;
+			for(set<int>::iterator index = transition->second.begin() ; index!=transition->second.end() ; index++){
+				newSet.insert((*index)+enfa1.states.size());
+			}
+			transition->second=newSet;
+		}
+	}
+	newStates.at(enfa1.states.size()-1).acceptState=false;
+	newStates.at(newStates.size()-1).acceptState=true;
+	set<int> reach1={enfa1.states.size()};
+	newStates.at(enfa1.states.size()-1).transitions[""]=reach1;
+	eNFA neweNFA(newStates,newAlph);
+	return neweNFA;
+}
+
+eNFA operator+(const eNFA &enfa1, const eNFA &enfa2) {
 
 	std::vector<State<string,set<int>>> states;
 	int beginIndex = enfa1.states.size()+1;
@@ -35,37 +92,50 @@ eNFA eNFA::regexPLUSregex(eNFA enfa1, eNFA enfa2) {
 	std::set<int> reach1;
 	reach1.insert(1);
 	reach1.insert(beginIndex);
-	headState.transitions.at("")=reach1;
+	headState.transitions[""]=reach1;
 	states.push_back(headState);
 
-	for(vector<State<string,set<int>>>::iterator state = enfa1.states.begin() ; state!=enfa1.states.end() ; state++){
-		for(map<string,set<int>>::iterator transition = state->transitions.begin() ; transition!=state->transitions.end() ; transition++){
+	for(vector<State<string,set<int>>>::const_iterator state = enfa1.states.begin() ; state!=enfa1.states.end() ; state++){
+		State<string,set<int>> newState;
+		for(map<string,set<int>>::const_iterator transition = state->transitions.begin() ; transition!=state->transitions.end() ; transition++){
 			set<int> newSet;
-			for(set<int>::iterator index = transition->second.begin() ; index!=transition->second.end() ; index++){
+			for(set<int>::const_iterator index = transition->second.begin() ; index!=transition->second.end() ; index++){
 				newSet.insert((*index)+1);
 			}
-			transition->second=newSet;
+			newState.transitions[transition->first]=newSet;
 		}
-		states.push_back(*state);
+		states.push_back(newState);
 	}
 
 
-	for(vector<State<string,set<int>>>::iterator state = enfa1.states.begin() ; state!=enfa1.states.end() ; state++){
-		for(map<string,set<int>>::iterator transition = state->transitions.begin() ; transition!=state->transitions.end() ; transition++){
+	for(vector<State<string,set<int>>>::const_iterator state = enfa2.states.begin() ; state!=enfa2.states.end() ; state++){
+		State<string,set<int>> newState;
+		for(map<string,set<int>>::const_iterator transition = state->transitions.begin() ; transition!=state->transitions.end() ; transition++){
 			set<int> newSet;
-			for(set<int>::iterator index = transition->second.begin() ; index!=transition->second.end() ; index++){
+			for(set<int>::const_iterator index = transition->second.begin() ; index!=transition->second.end() ; index++){
 				newSet.insert((*index)+beginIndex);
 			}
-			transition->second=newSet;
+			newState.transitions[transition->first]=newSet;
 		}
-		states.push_back(*state);
+		states.push_back(newState);
 	}
 
 	State<string,set<int>> tailState;
 	tailState.acceptState=true;
 	states.push_back(tailState);
-	states.at(beginIndex).transitions.at("").insert(beginIndex-1);
-	states.at(beginIndex).transitions.at("").insert(states.size());
+
+	states.at(beginIndex-1).acceptState=false;
+	states.at(states.size()-2).acceptState=false;
+
+	set<int> set2= {states.size()-1};
+	states.at(beginIndex-1).transitions[""]=set2;
+	states.at(states.size()-2).transitions[""]=set2;
+
+	std::set<string> newAlph = enfa1.alphabet;
+	newAlph.insert(enfa2.alphabet.begin(),enfa2.alphabet.end());
+
+	eNFA neweNFA(states,newAlph);
+	return neweNFA;
 }
 std::ostream& operator<< (std::ostream &out, eNFA &enfa){
 
@@ -100,10 +170,14 @@ std::ostream& operator<< (std::ostream &out, eNFA &enfa){
 	return out;
 }
 
-
-
-eNFA eNFA::regexMAALregex(eNFA enfa1, eNFA enfa2) {
-}
-
-eNFA eNFA::regexSTER(eNFA enfa) {
+eNFA geteNFA(string symbool) {
+	set<string> alph1 = {symbool,""};
+	vector<State<string,set<int>> > states1;
+	states1.push_back(State<string,set<int>>());
+	set<int> set1 = {1};
+	states1[0].transitions[symbool] = set1;
+	states1[0].acceptState = false;
+	states1.push_back(State<string,set<int>>());
+	eNFA enfa1(states1,alph1);
+	return enfa1;
 }
