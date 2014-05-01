@@ -27,12 +27,19 @@ void DFA::minimize() {
                                    std::set< std::set<int> >& pairsToIgnore) 
         {
             if (i == j) {
+                //a state is equivalent with itself
                 pairsToIgnore.erase({i,j});
                 return false;
             } else if (states[i].acceptState != states[j].acceptState) {
+                //an accepting state is always distinguishable from a 
+                // non-accepting state
                 pairsToIgnore.erase({i,j});
                 return true;
             } else {
+                //if neither of the base cases apply, recursively search for a
+                // distinguishable pair that can be reached from the current states
+                // with an identical string; if no such pair can be found, the
+                // result is false, otherwise it is true
                 pairsToIgnore.insert({i,j});
                 bool result = any(alphabet, [&](char c) {
                     int nextI = states[i].transitions.at(c);
@@ -48,20 +55,55 @@ void DFA::minimize() {
                 return result;
             }
         }));
-    // TODO eigenlijke minimalisatie
-    std::vector<State<char,int>> minimizedStates;
     std::vector<std::set<int>> equivalenceClasses;
-    //auto findEquivalenceClass = [&](int i) {
-        
-    //}
+    std::map<int,int> stateToEquivalenceClass;
     for (int i = 0; i < states.size(); i++) {
+        if (stateToEquivalenceClass.find(i) != stateToEquivalenceClass.end())
+            continue;
+        //if the state we are currently examining has not yet been placed in an
+        // equivalence class, create a new equivalence class and find its members
+        // (otherwise, skip to the next state)
+        equivalenceClasses.push_back(std::set<int>({i}));
+        int ecIndex = equivalenceClasses.size() - 1;
+        stateToEquivalenceClass.insert(std::make_pair(i, ecIndex));
         for (int j = i+1; j < states.size(); j++) {
             std::set< std::set<int> > pairsToIgnore;
+            //if we find an equivalent state, place it in i's equivalence class
             if (!testDistinguishability(i, j, pairsToIgnore)) {
-                
+                equivalenceClasses.back().insert(j);
+                stateToEquivalenceClass.insert(std::make_pair(j, ecIndex));
             }
         }
     }
+    //now we construct the new states from the equivalence classes
+    std::vector<State<char,int>> minimizedStates;
+    for (int ecIndex = 0; ecIndex < equivalenceClasses.size(); ecIndex++) {
+        minimizedStates.push_back(State<char,int>());
+        minimizedStates.back().acceptState = 
+            states[*(equivalenceClasses[ecIndex].begin())].acceptState;
+        //initialize the minimized state as one referring just to itself
+        //overwrite the transition for a given character if one of the states
+        // in the current equivalence class refers to a state in another
+        // equivalence class
+        for (char c: alphabet) {
+            minimizedStates.back().transitions[c] = ecIndex;
+            for (int stateIndex: equivalenceClasses[ecIndex]) {
+                int oldStateTransIndex = states[stateIndex].transitions[c];
+                int ecTransIndex = stateToEquivalenceClass[oldStateTransIndex];
+                if (ecTransIndex != ecIndex) {
+                    minimizedStates.back().transitions[c] = ecTransIndex;
+                    break;
+                }
+            }
+        }
+    }
+    std::cout << minimizedStates.size() << std::endl;
+    for (auto& s: minimizedStates) {
+        for (auto& p: s.transitions)
+            std::cout << p.first << ", " << p.second << std::endl;
+        std::cout << std::endl;
+    }
+    states = minimizedStates;
 }
 
 bool DFA::readChar(char theChar) {

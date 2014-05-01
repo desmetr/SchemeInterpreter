@@ -187,13 +187,15 @@ void testMinimization() {
     states2[7].transitions['0'] = 6;
     states2[7].transitions['1'] = 2;
 
-    DFA(states2, alphabet);
+    DFA(states2, alphabet).minimize();
+
     // fuck yea het werkt
 }
 
 int main() {
-	checkOutputEnfa();
-	cout<<"end"<<endl;
+	//checkOutputEnfa();
+	//cout<<"end"<<endl;
+    testMinimization();
 	return 0;
 
 }
