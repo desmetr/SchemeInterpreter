@@ -22,10 +22,6 @@ std::set<int> eNFA::eclose(const State<std::string,std::set<int>>& theState) {
 
 }
 
-eNFA eNFA::regexToeNFA(std::string regex) {
-
-}
-
 eNFA eNFA::operator *() {
 	std::vector<State<string,set<int>>> states;
 
@@ -46,7 +42,6 @@ eNFA eNFA::operator *() {
 		}
 		states.push_back(newState);
 	}
-	cout<<"trala"<<endl;
 
 	State<string,set<int>> tailState;
 	tailState.acceptState=true;
@@ -138,6 +133,7 @@ eNFA operator+(const eNFA &enfa1, const eNFA &enfa2) {
 	return neweNFA;
 }
 std::ostream& operator<< (std::ostream &out, eNFA &enfa){
+	cout<<"size"<<enfa.states.size()<<endl;
 
 	out<<"digraph eNFA {"<<endl;
 	out<<"\trankdir=LR;"<<endl<<endl;
@@ -170,7 +166,8 @@ std::ostream& operator<< (std::ostream &out, eNFA &enfa){
 	return out;
 }
 
-eNFA geteNFA(string symbool) {
+eNFA geteNFA(char token) {
+	string symbool(1,token);
 	set<string> alph1 = {symbool,""};
 	vector<State<string,set<int>> > states1;
 	states1.push_back(State<string,set<int>>());
@@ -181,3 +178,138 @@ eNFA geteNFA(string symbool) {
 	eNFA enfa1(states1,alph1);
 	return enfa1;
 }
+string setPoints(string regex){
+	assert(regex.size()>0);
+	string newRegex;
+	for(int i=0 ; i<regex.size() ; i++){
+		if(regex.at(i)!='(' and regex.at(i)!=')' and regex.at(i)!='*' and regex.at(i)!='+'){
+			if(i<regex.size()-2 and regex.at(i+1)!='(' and regex.at(i+1)!=')' and regex.at(i+1)!='*' and regex.at(i+1)!='+'){
+				if(i>0 and (regex.at(i-1)==')' or regex.at(i-1)=='*')){
+					newRegex.push_back('.');
+					newRegex.push_back(regex.at(i));
+					newRegex.push_back('.');
+				}
+				else{
+				newRegex.push_back(regex.at(i));
+				newRegex.push_back('.');
+				}
+			}
+			else if(i==regex.size()-1 and regex.size()>1 and regex.at(i-1)!='(' and regex.at(i-1)!=')' and regex.at(i-1)!='*' and regex.at(i-1)!='+'){
+				newRegex.push_back('.');
+				newRegex.push_back(regex.at(i));
+			}
+			else if(i>0 and regex.at(i-1)==')'){
+				newRegex.push_back('.');
+				newRegex.push_back(regex.at(i));
+			}
+			else if(i>0 and regex.at(i-1)=='*'){
+				newRegex.push_back('.');
+				newRegex.push_back(regex.at(i));
+			}
+			else{
+				newRegex.push_back(regex.at(i));
+			}
+		}
+		else if(i>0 and regex.at(i-1)==')' and regex.at(i)=='(' ){
+			newRegex.push_back('.');
+			newRegex.push_back(regex.at(i));
+		}
+		else if(i>0 and regex.at(i-1)=='*' and regex.at(i)=='('){
+			newRegex.push_back('.');
+			newRegex.push_back(regex.at(i));
+		}
+		else{
+			newRegex.push_back(regex.at(i));
+		}
+	}
+	return newRegex;
+}
+
+
+int getPrecedence(char expression){
+	if			(expression=='(' or expression==')')		return 4;
+	else if		(expression=='*' )							return 3;
+	else if		(expression=='.')							return 2;
+	else if		(expression=='+')							return 1;
+}
+
+string infixToPostfix(string expression) {
+	stack<char> astack;
+	string postfix;
+	for(int i=0 ; i<expression.size() ; i++){
+	/*	cout<<"postfix "<<postfix<<endl;
+		cout<<"token "<<expression.at(i)<<endl;
+		if(!astack.empty()){
+			cout<<"top "<<astack.top()<<endl;
+		}
+		else{
+		cout<<"Top Empty"<<endl;
+		}
+		cout<<endl;*/
+		char symbool = expression.at(i);
+		if(symbool=='('){
+			astack.push(symbool);
+		}
+		else if(symbool== ')'){
+			while(astack.top()!='('){
+				postfix +=astack.top();
+				astack.pop();
+			}
+			astack.pop();
+		}
+		else if(symbool=='*' or symbool=='+' or symbool=='.'){
+			while( !astack.empty() && (astack.top()!='(') && (getPrecedence(symbool)<=getPrecedence(astack.top())) ){
+				cout<<"in"<<endl;
+				postfix +=astack.top();
+				astack.pop();
+			}
+			astack.push(symbool);
+		}
+		else{
+			postfix +=symbool;
+		}
+	}
+	while(!astack.empty()){
+		postfix +=astack.top();
+		astack.pop();
+	}
+	return postfix;
+}
+eNFA regexToeNFA(std::string regexBegin) {
+	stack<eNFA> astack;
+	string regex = setPoints(regexBegin);
+	cout<<"setPoints "<<regex<<endl;
+	regex = infixToPostfix(regex);
+	cout<<"postfix "<<regex<<endl;
+	for(string::iterator symbool = regex.begin() ; symbool!=regex.end() ; symbool++){
+		char token = *symbool;
+		cout<<*symbool<<endl<<endl;
+		if(token!='*' and token!='.' and token!='+'){
+			astack.push(geteNFA(token));
+		}
+		else if(token=='*'){
+			eNFA top = astack.top();
+			astack.pop();
+			astack.push(*top);
+		}
+		else if(token=='+'){
+			eNFA top = astack.top();
+			astack.pop();
+			eNFA next = astack.top();
+			astack.pop();
+			astack.push(next+top);
+		}
+		else if(token=='.'){
+			eNFA top = astack.top();
+			astack.pop();
+			eNFA next = astack.top();
+			astack.pop();
+			astack.push(next^top);
+		}
+	}
+	return astack.top();
+}
+
+
+
+

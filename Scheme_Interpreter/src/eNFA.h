@@ -12,6 +12,8 @@
 #include <string>
 #include "Automaton.h"
 #include <iostream>
+#include <assert.h>
+#include <stack>
 using namespace std;
 
 class eNFA: public Automaton< std::string,std::set<int> > {
@@ -23,7 +25,6 @@ public:
 	virtual ~eNFA();
 
 	static std::set<int> eclose(const State<std::string,std::set<int>>& theState);
-	eNFA regexToeNFA(std::string regex);
 
 	friend std::ostream& operator<< (std::ostream &out, eNFA &enfa);
 	friend eNFA operator^(const eNFA &enfa1, const eNFA &enfa2);		//regex.regex
@@ -31,6 +32,8 @@ public:
 	eNFA operator*();													//regex*
 };
 
-eNFA geteNFA(string alphabet);
+eNFA geteNFA(char symbool);
+string setPoints(string regex);
+eNFA regexToeNFA(std::string regex);
 
 #endif /* ENFA_H_ */

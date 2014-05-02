@@ -14,18 +14,20 @@
 using namespace std;
 
 void checkregexPLUSregex(){
-	eNFA enfa1 = geteNFA("a");
+/*	eNFA enfa1 = geteNFA('a');
 
-	eNFA enfa2 = geteNFA("c");
+	eNFA enfa2 = geteNFA('c');
 
 
 	eNFA enfa3 = enfa1+enfa2;
 	eNFA enfa4 = *enfa3;
 	eNFA enfa5 = enfa4^enfa1;
-	eNFA enfa6 = enfa5^enfa3;
+	eNFA enfa6 = enfa5^enfa3;*/
+	eNFA enfa6 = regexToeNFA("(a+b)abbb*bdf*(uf*+h)");
+
 
 	ofstream ofStream3;
-	ofStream3.open("eNFAregexPLUSregex.dot");
+	ofStream3.open("regexToeNFA.dot");
 	ofStream3<<enfa6;
 	ofStream3.close();
 
