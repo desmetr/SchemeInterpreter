@@ -170,6 +170,7 @@ Expression::operator bool() const {
     else return false;
 }
 
+
 Expression Expression::operator+(int i) const {
     if (type == Int)
         return Expression(getAsInt() + i);
@@ -265,6 +266,7 @@ Expression Expression::operator/(const Expression& e) const {
         throw std::runtime_error("operator+ called on expression of type ");
             //TODO
 }
+
 
 /////////////////// LAMBDA MEMORY STUFF ////////////////////////////////////////
 #include "Lambda.h"

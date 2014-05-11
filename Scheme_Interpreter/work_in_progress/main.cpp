@@ -33,7 +33,7 @@ Expression evaluate(const Expression& exp, Environment& env) {
     else if (expIt->getAsSymbol() == "if") { // (if test conseq alt)
         auto& test = *(++expIt); auto& conseq= *(++expIt);
         auto& alt= *(++expIt);
-        return evaluate((evaluate(test,env) ? conseq : alt), env);
+        //return evaluate((evaluate(test,env) ? conseq : alt), env);
     }
     else if (expIt->getAsSymbol() == "set!") { // (set! symbol value)
         auto& symbol = *(++expIt); auto& value = *(++expIt);
@@ -128,4 +128,7 @@ int main() {
                     {multSym, aSym, aSym})})}, global);
     // (square var)
     std::cout << evaluate(std::list<Expression> {squareSym, var}, global).getAsInt() << std::endl;
+
+    // (define factorial (lambda n (if (< n 3) 1 (* n (factorial (- n 1))))))
+    // TODO
 }

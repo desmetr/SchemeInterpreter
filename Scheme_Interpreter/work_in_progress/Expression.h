@@ -8,6 +8,8 @@
 #include <stdexcept>
 #include <functional>
 
+#include "GenericArithmetic.h"
+
 enum ExpressionType {Sym, Int, Float, Boolean, List, Function, None};
 typedef std::string Symbol;
 
@@ -38,6 +40,7 @@ public:
     const std::list<Expression>& getAsList() const;
 
     operator bool() const;
+
     Expression operator+(int i) const;
     Expression operator+(double d) const;
     Expression operator+(const Expression& e) const;
