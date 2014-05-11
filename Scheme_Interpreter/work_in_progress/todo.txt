@@ -1,0 +1,10 @@
+onvolledig lijstje met todo's ivm evaluatie
+
+
+Global environment afwerken: < > eq? equal? ... (zie site voor volledige lijst)
+
+Exceptions afwerken
+    Expression operators moeten type uitprinten
+    Exceptions opvangen ipv programma laten crashen
+
+Lage prioriteit: Exception operators proberen generalizeren (heel vaak bijna identiek dezelfde code nu... maar ik weet niet of dit mogelijk is met templates en macro's zijn waarschijnlijk niet zo'n goed idee)
