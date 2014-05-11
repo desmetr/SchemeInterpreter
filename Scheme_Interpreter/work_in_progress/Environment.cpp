@@ -1,12 +1,16 @@
 #include "Environment.h"
 
+Environment::Environment() 
+    : dict(), outer(nullptr)
+{}
 
 Environment::Environment(const std::list<std::string>& symbols, 
                          const std::list<Expression>& values,
                          Environment* outer) 
 : outer(outer)
 {
-    static const auto makepair = [](const std::string& s, const Expression& v) {
+    static const auto makepair = [](const std::string& s, const Expression& v)
+    {
         return std::pair<std::string,Expression>(s, v);
     };
     std::transform(symbols.cbegin(), symbols.cend(), values.cbegin(),

@@ -12,6 +12,7 @@ class Environment
     Environment* outer;
 
 public:
+    Environment();
     Environment(const std::list<Symbol>& symbols, 
                 const std::list<Expression>& values,
                 Environment* outer=nullptr);
