@@ -5,7 +5,8 @@
 #include <utility>
 
 #include "Expression.h"
-
+// (define a 2)
+// (lambda (x y) (+ x y)) -> lokaal [x, y] -> globaal [a, +, * ...]
 class Environment 
 {
     std::map<Symbol,Expression> dict;

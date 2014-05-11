@@ -27,4 +27,5 @@ Expression Lambda::operator()(std::list<Expression>& params) const
 {
     if (params.size() == nArgsExpected)
         return f(params);
+    else throw std::invalid_argument("Wrong number of arguments");
 }
