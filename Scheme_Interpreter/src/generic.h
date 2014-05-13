@@ -185,7 +185,22 @@ template<
     typename... CtnrArgTypes >
 class FixedSizeSubsetIterator
 {
+    typedef FixedSizeSubsetIterator<CtnrType,ValueType,CtnrArgTypes...> MyType;
+    typedef typename CtnrType<ValueType,CtnrArgTypes...>::iterator ItType;
+
+    ItType current;
+    ItType end;
     int size;
-    FixedSizeSubsetIterator<
-}
+    MyType* smallerIt;
+
+    FixedSizeSubsetIterator(ItType begin, ItType end, int size, MyType* smallerIt)
+        : current(begin), end(end), size(size), smallerIt(smallerIt)
+    {}
+
+public:
+    //friend MyType getFixedSizeSubsetIterator(int size);
+    
+
+};
+
 */
