@@ -23,7 +23,7 @@ set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) {
 	indexesToIgnore.insert(indexState);
 	
 	for (int i : states[indexState].transitions.at(""))	{
-		for (int j : eclose(i))	{
+		for (int j : eclose(i, indexesToIgnore))	{
 			localSet.insert(j);
 		}
 	}
@@ -31,14 +31,14 @@ set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) {
 	return localSet;
 }
 
-set<set<int>> getQD()	{
+set<set<int>> eNFA::getQD()	{
 	
 
 }
 
-<<<<<<< HEAD
 set<int> eNFA::getStartStateDFA()	{
-	return eclose(0);
+    std::set<int> toIgnore;
+	return eclose(0, toIgnore);
 }
 
 set<int> eNFA::getAcceptingStatesDFA()	{
@@ -49,8 +49,6 @@ eNFA eNFA::regexToeNFA(std::string regex) {
 
 }
 
-=======
->>>>>>> 85f8b6b944e448d6e1d88b92dd3d1efad0edee3b
 eNFA eNFA::operator *() {
 	std::vector<State<string,set<int>>> states;
 

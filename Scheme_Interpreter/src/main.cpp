@@ -264,7 +264,6 @@ void convertENFAtoDFA()	{
 }
 
 int main() {
-<<<<<<< HEAD
 	checkregexPLUSregex();
 	
 	set<string> alph = {"a", "b", ""};
@@ -302,7 +301,8 @@ int main() {
 
 	eNFA eNFA(states, alph);
 
-	set<int> mySet = eNFA.eclose(0);
+    set<int> empty;
+	set<int> mySet = eNFA.eclose(0, empty);
 	// Doen allebei hetzelfde.
 	set<int> mySet2 = eNFA.getStartStateDFA();
 
@@ -315,9 +315,7 @@ int main() {
 		cout << *it << endl;
 	}
 
-=======
 	testMinimization();
->>>>>>> 85f8b6b944e448d6e1d88b92dd3d1efad0edee3b
 	cout<<"end"<<endl;
 	return 0;
 
