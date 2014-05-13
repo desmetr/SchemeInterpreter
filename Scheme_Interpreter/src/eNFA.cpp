@@ -32,8 +32,15 @@ set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) {
 }
 
 set<set<int>> eNFA::getQD()	{
-	
+	set<set<int>> localSet;
 
+	// The empty set.
+	localSet.insert(set<int>());
+
+	// The subsets of the vector that holds the states.
+	localSet.insert(getSubsets(states));
+
+	return localSet;
 }
 
 set<int> eNFA::getStartStateDFA()	{

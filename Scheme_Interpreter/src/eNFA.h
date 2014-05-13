@@ -15,6 +15,8 @@
 
 #include <assert.h>
 #include <stack>
+#include "generic.h"
+
 using namespace std;
 
 class eNFA: public Automaton< std::string,std::set<int> > {
@@ -25,7 +27,7 @@ public:
 	eNFA(std::vector<State<std::string, std::set<int> > >& states, std::set<std::string>& alphabet);
 	virtual ~eNFA();
 
-	set<int> getSubset();
+	//set<int> getSubset();
 	set<set<int>> getQD();
 	set<int> eclose(int indexState, std::set<int>& indexesToIgnore);
 	set<int> getStartStateDFA();
