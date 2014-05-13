@@ -8,20 +8,49 @@
 #include "eNFA.h"
 
 
-eNFA::eNFA(std::vector<State<std::string,std::set<int> > >& states, std::set<string>& alphabet)
-: Automaton(states, alphabet)
-{
-
+eNFA::eNFA(vector<State<string, set<int> > >& states, set<string>& alphabet)
+: Automaton(states, alphabet)	{
 }
 
 eNFA::~eNFA() {
-	// TODO Auto-generated destructor stub
 }
 
-std::set<int> eNFA::eclose(const State<std::string,std::set<int>>& theState) {
+set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) {
+	if (indexesToIgnore.count(indexState))	return set<int>();
+	
+	set<int> localSet;
+	localSet.insert(indexState);
+	indexesToIgnore.insert(indexState);
+	
+	for (int i : states[indexState].transitions.at(""))	{
+		for (int j : eclose(i))	{
+			localSet.insert(j);
+		}
+	}
+	
+	return localSet;
+}
+
+set<set<int>> getQD()	{
+	
 
 }
 
+<<<<<<< HEAD
+set<int> eNFA::getStartStateDFA()	{
+	return eclose(0);
+}
+
+set<int> eNFA::getAcceptingStatesDFA()	{
+	
+}
+
+eNFA eNFA::regexToeNFA(std::string regex) {
+
+}
+
+=======
+>>>>>>> 85f8b6b944e448d6e1d88b92dd3d1efad0edee3b
 eNFA eNFA::operator *() {
 	std::vector<State<string,set<int>>> states;
 
@@ -155,7 +184,6 @@ std::ostream& operator<< (std::ostream &out, eNFA &enfa){
 					else{
 						out<<"\t"<<i<<" -> "<<(*index)<<" [label=\""<<*caracter<<"\"];"<<endl;
 					}
-
 				}
 			}
 		}

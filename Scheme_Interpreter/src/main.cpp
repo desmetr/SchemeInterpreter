@@ -30,9 +30,7 @@ void checkregexPLUSregex(){
 	ofStream3.open("regexToeNFA.dot");
 	ofStream3<<enfa6;
 	ofStream3.close();
-
 }
-
 
 void checkOutputEnfa(){
 	set<string> alph = {"a", "b", ""};
@@ -228,8 +226,98 @@ void testMinimization() {
     // fuck yea het werkt
 }
 
+void convertENFAtoDFA()	{
+	set<string> alph = {"a", "b", ""};
+	vector<State<string,set<int>> > states;
+	states.push_back(State<string,set<int>>());
+	set<int> set1 = {1,2};
+	states[0].transitions[""] = set1;
+	states[0].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	set<int> set2 = {3};
+	states[1].transitions["a"] = set2;
+	states[1].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	set<int> set3 = {4};
+	states[2].transitions["b"] = set3;
+	states[2].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	set<int> set4 = {5};
+	states[3].transitions[""] = set4;
+	states[3].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	set<int> set5 = {5};
+	states[4].transitions[""] = set5;
+	states[4].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	states[5].acceptState = true;
+
+	eNFA enfa = eNFA(states, alph);
+
+	//cout << states[0].transitions["0"][0] << endl;
+
+}
+
 int main() {
+<<<<<<< HEAD
+	checkregexPLUSregex();
+	
+	set<string> alph = {"a", "b", ""};
+	vector<State<string,set<int>> > states;
+	states.push_back(State<string,set<int>>());
+	set<int> set1 = {1,2};
+	states[0].transitions[""] = set1;
+	states[0].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	set<int> set2 = {3};
+	states[1].transitions["a"] = set2;
+	states[1].transitions[""] = {5};
+	states[1].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	set<int> set3 = {4};
+	states[2].transitions["b"] = set3;
+	states[2].transitions[""] = set<int>();
+	states[2].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	set<int> set4 = {5};
+	states[3].transitions[""] = set4;
+	states[3].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	set<int> set5 = {5};
+	states[4].transitions[""] = set5;
+	states[4].acceptState = false;
+
+	states.push_back(State<string,set<int>>());
+	states[5].transitions[""] = set<int>();
+	states[5].acceptState = true;
+
+	eNFA eNFA(states, alph);
+
+	set<int> mySet = eNFA.eclose(0);
+	// Doen allebei hetzelfde.
+	set<int> mySet2 = eNFA.getStartStateDFA();
+
+	// Itereren over de set verkregen door de eclose(0).
+	for (set<int>::iterator it = mySet.begin(); it != mySet.end(); it++)	{
+		cout << *it << endl;
+	}
+	// Itereren over de set verkregen door getStartStateDFA().
+	for (set<int>::iterator it = mySet2.begin(); it != mySet2.end(); it++)	{
+		cout << *it << endl;
+	}
+
+=======
 	testMinimization();
+>>>>>>> 85f8b6b944e448d6e1d88b92dd3d1efad0edee3b
 	cout<<"end"<<endl;
 	return 0;
 
