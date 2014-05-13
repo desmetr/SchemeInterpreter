@@ -147,3 +147,34 @@ private:
         objectptr = new T(obj);
     };
 };
+
+
+// returns all subsets of a given container, in no particular order
+// the empty set is not included
+template<
+    template<typename ...> class CtnrType, 
+    typename ValueType,
+    typename... CtnrArgTypes >
+auto getSubsets(const CtnrType<ValueType,CtnrArgTypes...>& ctnr)
+    -> std::set<std::set<ValueType>>
+{
+    typedef std::set<std::set<ValueType>> ReturnType;
+    typedef const CtnrType<ValueType,CtnrArgTypes...>& ParamType;
+    std::function<ReturnType(ParamType,int)> recurrence = [&](ParamType c,int size) {
+        if (size == 0)
+            return ReturnType({std::set<ValueType>()});
+        else {
+            auto smallerSubsets = recurrence(c, size-1);
+            ReturnType result;
+            for (auto& s: smallerSubsets) {
+                for (auto& v: c) {
+                    std::set<ValueType> sCopy(s);
+                    sCopy.insert(v);
+                    result.insert(sCopy);
+                }
+            } 
+            return result;
+        }
+    };
+    return recurrence(ctnr, ctnr.size());
+}

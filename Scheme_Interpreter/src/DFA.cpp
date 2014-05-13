@@ -58,6 +58,8 @@ void DFA::eliminateUnreachableStates() {
         else return;
     };
     findReachableStates(0);
+    for (auto state: unreachedStates)
+        std::cout << "failed to reach " << state << std::endl;
     
     // now, we eliminate the states that couldn't be reached
 
@@ -123,11 +125,7 @@ void DFA::minimize() {
             }
         }));
     // first, we eliminate unreachable states
-    //eliminateUnreachableStates();
-    // XXX: vreemd genoeg lijkt dit vanzelf te gebeuren... ik begrijp niet 
-    //      waarom table-filling hier blijkbaar geen hulp bij nodig heeft
-    //      TODO: nakijken of er echt geen enkel geval is waarbij expliciet
-    //            onbereikbare staten verwijderen nodig is.
+    eliminateUnreachableStates();
 
     // then, we sort all equivalent states in equivalence classes
     std::vector<std::set<int>> equivalenceClasses;

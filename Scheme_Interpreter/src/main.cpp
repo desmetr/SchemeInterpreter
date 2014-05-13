@@ -146,12 +146,12 @@ void testMinimization() {
     states[1].transitions['1'] = 1;
 
     // C
-    states[2].acceptState = true;
+    states[2].acceptState = false;
     states[2].transitions['0'] = 3;
     states[2].transitions['1'] = 4;
 
     // D
-    states[3].acceptState = true;
+    states[3].acceptState = false;
     states[3].transitions['0'] = 3;
     states[3].transitions['1'] = 4;
 
