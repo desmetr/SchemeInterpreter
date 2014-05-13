@@ -32,9 +32,10 @@ public:
 	bool readUntilAccepted(const std::string& theString);
 	bool accepted();
 	void reset();
+    void eliminateUnreachableStates();
     void minimize();
 	friend DFA operator*(const DFA &DFA1, const DFA &DFA2);		//geeft de productautomaat terug van DFA1 en DFA2
-	friend std::ostream& operator<< (std::ostream &out, DFA &cPoint);
+	friend std::ostream& operator<< (std::ostream &out, DFA &dfa);
 };
 
 #endif /* DFA_H_ */

@@ -8,6 +8,7 @@
 #include <memory>
 #include <set>
 #include <iostream>
+#include <stdexcept>
 
 //herbruikt van eigen project computer graphics (Koen)
 
@@ -73,4 +74,76 @@ public:
     bool operator!=(int other) {return i != other;}
     int operator*() {return i;}
 
+};
+
+
+//////////////////////////////////////////////////////////////////////
+class DisengagedMaybeException : public std::runtime_error {
+public:
+    DisengagedMaybeException (const std::string& message) 
+    : std::runtime_error(message) { };
+};
+
+template<typename T>
+class Maybe
+{
+    T* objectptr;
+    bool engaged;
+public:
+    Maybe() {engaged = false; objectptr = NULL;};
+    Maybe(const Maybe<T>& other) {
+        if (other.engaged) assign(other.value()); 
+        else engaged = false; 
+    };
+    Maybe(T object) {
+        assign(object);
+    };
+    Maybe(T* ptr) {
+        if (ptr) assign(*ptr);
+        else engaged = false;
+    };
+    template<typename ... Argtypes>
+    Maybe(Argtypes ... args) {
+        assign(T(args ...));
+    };
+    ~Maybe() {if (engaged) delete objectptr;};
+
+    operator bool() const {return engaged;};
+    Maybe<T>& operator= (const T& object) {
+        if (engaged) delete objectptr; 
+        assign(object);
+        return *this;
+    };
+    Maybe<T>& operator= (const Maybe<T>& optionalobject) {
+        if (engaged) delete objectptr; 
+        engaged = optionalobject.engaged;
+        if (engaged) objectptr = new T(optionalobject.value());
+        return *this;
+    };
+    T* operator->() {
+        if (!engaged) 
+            throw DisengagedMaybeException("Attempted to access a nonexistent object");
+        return objectptr;
+    };
+    T& operator*() {
+        if (!engaged) 
+            throw DisengagedMaybeException("Attempted to access a nonexistent object");
+        return *objectptr;
+    };
+    const T& value() const {
+        if (!engaged) 
+            throw DisengagedMaybeException("Attempted to access a nonexistent object");
+        return *objectptr;
+    };
+    template <typename U>
+    T value_or(const U& value) const {
+        if (engaged) return *objectptr;
+        else return T(value);
+    };
+    
+private:
+    void assign(const T& obj) {
+        engaged = true;
+        objectptr = new T(obj);
+    };
 };

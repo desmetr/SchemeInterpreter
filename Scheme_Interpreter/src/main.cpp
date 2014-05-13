@@ -161,9 +161,16 @@ void testMinimization() {
     states[4].transitions['1'] = 4;
 
     DFA test(states, alphabet);
-    
+    ofstream eerste;
+	eerste.open("eerste.dot");
+	eerste << test;
 
-    cout << "____________" << endl << endl;
+    test.minimize();
+    ofstream eersteminimized;
+	eersteminimized.open("eersteminimized.dot");
+	eersteminimized << test;
+
+
 
     vector<State<char,int> > states2(8);
 
@@ -207,13 +214,22 @@ void testMinimization() {
     states2[7].transitions['0'] = 6;
     states2[7].transitions['1'] = 2;
 
-    DFA(states2, alphabet).minimize();
+	ofstream output;
+	ofstream output2;
+	output.open("unminimized.dot");
+    DFA testMin(states2, alphabet);
+    output << testMin;
+	output2.open("minimized.dot");
+    testMin.eliminateUnreachableStates();
+    testMin.minimize();
+    output2 << testMin;
+    
 
     // fuck yea het werkt
 }
 
 int main() {
-	checkregexPLUSregex();
+	testMinimization();
 	cout<<"end"<<endl;
 	return 0;
 
