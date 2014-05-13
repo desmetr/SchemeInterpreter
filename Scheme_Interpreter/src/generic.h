@@ -178,3 +178,14 @@ auto getSubsets(const CtnrType<ValueType,CtnrArgTypes...>& ctnr)
     };
     return recurrence(ctnr, ctnr.size());
 }
+/*
+template<
+    template<typename ...> class CtnrType, 
+    typename ValueType,
+    typename... CtnrArgTypes >
+class FixedSizeSubsetIterator
+{
+    int size;
+    FixedSizeSubsetIterator<
+}
+*/
