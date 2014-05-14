@@ -57,17 +57,9 @@ void DFA::eliminateUnreachableStates() {
         // if the state has already been reached, just ignore it
         else return;
     };
-    std::cout << "states: ";
-    for (auto state: unreachedStates)
-        std::cout << state << ", ";
-    std::cout << std::endl;
     findReachableStates(0);
-    std::cout << "failed to reach ";
-    for (auto state: unreachedStates)
-        std::cout << state << ", ";
-    std::cout << std::endl;
     // now, we eliminate the states that couldn't be reached
-
+    //
     // our first task is to identify the new indices the reachable states
     //  will get
     std::map<int,int> oldIndexToNewIndex;
@@ -78,17 +70,13 @@ void DFA::eliminateUnreachableStates() {
         else
             oldIndexToNewIndex.insert(std::make_pair(i, i-offset));
     }
-    for (auto p : oldIndexToNewIndex) 
-        std::cout << p.first << " -> " << p.second << std::endl;
     std::vector<State<char,int>> newStates;
     for (int i = 0; i < states.size(); i++) {
         if (! unreachedStates.count(i)) {
             newStates.push_back(states[i]);
             for (char c: alphabet) {
-                std::cout << newStates.back().transitions.at(c) << " -> " ;
                 newStates.back().transitions.at(c) = 
                     oldIndexToNewIndex.at(newStates.back().transitions.at(c));
-                std::cout << newStates.back().transitions.at(c) << "\n" ;
             }
         }
     }
