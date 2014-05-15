@@ -31,11 +31,11 @@ public:
 	virtual ~eNFA();
 
 	//set<int> getSubset();
-	set<set<int>> getQD();
-	set<int> eclose(int indexState, std::set<int>& indexesToIgnore);
+	set<set<int>> getQD() const;
+	set<int> eclose(int indexState, std::set<int>& indexesToIgnore) const;
 	set<int> eclose(set<int> subset) const;
 	DFA modSubCnstr() const;
-	set<int> getStartStateDFA();
+	set<int> getStartStateDFA() const;
 
 	eNFA regexToeNFA(std::string regex);
 

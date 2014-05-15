@@ -15,7 +15,7 @@ eNFA::eNFA(vector<State<string, set<int> > >& states, set<string>& alphabet)
 eNFA::~eNFA() {
 }
 
-set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) {
+set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) const {
 	if (indexesToIgnore.count(indexState))	return set<int>();
 	
 	set<int> localSet;
@@ -29,7 +29,7 @@ set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) {
 	
 	return localSet;
 }
-/*
+
 set<int> eNFA::eclose(set<int> subset) const {
 	set<int> result;
 	for (int elem: subset) {
@@ -42,7 +42,7 @@ set<int> eNFA::eclose(set<int> subset) const {
 }
 
 // Returns the eclosed subsets of the eNFA
-set<set<int>> eNFA::getQD()	{
+set<set<int>> eNFA::getQD() const {
 	vector<int> indices;
 	for (int i = 0; i < states.size(); i++)
 		indices.push_back(i);
@@ -52,44 +52,33 @@ set<set<int>> eNFA::getQD()	{
 	for (auto& subset: subsets)
 		result.insert(eclose(subset));
 	
-	//for (int i = 0; i < states.size(); i++)
-		//localSet.insert(eclose(i, toIgnore));  
-set<set<int>> eNFA::getQD()	{    
-	// The subsets of the vector that holds the state indexes.
-	set<set<int>> localSet;
-	set<int> toIgnore;
-    
-	for (int i = 0; i < states.size(); i++)
-		localSet.insert(eclose(i, toIgnore));  
-
-	// Add the empty set.
-	localSet.insert(set<int>());
-	
 	return result;
-}*/
+}
 
-set<int> eNFA::getStartStateDFA()	{
+set<int> eNFA::getStartStateDFA() const {
     set<int> toIgnore;
 	return eclose(0, toIgnore);
 }
 
 
-/*
+
 DFA eNFA::modSubCnstr() const {
 	set<set<int>> qdSet = getQD();
 	
 	typedef map< set<int> , map<char,set<int>> > TransitionType;
 	TransitionType transitions;
 	
-	auto constructTransitionTarget = [&](set<int>& subset, char c) {
+	auto constructTransitionTarget = [&](set<int>& subset, char c) 
+											-> set<int> 
+	{
 		set<int> result;
 		for (int elem: subset) {
-			set<int> target = states[elem].transitions.at(c);
-			
+			// TODO
 		}
+		return result;
 	};
 }
-*/
+
 eNFA eNFA::operator *() {
 	std::vector<State<string,set<int>>> states;
 
