@@ -30,8 +30,9 @@ public:
 	//set<int> getSubset();
 	set<set<int>> getQD();
 	set<int> eclose(int indexState, std::set<int>& indexesToIgnore);
+	DFA modSubCnstr() const;
 	set<int> getStartStateDFA();
-	set<int> getAcceptingStatesDFA();
+	set<set<int>> getAcceptingStatesDFA();
 
 	eNFA regexToeNFA(std::string regex);
 

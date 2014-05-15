@@ -130,6 +130,7 @@ void getProductautomaat(){
 }
 
 void testMinimization() {
+
     set<char> alphabet = {'0', '1'};
     vector<State<char,int> > states(5);
 
@@ -218,7 +219,6 @@ void testMinimization() {
     DFA testMin(states2, alphabet);
     output << testMin;
 	output2.open("minimized.dot");
-    testMin.eliminateUnreachableStates();
     testMin.minimize();
     output2 << testMin;
     

@@ -23,48 +23,65 @@ set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) {
 	indexesToIgnore.insert(indexState);
 	
 	for (int i : states[indexState].transitions.at(""))	{
-		for (int j : eclose(i, indexesToIgnore))	{
+		for (int j : eclose(i, indexesToIgnore))
 			localSet.insert(j);
-		}
 	}
 	
 	return localSet;
 }
 
-set<set<int>> eNFA::getQD()	{
-    vector<int> stateIndexes(states.size());
-    for (int i = 0; i < states.size(); i++)
-        stateIndexes[i] = i;
-    
+set<set<int>> eNFA::getQD()	{    
 	// The subsets of the vector that holds the state indexes.
-	set<set<int>> localSet = getSubsets(stateIndexes);
+	set<set<int>> localSet;
+	set<int> toIgnore;
     
+	for (int i = 0; i < states.size(); i++)
+		localSet.insert(eclose(i, toIgnore));  
+
 	// Add the empty set.
 	localSet.insert(set<int>());
-
-
+	
 	return localSet;
 }
 
 set<int> eNFA::getStartStateDFA()	{
-    std::set<int> toIgnore;
+    set<int> toIgnore;
 	return eclose(0, toIgnore);
 }
 
-set<int> eNFA::getAcceptingStatesDFA()	{
-	// set<set<int>> localSet = getQD();
+set<set<int>> eNFA::getAcceptingStatesDFA()	{
+	set<set<int>> qdSet = getQD();
+
 	set<int> localSet;
-	for(vector<State<string,set<int>>>::iterator state = this->states.begin(); state!=this->states.end(); state++){
-		if (*state.acceptState == true)	{
-			localSet.insert(*state.transitions());
-		}
-	}
+
+	// For every element in eNFA states, keeps track of which eclosed subset
+	// the state is assigned to.
+	vector<set<int>&> indexToSubsetMap;
+	for (auto& subset: qdSet)
+		for (int index: subset)
+			indexToSubsetMap[index] = subset;
 	
 	return localSet;
 }
 
 eNFA eNFA::regexToeNFA(std::string regex) {
 
+}
+
+DFA eNFA::modSubCnstr() const {
+	set<set<int>> qdSet = getQD();
+	
+	// For every element in eNFA states, keeps track of which eclosed subset
+	// the state is assigned to.
+	vector<set<int>&> indexToSubsetMap;
+	for (auto& subset: qdSet)
+		for (int index: subset)
+			indexToSubsetMap[index] = subset;
+			
+	vector<State<char,int>> DFAStates;
+	for (int i = 0; i < indexToSubsetMap.size(); i++) {
+		
+	}
 }
 
 eNFA eNFA::operator *() {
