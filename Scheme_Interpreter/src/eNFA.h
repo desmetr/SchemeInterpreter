@@ -11,10 +11,12 @@
 #include <set>
 #include <string>
 #include "Automaton.h"
+#include "DFA.h"
 #include <iostream>
 
 #include <assert.h>
 #include <stack>
+#include <utility>
 #include "generic.h"
 
 using namespace std;
@@ -30,10 +32,10 @@ public:
 	//set<int> getSubset();
 	set<set<int>> getQD();
 	set<int> eclose(int indexState, std::set<int>& indexesToIgnore);
+	set<int> eclose(set<int> subset) const;
+	DFA modSubCnstr() const;
 	set<int> getStartStateDFA();
-	set<int> getAcceptingStatesDFA();
-
-	eNFA regexToeNFA(std::string regex);
+	set<set<int>> getAcceptingStatesDFA();
 
 	friend std::ostream& operator<< (std::ostream &out, eNFA &enfa);
 	friend eNFA operator^(const eNFA &enfa1, const eNFA &enfa2);		//regex.regex
