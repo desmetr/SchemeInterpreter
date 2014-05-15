@@ -16,6 +16,7 @@
 #include <assert.h>
 #include <stack>
 #include "generic.h"
+#include "DFA.h"
 
 using namespace std;
 

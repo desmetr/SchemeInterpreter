@@ -24,7 +24,7 @@ void input(int argc, char const* argv[]){
 		int nrTest = conf["General"]["nTests"].as_int_or_die();
 		for(int i=0 ; i<nrTest ; ++i){
 			stringstream testNumber;
-			testNumber << "Test"<<i;
+			testNumber << "test"<<i;
 			string type = conf[testNumber.str()]["type"].as_string_or_die();
 			if(type=="minimization"){
 				testMinimize(conf,testNumber.str());
@@ -36,14 +36,14 @@ void input(int argc, char const* argv[]){
 				testMod_Subset(conf,testNumber.str());
 			}
 			else if(type=="regex_to_enfa"){
-				testMod_Subset(conf,testNumber.str());
+				testRegex_Enfa(conf,testNumber.str());
 			}
 		}
 	}
 }
 
 void testMinimize(const ini::Configuration& conf, const string testNr ) {
-	string dfaNr = conf[testNr]["input0"].as_string_or_die();
+	string dfaNr = conf[testNr]["input"].as_string_or_die();
 	DFA dfa = getDFA(conf,dfaNr);
 	dfa.minimize();
 	ofstream ofStream3;
@@ -99,11 +99,12 @@ DFA getDFA(const ini::Configuration& conf, string dfaNr) {
 		if(find(acceptStates.begin(),acceptStates.end(),i)!=acceptStates.end()){
 			state.acceptState=true;
 		}
-
 		stringstream nrState;
-		nrState<<"state_"<<i<<"_";
+		nrState<<"state"<<i<<"a";
 		for(char sym:alphabet){
 			try{
+				stringstream nrState;
+				nrState<<"state"<<i<<"a";
 				nrState<<sym;
 				int index = conf[dfaNr][nrState.str()].as_int_or_die();
 				state.transitions[sym]=index;
