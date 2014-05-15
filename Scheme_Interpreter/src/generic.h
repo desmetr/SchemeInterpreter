@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GENERIC_H_
+#define GENERIC_H_
 
 #include <cmath>
 #include <algorithm>
@@ -145,7 +146,7 @@ private:
     void assign(const T& obj) {
         engaged = true;
         objectptr = new T(obj);
-    };
+    }
 };
 
 template<typename a, typename b>
@@ -187,85 +188,4 @@ auto getSubsets(const CtnrType<ValueType,CtnrArgTypes...>& ctnr)
     return recurrence(ctnr, ctnr.size());
 }
 
-/*
-///////////////////////////////////////////////////////////////////////////////
-template<
-    template<typename ...> class CtnrType, 
-    typename ValueType,
-    typename... CtnrArgTypes >
-class SubsetIterator;
-
-template<
-    template<typename ...> class CtnrType, 
-    typename ValueType,
-    typename... CtnrArgTypes >
-class SubsetIterator
-{
-    typedef SubsetIterator<CtnrType,ValueType,CtnrArgTypes...> MyType;
-    typedef typename CtnrType<ValueType,CtnrArgTypes...>::iterator ItType;
-
-    const ItType begin;
-    ItType current;
-    const ItType end;
-    int size;
-    std::shared_ptr<MyType> smallerItPtr;
-
-public:
-    SubsetIterator(ItType begin, ItType end, int size, std::shared_ptr<MyType> smallerItPtr)
-        : begin(begin), current(begin), end(end), size(size), 
-          smallerItPtr(smallerItPtr)
-    {}
-
-    SubsetIterator(const SubsetIterator& other)
-
-    ~SubsetIterator() {if (smallerItPtr) delete smallerItPtr;}
-
-    MyType& operator++() {
-        current++;
-        if (current == end && smallerItPtr->current != smallerItPtr->end) {
-            (*smallerItPtr)++;
-            current = begin;
-        } 
-    }
-
-    MyType operator++(int) {
-        MyType old(*this);
-        ++*this;
-        return old;
-    }
-
-    std::set<ValueType> operator*() {
-        //by returning the empty set we indicate 
-        // - either this iterator has size 0, and this is the base case
-        // - or we're a larger iterator but our iteration has ended
-        if (current == end) return std::set<ValueType>(); 
-        std::set<ValueType> result = **smallerItPtr;
-        //smallerItPtr should return a set the size of ours - 1, if it doesn't
-        // , it means the iteration has ended and we return the emtpy set
-        if (result.size() != size-1) return std::set<ValueType>();
-        result.insert(*current);
-        return result;
-    }
-};
-
-template<
-    template<typename ...> class CtnrType, 
-    typename ValueType,
-    typename... CtnrArgTypes >
-SubsetIterator<CtnrType,ValueType,CtnrArgTypes...>
-getSubsetIterator(const CtnrType<ValueType,CtnrArgTypes...>& ctnr, int size)
-    
-{
-    typedef SubsetIterator<CtnrType,ValueType,CtnrArgTypes...> ReturnType;
-    typedef CtnrType<ValueType,CtnrArgTypes...> FullCtnrType;
-    std::function<ReturnType*(FullCtnrType)> recurrence = [&](const FullCtnrType& ctnr, int size) {
-        if (size == 0)
-            return new ReturnType(ctnr.begin(), ctnr.end(), 0, nullptr);
-        else
-            return new ReturnType(ctnr.begin(), ctnr.end(), 
-                                  size, recurrence(ctnr, size-1));
-    };
-    return ReturnType(ctnr.begin(), ctnr.end(), size, recurrence(ctnr, size-1));
-                      
-}
-*/
+#endif

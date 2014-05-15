@@ -1,3 +1,4 @@
+CXX		= g++-4.8
 CXXFLAGS	= -std=c++11 -ggdb
 EXECUTABLE  = test
 EXTENSION   = cpp
