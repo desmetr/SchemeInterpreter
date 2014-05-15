@@ -18,6 +18,7 @@
 #include <stack>
 #include <utility>
 #include "generic.h"
+#include "DFA.h"
 
 using namespace std;
 
@@ -35,7 +36,8 @@ public:
 	set<int> eclose(set<int> subset) const;
 	DFA modSubCnstr() const;
 	set<int> getStartStateDFA();
-	set<set<int>> getAcceptingStatesDFA();
+
+	eNFA regexToeNFA(std::string regex);
 
 	friend std::ostream& operator<< (std::ostream &out, eNFA &enfa);
 	friend eNFA operator^(const eNFA &enfa1, const eNFA &enfa2);		//regex.regex

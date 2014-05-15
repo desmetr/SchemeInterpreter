@@ -54,6 +54,13 @@ set<set<int>> eNFA::getQD()	{
 	
 	//for (int i = 0; i < states.size(); i++)
 		//localSet.insert(eclose(i, toIgnore));  
+set<set<int>> eNFA::getQD()	{    
+	// The subsets of the vector that holds the state indexes.
+	set<set<int>> localSet;
+	set<int> toIgnore;
+    
+	for (int i = 0; i < states.size(); i++)
+		localSet.insert(eclose(i, toIgnore));  
 
 	// Add the empty set.
 	localSet.insert(set<int>());
@@ -62,22 +69,12 @@ set<set<int>> eNFA::getQD()	{
 }*/
 
 set<int> eNFA::getStartStateDFA()	{
-	set<int> toIgnore;
+    set<int> toIgnore;
 	return eclose(0, toIgnore);
 }
 
-set<set<int>> eNFA::getAcceptingStatesDFA()	{
-}
-/*
-template<typename keyType, typename valueType>
-struct State {
-	std::map<keyType, valueType> transitions;
-	bool acceptState;
-	State(){
-		acceptState=false;
-	}
-};
 
+/*
 DFA eNFA::modSubCnstr() const {
 	set<set<int>> qdSet = getQD();
 	
@@ -93,7 +90,6 @@ DFA eNFA::modSubCnstr() const {
 	};
 }
 */
-
 eNFA eNFA::operator *() {
 	std::vector<State<string,set<int>>> states;
 
@@ -251,7 +247,7 @@ eNFA geteNFA(char token) {
 }
 string setPoints(string regex){
 	assert(regex.size()>0);
-	string newRegex;
+	/*string newRegex;
 	for(int i=0 ; i<int(regex.size()) ; i++){
 		if(regex.at(i)!='(' and regex.at(i)!=')' and regex.at(i)!='*' and regex.at(i)!='+'){
 			if(i<regex.size()-2 and regex.at(i+1)!='(' and regex.at(i+1)!=')' and regex.at(i+1)!='*' and regex.at(i+1)!='+'){
@@ -293,7 +289,8 @@ string setPoints(string regex){
 			newRegex.push_back(regex.at(i));
 		}
 	}
-	return newRegex;
+	return newRegex;*/
+
 }
 
 
@@ -339,7 +336,7 @@ string infixToPostfix(string expression) {
 }
 eNFA regexToeNFA(std::string regexBegin) {
 	stack<eNFA> astack;
-	string regex = setPoints(regexBegin);
+	string regex = regexBegin;
 	cout<<"setPoints "<<regex<<endl;
 	regex = infixToPostfix(regex);
 	cout<<"postfix "<<regex<<endl;

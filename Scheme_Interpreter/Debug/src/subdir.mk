@@ -7,19 +7,25 @@ CPP_SRCS += \
 ../src/Automaton.cpp \
 ../src/DFA.cpp \
 ../src/eNFA.cpp \
-../src/main.cpp 
+../src/ini_configuration.cpp \
+../src/main.cpp \
+../src/readInput.cpp 
 
 OBJS += \
 ./src/Automaton.o \
 ./src/DFA.o \
 ./src/eNFA.o \
-./src/main.o 
+./src/ini_configuration.o \
+./src/main.o \
+./src/readInput.o 
 
 CPP_DEPS += \
 ./src/Automaton.d \
 ./src/DFA.d \
 ./src/eNFA.d \
-./src/main.d 
+./src/ini_configuration.d \
+./src/main.d \
+./src/readInput.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

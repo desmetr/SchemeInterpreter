@@ -1,5 +1,6 @@
+CXX		= g++-4.8
 CXXFLAGS	= -std=c++11 -ggdb
-EXECUTABLE  = KOENtest
+EXECUTABLE  = test
 EXTENSION   = cpp
 SOURCES	 = $(basename $(shell find . -name '*.$(EXTENSION)'))
 
@@ -22,3 +23,4 @@ clean:
 	find . -name '*.o' -delete
 	find . -name '*.d' -delete
 	find . -name '*~' -delete
+	find . -name '*.gch' -delete
