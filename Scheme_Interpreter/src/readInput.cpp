@@ -50,6 +50,8 @@ void testMinimize(const ini::Configuration& conf, const string testNr ) {
 	ofStream3.open(testNr.c_str());
 	ofStream3<<dfa;
 	ofStream3.close();
+	string command = "dot -Tjpg " + testNr + " -O";
+	system(command.c_str());
 
 }
 
@@ -63,6 +65,8 @@ void testProduct(const ini::Configuration& conf, string testNr) {
 	ofStream3.open(testNr.c_str());
 	ofStream3<<dfa3;
 	ofStream3.close();
+	string command = "dot -Tjpg " + testNr + " -O";
+	system(command.c_str());
 }
 
 void testRegex_Enfa(const ini::Configuration& conf, string testNr) {
@@ -72,9 +76,19 @@ void testRegex_Enfa(const ini::Configuration& conf, string testNr) {
 	ofStream3.open(testNr.c_str());
 	ofStream3<<enfa;
 	ofStream3.close();
+	string command = "dot -Tjpg " + testNr + " -O";
+	system(command.c_str());
 }
 
-void testMod_Subset(const ini::Configuration& configuration, string testNr) {
+void testMod_Subset(const ini::Configuration& conf, string testNr) {
+	string eNfaNr = conf[testNr]["input"].as_string_or_die();
+	eNFA enfa = getEnfa(conf,eNfaNr);
+	ofstream ofStream3;
+	ofStream3.open(testNr.c_str());
+	ofStream3<<enfa;
+	ofStream3.close();
+	string command = "dot -Tjpg " + testNr + " -O";
+	system(command.c_str());
 }
 
 DFA getDFA(const ini::Configuration& conf, string dfaNr) {
@@ -100,17 +114,17 @@ DFA getDFA(const ini::Configuration& conf, string dfaNr) {
 			state.acceptState=true;
 		}
 		stringstream nrState;
-		nrState<<"state"<<i<<"a";
+		nrState<<"state"<<i<<"Met";
 		for(char sym:alphabet){
 			try{
 				stringstream nrState;
-				nrState<<"state"<<i<<"a";
+				nrState<<"state"<<i<<"Met";
 				nrState<<sym;
 				int index = conf[dfaNr][nrState.str()].as_int_or_die();
 				state.transitions[sym]=index;
 			}
 			catch(ini::ParseException& ex){
-				cerr<<"Invalid "<<dfaNr<<". Niet alle symbolen per staat is gegeven. "<<nrState.str()<<endl;
+				cerr<<"Invalid "<<dfaNr<<". Niet alle symbolen per staat zijn gegeven. "<<nrState.str()<<endl;
 			}
 		}
 		states.push_back(state);
@@ -118,6 +132,51 @@ DFA getDFA(const ini::Configuration& conf, string dfaNr) {
 	return DFA(states,alphabet);
 }
 
-eNFA getEnfa(const ini::Configuration& configuration, string eNFANr) {
+eNFA getEnfa(const ini::Configuration& conf, string eNFANr) {
+	int nrStates 	=	 conf[eNFANr]["nStates"].as_int_or_die();
+	int nrSymbool 	=	 conf[eNFANr]["nChars"].as_int_or_die();
+	vector<int> acceptStates	=	 conf[eNFANr]["acceptStates"].as_int_tuple_or_die();
+	set <string> alphabet;
+	for(int i=0 ; i<nrSymbool ; i++){
+		stringstream nrChar;
+		nrChar<<"char"<<i;
+		string symbool = conf[eNFANr][nrChar.str()].as_string_or_die();
+		if(symbool.size()==1 || symbool.size()==0){
+			alphabet.insert(symbool);
+		}
+		else{
+			cerr<<"Invaid alphabet "<<eNFANr<<endl;
+		}
+	}
+	vector<State<string,set<int>>> states;
+	for(int i=0 ; i<nrStates ; i++){
+		State<string,set<int>> state;
+		if(find(acceptStates.begin(),acceptStates.end(),i)!=acceptStates.end()){
+			state.acceptState=true;
+		}
+		stringstream nrState;
+		nrState<<"state"<<i<<"Met";
+		for(string sym:alphabet){
+			try{
+				stringstream nrState;
+				nrState<<"state"<<i<<"Met";
+				cout<<sym<<" la"<<endl;
+				nrState<<sym;
+				if(conf[eNFANr][nrState.str()].exists()){
+					vector<int> index = conf[eNFANr][nrState.str()].as_int_tuple_or_die();
+					set<int> indices;
+					for(int i:index){
+						indices.insert(i);
+					}
+					state.transitions[sym]=indices;
+				}
+			}
+			catch(ini::ParseException& ex){
+				cerr<<"Invalid "<<eNFANr<<". Niet alle symbolen per staat zijn gegeven. "<<nrState.str()<<endl;
+			}
+		}
+		states.push_back(state);
+	}
+	return eNFA(states,alphabet);
 
 }

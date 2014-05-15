@@ -319,7 +319,7 @@ int main(int argc, char const* argv[]) {
 	testMinimization();*/
 	input(argc,argv);
 
-	cout<<"end"<<endl;
+	cout<<"endd"<<endl;
 	return 0;
 
 }

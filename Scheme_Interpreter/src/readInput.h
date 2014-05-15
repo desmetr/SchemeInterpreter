@@ -15,6 +15,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <set>
+#include <stdio.h>
+#include <stdlib.h>
 using namespace std;
 
 void input(int argc, char const* argv[]);
