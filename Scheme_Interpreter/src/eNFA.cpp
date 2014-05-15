@@ -1,4 +1,4 @@
-	/*
+/*
  * eNFA.cpp
  *
  *  Created on: Apr 10, 2014
@@ -23,66 +23,41 @@ set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) {
 	indexesToIgnore.insert(indexState);
 	
 	for (int i : states[indexState].transitions.at(""))	{
-		for (int j : eclose(i, indexesToIgnore))
+		for (int j : eclose(i, indexesToIgnore))	{
 			localSet.insert(j);
+		}
 	}
 	
 	return localSet;
 }
-/*
-set<set<int>> eNFA::getQD()	{    
-	// The subsets of the vector that holds the state indexes.
-	set<set<int>> localSet;
-	set<int> toIgnore;
-    
-	for (int i = 0; i < states.size(); i++)
-		localSet.insert(eclose(i, toIgnore));  
 
+set<set<int>> eNFA::getQD()	{
+    vector<int> stateIndexes(states.size());
+    for (int i = 0; i < states.size(); i++)
+        stateIndexes[i] = i;
+
+	// The subsets of the vector that holds the state indexes.
+	set<set<int>> localSet = getSubsets(stateIndexes);
+    
 	// Add the empty set.
 	localSet.insert(set<int>());
-	
+
+
 	return localSet;
 }
 
 set<int> eNFA::getStartStateDFA()	{
-    set<int> toIgnore;
+    std::set<int> toIgnore;
 	return eclose(0, toIgnore);
 }
 
-set<set<int>> eNFA::getAcceptingStatesDFA()	{
-	set<set<int>> qdSet = getQD();
-
-	set<int> localSet;
-
-	// For every element in eNFA states, keeps track of which eclosed subset
-	// the state is assigned to.
-	vector<set<int>&> indexToSubsetMap;
-	for (auto& subset: qdSet)
-		for (int index: subset)
-			indexToSubsetMap[index] = subset;
+//set<int> eNFA::getAcceptingStatesDFA()	{
 	
-	return localSet;
-}
+//}
 
 eNFA eNFA::regexToeNFA(std::string regex) {
 
 }
-/*
-DFA eNFA::modSubCnstr() const {
-	set<set<int>> qdSet = getQD();
-	
-	// For every element in eNFA states, keeps track of which eclosed subset
-	// the state is assigned to.
-	vector<set<int>&> indexToSubsetMap;
-	for (auto& subset: qdSet)
-		for (int index: subset)
-			indexToSubsetMap[index] = subset;
-			
-	vector<State<char,int>> DFAStates;
-	for (int i = 0; i < indexToSubsetMap.size(); i++) {
-		
-	}
-}*/
 
 eNFA eNFA::operator *() {
 	std::vector<State<string,set<int>>> states;
@@ -241,7 +216,7 @@ eNFA geteNFA(char token) {
 }
 string setPoints(string regex){
 	assert(regex.size()>0);
-	/*string newRegex;
+	string newRegex;
 	for(int i=0 ; i<int(regex.size()) ; i++){
 		if(regex.at(i)!='(' and regex.at(i)!=')' and regex.at(i)!='*' and regex.at(i)!='+'){
 			if(i<regex.size()-2 and regex.at(i+1)!='(' and regex.at(i+1)!=')' and regex.at(i+1)!='*' and regex.at(i+1)!='+'){
@@ -283,8 +258,7 @@ string setPoints(string regex){
 			newRegex.push_back(regex.at(i));
 		}
 	}
-	return newRegex;*/
-
+	return newRegex;
 }
 
 

@@ -1,0 +1,8 @@
+In de output bestanden is staat 0 altijd het begin staat
+Elke input bestand om de algorithme die een regex omzet naar een e-nfa ziet er vb. als volgt uit:
+[General]
+nTests = 1				;geef aan hoeveel testen er zijn
+
+[test0]		
+type = "regex_to_enfa"			;geef de algoritme die je wil testen
+regex = "(A(af+B*)*B+4(B+0)*5*7)" 	;geef de regex die omgezet moet worden naar e-nfa

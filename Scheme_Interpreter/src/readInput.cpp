@@ -61,12 +61,27 @@ void testProduct(const ini::Configuration& conf, string testNr) {
 	DFA dfa1 = getDFA(conf,dfaNr1);
 	DFA dfa2 = getDFA(conf,dfaNr2);
 	DFA dfa3 = dfa1*dfa2;
+
 	ofstream ofStream3;
 	ofStream3.open(testNr.c_str());
 	ofStream3<<dfa3;
 	ofStream3.close();
 	string command = "dot -Tjpg " + testNr + " -O";
 	system(command.c_str());
+
+	ofstream ofStream4;
+	ofStream4.open("Dfa1");
+	ofStream4<<dfa1;
+	ofStream4.close();
+	string command2 = "dot -Tjpg Dfa1 -O";
+	system(command2.c_str());
+
+	ofstream ofStream5;
+	ofStream5.open("Dfa2");
+	ofStream5<<dfa2;
+	ofStream5.close();
+	string command3 = "dot -Tjpg Dfa2 -O";
+	system(command3.c_str());
 }
 
 void testRegex_Enfa(const ini::Configuration& conf, string testNr) {
@@ -160,7 +175,6 @@ eNFA getEnfa(const ini::Configuration& conf, string eNFANr) {
 			try{
 				stringstream nrState;
 				nrState<<"state"<<i<<"Met";
-				cout<<sym<<" la"<<endl;
 				nrState<<sym;
 				if(conf[eNFANr][nrState.str()].exists()){
 					vector<int> index = conf[eNFANr][nrState.str()].as_int_tuple_or_die();
