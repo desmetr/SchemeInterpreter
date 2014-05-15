@@ -1,5 +1,5 @@
 CXXFLAGS	= -std=c++11 -ggdb
-EXECUTABLE  = KOENtest
+EXECUTABLE  = test
 EXTENSION   = cpp
 SOURCES	 = $(basename $(shell find . -name '*.$(EXTENSION)'))
 
