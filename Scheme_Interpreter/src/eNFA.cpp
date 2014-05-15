@@ -60,22 +60,21 @@ set<int> eNFA::getStartStateDFA() const {
 	return eclose(0, toIgnore);
 }
 
-
-
 DFA eNFA::modSubCnstr() const {
 	set<set<int>> qdSet = getQD();
 	
 	typedef map< set<int> , map<char,set<int>> > TransitionType;
 	TransitionType transitions;
 	
-	auto constructTransitionTarget = [&](set<int>& subset, char c) 
+	auto constructTransitionTarget = [&](set<int>& subset, string s) 
 											-> set<int> 
 	{
 		set<int> result;
 		for (int elem: subset) {
-			// TODO
+			set<int> target = states[elem].transitions.at(s);
+			result.insert(target.begin(), target.end());
 		}
-		return result;
+		return eclose(result);
 	};
 }
 
