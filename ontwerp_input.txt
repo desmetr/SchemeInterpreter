@@ -12,6 +12,6 @@ state_0_ =
 state_0_x = [VECTOR<INT>]
 
 [test0]
-type = "product"
+type = "product"/"minimization"/"regex_to_enfa"/"msc"
 input0 = ...
 input1 = ...
