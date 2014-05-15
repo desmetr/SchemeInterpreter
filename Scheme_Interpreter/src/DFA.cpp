@@ -58,32 +58,29 @@ void DFA::eliminateUnreachableStates() {
         else return;
     };
     findReachableStates(0);
-    for (auto state: unreachedStates)
-        std::cout << "failed to reach " << state << std::endl;
-    
     // now, we eliminate the states that couldn't be reached
-
+    //
     // our first task is to identify the new indices the reachable states
     //  will get
     std::map<int,int> oldIndexToNewIndex;
-    for (int i = 0; i < states.size(); i++)
-        oldIndexToNewIndex.insert(std::make_pair(i, i));
-    for (int i = 0; i < states.size(); i++)
+    int offset = 0;
+    for (int i = 0; i < states.size(); i++) {
         if (unreachedStates.count(i))
-            for (int j = i+1; j < states.size(); j++) 
-                oldIndexToNewIndex.at(j) -= 1;
-    // then, we actually eliminate the unreachable states and we adjust
-    // the indices of the states that still exist
-    for (int i = 0; i < states.size();) {
-        if (unreachedStates.erase(i))
-            states.erase(states.begin() + i);
-        else {
-            for (char c: alphabet)
-                states[i].transitions.at(c) = 
-                    oldIndexToNewIndex.at(states[i].transitions.at(c));
-            i++;
+            offset++;
+        else
+            oldIndexToNewIndex.insert(std::make_pair(i, i-offset));
+    }
+    std::vector<State<char,int>> newStates;
+    for (int i = 0; i < states.size(); i++) {
+        if (! unreachedStates.count(i)) {
+            newStates.push_back(states[i]);
+            for (char c: alphabet) {
+                newStates.back().transitions.at(c) = 
+                    oldIndexToNewIndex.at(newStates.back().transitions.at(c));
+            }
         }
     }
+    states = newStates;
 }
 
 void DFA::minimize() {
