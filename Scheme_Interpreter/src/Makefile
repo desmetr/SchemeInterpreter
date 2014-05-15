@@ -1,3 +1,4 @@
+CXX		= g++-4.8
 CXXFLAGS	= -std=c++11 -ggdb
 EXECUTABLE  = test
 EXTENSION   = cpp
@@ -22,3 +23,4 @@ clean:
 	find . -name '*.o' -delete
 	find . -name '*.d' -delete
 	find . -name '*~' -delete
+	find . -name '*.gch' -delete
