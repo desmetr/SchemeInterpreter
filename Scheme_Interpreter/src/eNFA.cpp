@@ -237,15 +237,6 @@ string infixToPostfix(string expression) {
 	stack<char> astack;
 	string postfix;
 	for(int i=0 ; i<expression.size() ; i++){
-	/*	cout<<"postfix "<<postfix<<endl;
-		cout<<"token "<<expression.at(i)<<endl;
-		if(!astack.empty()){
-			cout<<"top "<<astack.top()<<endl;
-		}
-		else{
-		cout<<"Top Empty"<<endl;
-		}
-		cout<<endl;*/
 		char symbool = expression.at(i);
 		if(symbool=='('){
 			astack.push(symbool);
