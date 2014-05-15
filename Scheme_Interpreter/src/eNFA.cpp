@@ -8,17 +8,54 @@
 #include "eNFA.h"
 
 
-eNFA::eNFA(std::vector<State<std::string,std::set<int> > >& states, std::set<string>& alphabet)
-: Automaton(states, alphabet)
-{
-
+eNFA::eNFA(vector<State<string, set<int> > >& states, set<string>& alphabet)
+: Automaton(states, alphabet)	{
 }
 
 eNFA::~eNFA() {
-	// TODO Auto-generated destructor stub
 }
 
-std::set<int> eNFA::eclose(const State<std::string,std::set<int>>& theState) {
+set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) {
+	if (indexesToIgnore.count(indexState))	return set<int>();
+	
+	set<int> localSet;
+	localSet.insert(indexState);
+	indexesToIgnore.insert(indexState);
+	
+	for (int i : states[indexState].transitions.at(""))	{
+		for (int j : eclose(i, indexesToIgnore))	{
+			localSet.insert(j);
+		}
+	}
+	
+	return localSet;
+}
+
+set<set<int>> eNFA::getQD()	{
+    vector<int> stateIndexes(states.size());
+    for (int i = 0; i < states.size(); i++)
+        stateIndexes[i] = i;
+    
+	// The subsets of the vector that holds the state indexes.
+	set<set<int>> localSet = getSubsets(stateIndexes);
+    
+	// Add the empty set.
+	localSet.insert(set<int>());
+
+
+	return localSet;
+}
+
+set<int> eNFA::getStartStateDFA()	{
+    std::set<int> toIgnore;
+	return eclose(0, toIgnore);
+}
+
+set<int> eNFA::getAcceptingStatesDFA()	{
+	
+}
+
+eNFA eNFA::regexToeNFA(std::string regex) {
 
 }
 
@@ -26,7 +63,7 @@ eNFA eNFA::operator *() {
 	std::vector<State<string,set<int>>> states;
 
 	State<string,set<int>> headState;
-	std::set<int> reach1 = {1,(this->states.size()+1)};
+	std::set<int> reach1 = {1,(int(this->states.size())+1)};
 
 	headState.transitions[""]=reach1;
 	states.push_back(headState);
@@ -61,7 +98,7 @@ eNFA operator ^(const eNFA &enfa1, const eNFA &enfa2) {
 	newStates.insert(newStates.end(),enfa2.states.begin(),enfa2.states.end());
 	set<string> newAlph = enfa1.alphabet;
 	newAlph.insert(enfa2.alphabet.begin(),enfa2.alphabet.end());
-	for(int i=enfa1.states.size() ; i<newStates.size() ; i++){
+	for(int i=enfa1.states.size() ; i<int(newStates.size()) ; i++){
 		for(map<string,set<int>>::iterator transition = newStates.at(i).transitions.begin() ; transition!=newStates.at(i).transitions.end() ; transition++){
 			set<int> newSet;
 			for(set<int>::iterator index = transition->second.begin() ; index!=transition->second.end() ; index++){
@@ -72,7 +109,7 @@ eNFA operator ^(const eNFA &enfa1, const eNFA &enfa2) {
 	}
 	newStates.at(enfa1.states.size()-1).acceptState=false;
 	newStates.at(newStates.size()-1).acceptState=true;
-	set<int> reach1={enfa1.states.size()};
+	set<int> reach1={int(enfa1.states.size())};
 	newStates.at(enfa1.states.size()-1).transitions[""]=reach1;
 	eNFA neweNFA(newStates,newAlph);
 	return neweNFA;
@@ -122,7 +159,7 @@ eNFA operator+(const eNFA &enfa1, const eNFA &enfa2) {
 	states.at(beginIndex-1).acceptState=false;
 	states.at(states.size()-2).acceptState=false;
 
-	set<int> set2= {states.size()-1};
+	set<int> set2= {int(states.size())-1};
 	states.at(beginIndex-1).transitions[""]=set2;
 	states.at(states.size()-2).transitions[""]=set2;
 
@@ -155,7 +192,6 @@ std::ostream& operator<< (std::ostream &out, eNFA &enfa){
 					else{
 						out<<"\t"<<i<<" -> "<<(*index)<<" [label=\""<<*caracter<<"\"];"<<endl;
 					}
-
 				}
 			}
 		}
@@ -181,7 +217,7 @@ eNFA geteNFA(char token) {
 string setPoints(string regex){
 	assert(regex.size()>0);
 	string newRegex;
-	for(int i=0 ; i<regex.size() ; i++){
+	for(int i=0 ; i<int(regex.size()) ; i++){
 		if(regex.at(i)!='(' and regex.at(i)!=')' and regex.at(i)!='*' and regex.at(i)!='+'){
 			if(i<regex.size()-2 and regex.at(i+1)!='(' and regex.at(i+1)!=')' and regex.at(i+1)!='*' and regex.at(i+1)!='+'){
 				if(i>0 and (regex.at(i-1)==')' or regex.at(i-1)=='*')){

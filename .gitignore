@@ -4,3 +4,5 @@
 *.swp
 *.o
 *.d
+*.jpg
+*a.out

@@ -17,6 +17,72 @@ DFA::~DFA() {
 	// TODO Auto-generated destructor stub
 }
 
+
+bool DFA::readChar(char theChar) {
+	currentState = states.at(currentState).transitions.at(theChar);
+	return accepted();
+}
+
+bool DFA::readString(const std::string& theString) {
+	for (char c : theString) readChar(c);
+	return accepted();
+}
+
+bool DFA::readUntilAccepted(const std::string& theString) {
+	for (char c : theString) if (readChar(c)) return true;
+	return false;
+}
+
+bool DFA::accepted() {
+	return states.at(currentState).acceptState;
+}
+
+void DFA::reset() {
+	currentState = 0;
+}
+
+void DFA::eliminateUnreachableStates() {
+    // create a list of unreached states, add all states 
+    std::set<int> unreachedStates;
+    for (int i = 0; i < states.size(); i++)
+        unreachedStates.insert(i);
+
+    // remove states that can be reached from the starting state
+    std::function<void(int)> findReachableStates = [&](int index) -> void {
+        // if the current state has not been reached yet, investigate it 
+        // and all states that can be reached directly from it
+        if (unreachedStates.erase(index))
+            for (char c: alphabet) 
+                findReachableStates(states.at(index).transitions.at(c));
+        // if the state has already been reached, just ignore it
+        else return;
+    };
+    findReachableStates(0);
+    // now, we eliminate the states that couldn't be reached
+    //
+    // our first task is to identify the new indices the reachable states
+    //  will get
+    std::map<int,int> oldIndexToNewIndex;
+    int offset = 0;
+    for (int i = 0; i < states.size(); i++) {
+        if (unreachedStates.count(i))
+            offset++;
+        else
+            oldIndexToNewIndex.insert(std::make_pair(i, i-offset));
+    }
+    std::vector<State<char,int>> newStates;
+    for (int i = 0; i < states.size(); i++) {
+        if (! unreachedStates.count(i)) {
+            newStates.push_back(states[i]);
+            for (char c: alphabet) {
+                newStates.back().transitions.at(c) = 
+                    oldIndexToNewIndex.at(newStates.back().transitions.at(c));
+            }
+        }
+    }
+    states = newStates;
+}
+
 void DFA::minimize() {
     // tests whether two indices refer to distinguishable states
     // pairsToIgnore contains pairs that have been encountered but whose 
@@ -55,6 +121,10 @@ void DFA::minimize() {
                 return result;
             }
         }));
+    // first, we eliminate unreachable states
+    eliminateUnreachableStates();
+
+    // then, we sort all equivalent states in equivalence classes
     std::vector<std::set<int>> equivalenceClasses;
     std::map<int,int> stateToEquivalenceClass;
     for (int i = 0; i < states.size(); i++) {
@@ -97,36 +167,7 @@ void DFA::minimize() {
             }
         }
     }
-    std::cout << minimizedStates.size() << std::endl;
-    for (auto& s: minimizedStates) {
-        for (auto& p: s.transitions)
-            std::cout << p.first << ", " << p.second << std::endl;
-        std::cout << std::endl;
-    }
     states = minimizedStates;
-}
-
-bool DFA::readChar(char theChar) {
-	currentState = states.at(currentState).transitions.at(theChar);
-	return accepted();
-}
-
-bool DFA::readString(const std::string& theString) {
-	for (char c : theString) readChar(c);
-	return accepted();
-}
-
-bool DFA::readUntilAccepted(const std::string& theString) {
-	for (char c : theString) if (readChar(c)) return true;
-	return false;
-}
-
-bool DFA::accepted() {
-	return states.at(currentState).acceptState;
-}
-
-void DFA::reset() {
-	currentState = 0;
 }
 
 DFA operator *(const DFA& DFA1, const DFA& DFA2) {

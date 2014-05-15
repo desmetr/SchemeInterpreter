@@ -12,8 +12,11 @@
 #include <string>
 #include "Automaton.h"
 #include <iostream>
+
 #include <assert.h>
 #include <stack>
+#include "generic.h"
+
 using namespace std;
 
 class eNFA: public Automaton< std::string,std::set<int> > {
@@ -21,17 +24,24 @@ private:
 	std::set<int> currentState;
 
 public:
-	eNFA(vector<State<string,set<int> > >& states, set<string>& alphabet);
+	eNFA(std::vector<State<std::string, std::set<int> > >& states, std::set<std::string>& alphabet);
 	virtual ~eNFA();
 
-	static std::set<int> eclose(const State<std::string,std::set<int>>& theState);
+	//set<int> getSubset();
+	set<set<int>> getQD();
+	set<int> eclose(int indexState, std::set<int>& indexesToIgnore);
+	set<int> getStartStateDFA();
+	set<int> getAcceptingStatesDFA();
+
+	eNFA regexToeNFA(std::string regex);
 
 	friend std::ostream& operator<< (std::ostream &out, eNFA &enfa);
 	friend eNFA operator^(const eNFA &enfa1, const eNFA &enfa2);		//regex.regex
 	friend eNFA operator+(const eNFA &enfa1, const eNFA &enfa2);		//regex+regex
-	eNFA operator*();													//regex*
+	eNFA operator*();							//regex*
 };
 
+eNFA geteNFA(std::string alphabet);
 eNFA geteNFA(char symbool);
 string setPoints(string regex);
 eNFA regexToeNFA(std::string regex);
