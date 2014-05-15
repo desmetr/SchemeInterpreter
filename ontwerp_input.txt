@@ -1,0 +1,17 @@
+[dfa0]
+nStates = [INT]
+alphabet = [VECTOR<CHAR>]
+
+state_0_x = 2
+state_0_y = 0
+
+acceptStates = [VECTOR<INT>]
+
+[enfa0]
+state_0_ = 
+state_0_x = [VECTOR<INT>]
+
+[test0]
+type = "product"
+input0 = ...
+input1 = ...
