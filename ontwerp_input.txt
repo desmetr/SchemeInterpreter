@@ -1,3 +1,6 @@
+[General]
+nTests = 2
+
 [dfa0]
 nStates = [INT]
 alphabet = [VECTOR<CHAR>]

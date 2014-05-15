@@ -86,7 +86,7 @@ eNFA eNFA::operator *() {
 
 	states.at(states.size()-2).acceptState=false;
 
-	set<int> set2= {(states.size()-1),1};
+	set<int> set2= {int(states.size()-1),1};
 	states.at(states.size()-2).transitions[""]=set2;
 	eNFA neweNFA(states,this->alphabet);
 	return neweNFA;
