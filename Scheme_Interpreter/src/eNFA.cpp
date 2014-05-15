@@ -1,4 +1,4 @@
-/*
+	/*
  * eNFA.cpp
  *
  *  Created on: Apr 10, 2014
@@ -52,7 +52,15 @@ set<int> eNFA::getStartStateDFA()	{
 }
 
 set<int> eNFA::getAcceptingStatesDFA()	{
+	// set<set<int>> localSet = getQD();
+	set<int> localSet;
+	for(vector<State<string,set<int>>>::iterator state = this->states.begin(); state!=this->states.end(); state++){
+		if (*state.acceptState == true)	{
+			localSet.insert(*state.transitions());
+		}
+	}
 	
+	return localSet;
 }
 
 eNFA eNFA::regexToeNFA(std::string regex) {
