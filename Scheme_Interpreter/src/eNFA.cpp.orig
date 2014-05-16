@@ -1,4 +1,4 @@
-/*
+	/*
  * eNFA.cpp
  *
  *  Created on: Apr 10, 2014
@@ -15,23 +15,22 @@ eNFA::eNFA(vector<State<string, set<int> > >& states, set<string>& alphabet)
 eNFA::~eNFA() {
 }
 
-set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) const {
+set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) {
 	if (indexesToIgnore.count(indexState))	return set<int>();
-
+	
 	set<int> localSet;
 	localSet.insert(indexState);
 	indexesToIgnore.insert(indexState);
-
+	
 	for (int i : states[indexState].transitions.at(""))	{
-		for (int j : eclose(i, indexesToIgnore))	{
+		for (int j : eclose(i, indexesToIgnore))
 			localSet.insert(j);
-		}
 	}
-
+	
 	return localSet;
 }
-
-
+/*
+<<<<<<< HEAD
 set<int> eNFA::eclose(set<int> subset) const {
 	set<int> result;
 	for (int elem: subset) {
@@ -44,41 +43,108 @@ set<int> eNFA::eclose(set<int> subset) const {
 }
 
 // Returns the eclosed subsets of the eNFA
-set<set<int>> eNFA::getQD() const {
+set<set<int>> eNFA::getQD()	{
 	vector<int> indices;
 	for (int i = 0; i < states.size(); i++)
 		indices.push_back(i);
-
+		
 	set<set<int>> subsets = getSubsets(indices);
 	set<set<int>> result;
 	for (auto& subset: subsets)
 		result.insert(eclose(subset));
+	
+	//for (int i = 0; i < states.size(); i++)
+		//localSet.insert(eclose(i, toIgnore));  
+=======
+set<set<int>> eNFA::getQD()	{    
+	// The subsets of the vector that holds the state indexes.
+	set<set<int>> localSet;
+	set<int> toIgnore;
+    
+	for (int i = 0; i < states.size(); i++)
+		localSet.insert(eclose(i, toIgnore));  
+>>>>>>> 29c0494f926c792154f80edfe8b2712edb57cf51
 
+	// Add the empty set.
+	localSet.insert(set<int>());
+	
+<<<<<<< HEAD
 	return result;
+}*/
+
+set<int> eNFA::getStartStateDFA()	{
+	set<int> toIgnore;
+=======
+	return localSet;
 }
 
-set<int> eNFA::getStartStateDFA() const {
-	set<int> toIgnore;
+set<int> eNFA::getStartStateDFA()	{
+    set<int> toIgnore;
+>>>>>>> 29c0494f926c792154f80edfe8b2712edb57cf51
 	return eclose(0, toIgnore);
 }
 
-DFA eNFA::modSubCnstr() const {
+set<set<int>> eNFA::getAcceptingStatesDFA()	{
+<<<<<<< HEAD
+=======
 	set<set<int>> qdSet = getQD();
 
+	set<int> localSet;
+
+	// For every element in eNFA states, keeps track of which eclosed subset
+	// the state is assigned to.
+	vector<set<int>&> indexToSubsetMap;
+	for (auto& subset: qdSet)
+		for (int index: subset)
+			indexToSubsetMap[index] = subset;
+	
+	return localSet;
+>>>>>>> 29c0494f926c792154f80edfe8b2712edb57cf51
+}
+/*
+template<typename keyType, typename valueType>
+struct State {
+	std::map<keyType, valueType> transitions;
+	bool acceptState;
+	State(){
+		acceptState=false;
+	}
+};
+
+DFA eNFA::modSubCnstr() const {
+	set<set<int>> qdSet = getQD();
+	
 	typedef map< set<int> , map<char,set<int>> > TransitionType;
 	TransitionType transitions;
-
-	auto constructTransitionTarget = [&](set<int>& subset, string s) 
-													-> set<int>
-	{
+	
+	auto constructTransitionTarget = [&](set<int>& subset, char c) {
 		set<int> result;
 		for (int elem: subset) {
-			set<int> target = states[elem].transitions.at(s);
-			result.insert(target.begin(), target.end());
+			set<int> target = states[elem].transitions.at(c);
+			
 		}
-		return eclose(result);
 	};
 }
+<<<<<<< HEAD
+*/
+=======
+/*
+DFA eNFA::modSubCnstr() const {
+	set<set<int>> qdSet = getQD();
+	
+	// For every element in eNFA states, keeps track of which eclosed subset
+	// the state is assigned to.
+	vector<set<int>&> indexToSubsetMap;
+	for (auto& subset: qdSet)
+		for (int index: subset)
+			indexToSubsetMap[index] = subset;
+			
+	vector<State<char,int>> DFAStates;
+	for (int i = 0; i < indexToSubsetMap.size(); i++) {
+		
+	}
+}*/
+>>>>>>> 29c0494f926c792154f80edfe8b2712edb57cf51
 
 eNFA eNFA::operator *() {
 	std::vector<State<string,set<int>>> states;
@@ -191,6 +257,7 @@ eNFA operator+(const eNFA &enfa1, const eNFA &enfa2) {
 	return neweNFA;
 }
 std::ostream& operator<< (std::ostream &out, eNFA &enfa){
+	cout<<"size"<<enfa.states.size()<<endl;
 
 	out<<"digraph eNFA {"<<endl;
 	out<<"\trankdir=LR;"<<endl<<endl;
@@ -234,37 +301,56 @@ eNFA geteNFA(char token) {
 	eNFA enfa1(states1,alph1);
 	return enfa1;
 }
-
-bool isSymbool(char symbool){
-	return !(symbool == '(' || symbool == ')' || symbool == '+' || symbool == '*');
-}
-
 string setPoints(string regex){
 	assert(regex.size()>0);
+<<<<<<< HEAD
 	string newRegex;
-	for(string::iterator token = regex.begin() ; token != regex.end() ; ++token){
-		if((token+1)!=regex.end()){
-			if(isSymbool(*token) && (isSymbool(*(token+1)) || *(token+1) == '(') ){		//twee symbolen naast elkaar of ( na een symbool
-				newRegex+=*token;
-				newRegex+=".";
+=======
+	/*string newRegex;
+>>>>>>> 29c0494f926c792154f80edfe8b2712edb57cf51
+	for(int i=0 ; i<int(regex.size()) ; i++){
+		if(regex.at(i)!='(' and regex.at(i)!=')' and regex.at(i)!='*' and regex.at(i)!='+'){
+			if(i<regex.size()-2 and regex.at(i+1)!='(' and regex.at(i+1)!=')' and regex.at(i+1)!='*' and regex.at(i+1)!='+'){
+				if(i>0 and (regex.at(i-1)==')' or regex.at(i-1)=='*')){
+					newRegex.push_back('.');
+					newRegex.push_back(regex.at(i));
+					newRegex.push_back('.');
+				}
+				else{
+				newRegex.push_back(regex.at(i));
+				newRegex.push_back('.');
+				}
 			}
-			else if((*token) == '*' && (isSymbool(*(token+1)) || *(token+1)=='(') ){	//Als na ster een symbool of (
-				newRegex+="*";
-				newRegex+=".";
+			else if(i==regex.size()-1 and regex.size()>1 and regex.at(i-1)!='(' and regex.at(i-1)!=')' and regex.at(i-1)!='*' and regex.at(i-1)!='+'){
+				newRegex.push_back('.');
+				newRegex.push_back(regex.at(i));
 			}
-			else if((*token) == ')' && (isSymbool(*(token+1)) || *(token+1)=='(') ){	//Als na ) een symbool of (
-				newRegex+=")";
-				newRegex+=".";
+			else if(i>0 and regex.at(i-1)==')'){
+				newRegex.push_back('.');
+				newRegex.push_back(regex.at(i));
+			}
+			else if(i>0 and regex.at(i-1)=='*'){
+				newRegex.push_back('.');
+				newRegex.push_back(regex.at(i));
 			}
 			else{
-				newRegex+=*token;
+				newRegex.push_back(regex.at(i));
 			}
-
 		}
-
-
+		else if(i>0 and regex.at(i-1)==')' and regex.at(i)=='(' ){
+			newRegex.push_back('.');
+			newRegex.push_back(regex.at(i));
+		}
+		else if(i>0 and regex.at(i-1)=='*' and regex.at(i)=='('){
+			newRegex.push_back('.');
+			newRegex.push_back(regex.at(i));
+		}
+		else{
+			newRegex.push_back(regex.at(i));
+		}
 	}
-	return newRegex;
+	return newRegex;*/
+
 }
 
 
@@ -292,6 +378,7 @@ string infixToPostfix(string expression) {
 		}
 		else if(symbool=='*' or symbool=='+' or symbool=='.'){
 			while( !astack.empty() && (astack.top()!='(') && (getPrecedence(symbool)<=getPrecedence(astack.top())) ){
+				cout<<"in"<<endl;
 				postfix +=astack.top();
 				astack.pop();
 			}
@@ -309,10 +396,13 @@ string infixToPostfix(string expression) {
 }
 eNFA regexToeNFA(std::string regexBegin) {
 	stack<eNFA> astack;
-	string regex = setPoints(regexBegin);
+	string regex = regexBegin;
+	cout<<"setPoints "<<regex<<endl;
 	regex = infixToPostfix(regex);
+	cout<<"postfix "<<regex<<endl;
 	for(string::iterator symbool = regex.begin() ; symbool!=regex.end() ; symbool++){
 		char token = *symbool;
+		cout<<*symbool<<endl<<endl;
 		if(token!='*' and token!='.' and token!='+'){
 			astack.push(geteNFA(token));
 		}
@@ -336,7 +426,6 @@ eNFA regexToeNFA(std::string regexBegin) {
 			astack.push(next^top);
 		}
 	}
-	assert(astack.size()==1);
 	return astack.top();
 }
 

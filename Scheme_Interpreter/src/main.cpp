@@ -318,8 +318,9 @@ int main(int argc, char const* argv[]) {
 
 	testMinimization();*/
 	input(argc,argv);
+	//cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;
 
-	cout<<"endd"<<endl;
+	cout<<"end"<<endl;
 	return 0;
 
 }

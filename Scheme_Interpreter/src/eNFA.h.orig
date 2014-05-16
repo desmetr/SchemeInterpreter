@@ -31,13 +31,20 @@ public:
 	virtual ~eNFA();
 
 	//set<int> getSubset();
-	set<set<int>> getQD() const;
-	set<int> eclose(int indexState, std::set<int>& indexesToIgnore) const;
+	set<set<int>> getQD();
+	set<int> eclose(int indexState, std::set<int>& indexesToIgnore);
+<<<<<<< HEAD
 	set<int> eclose(set<int> subset) const;
 	DFA modSubCnstr() const;
-	set<int> getStartStateDFA() const;
+	set<int> getStartStateDFA();
+	set<set<int>> getAcceptingStatesDFA();
+=======
+	DFA modSubCnstr() const;
+	set<int> getStartStateDFA();
+	set<set<int>> getAcceptingStatesDFA();
 
 	eNFA regexToeNFA(std::string regex);
+>>>>>>> 29c0494f926c792154f80edfe8b2712edb57cf51
 
 	friend std::ostream& operator<< (std::ostream &out, eNFA &enfa);
 	friend eNFA operator^(const eNFA &enfa1, const eNFA &enfa2);		//regex.regex
