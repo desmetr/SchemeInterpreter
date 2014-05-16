@@ -17,17 +17,17 @@ eNFA::~eNFA() {
 
 set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) const {
 	if (indexesToIgnore.count(indexState))	return set<int>();
-	
+
 	set<int> localSet;
 	localSet.insert(indexState);
 	indexesToIgnore.insert(indexState);
-	
+
 	for (int i : states[indexState].transitions.at(""))	{
 		for (int j : eclose(i, indexesToIgnore))	{
 			localSet.insert(j);
 		}
 	}
-	
+
 	return localSet;
 }
 
@@ -48,28 +48,28 @@ set<set<int>> eNFA::getQD() const {
 	vector<int> indices;
 	for (int i = 0; i < states.size(); i++)
 		indices.push_back(i);
-		
+
 	set<set<int>> subsets = getSubsets(indices);
 	set<set<int>> result;
 	for (auto& subset: subsets)
 		result.insert(eclose(subset));
-	
+
 	return result;
 }
 
 set<int> eNFA::getStartStateDFA() const {
-    set<int> toIgnore;
+	set<int> toIgnore;
 	return eclose(0, toIgnore);
 }
 
 DFA eNFA::modSubCnstr() const {
 	set<set<int>> qdSet = getQD();
-	
+
 	typedef map< set<int> , map<char,set<int>> > TransitionType;
 	TransitionType transitions;
-	
+
 	auto constructTransitionTarget = [&](set<int>& subset, string s) 
-											-> set<int> 
+													-> set<int>
 	{
 		set<int> result;
 		for (int elem: subset) {
@@ -191,7 +191,6 @@ eNFA operator+(const eNFA &enfa1, const eNFA &enfa2) {
 	return neweNFA;
 }
 std::ostream& operator<< (std::ostream &out, eNFA &enfa){
-	cout<<"size"<<enfa.states.size()<<endl;
 
 	out<<"digraph eNFA {"<<endl;
 	out<<"\trankdir=LR;"<<endl<<endl;
@@ -235,49 +234,35 @@ eNFA geteNFA(char token) {
 	eNFA enfa1(states1,alph1);
 	return enfa1;
 }
+
+bool isSymbool(char symbool){
+	return !(symbool == '(' || symbool == ')' || symbool == '+' || symbool == '*');
+}
+
 string setPoints(string regex){
 	assert(regex.size()>0);
 	string newRegex;
-	for(int i=0 ; i<int(regex.size()) ; i++){
-		if(regex.at(i)!='(' and regex.at(i)!=')' and regex.at(i)!='*' and regex.at(i)!='+'){
-			if(i<regex.size()-2 and regex.at(i+1)!='(' and regex.at(i+1)!=')' and regex.at(i+1)!='*' and regex.at(i+1)!='+'){
-				if(i>0 and (regex.at(i-1)==')' or regex.at(i-1)=='*')){
-					newRegex.push_back('.');
-					newRegex.push_back(regex.at(i));
-					newRegex.push_back('.');
-				}
-				else{
-				newRegex.push_back(regex.at(i));
-				newRegex.push_back('.');
-				}
+	for(string::iterator token = regex.begin() ; token != regex.end() ; ++token){
+		if((token+1)!=regex.end()){
+			if(isSymbool(*token) && (isSymbool(*(token+1)) || *(token+1) == '(') ){		//twee symbolen naast elkaar of ( na een symbool
+				newRegex+=*token;
+				newRegex+=".";
 			}
-			else if(i==regex.size()-1 and regex.size()>1 and regex.at(i-1)!='(' and regex.at(i-1)!=')' and regex.at(i-1)!='*' and regex.at(i-1)!='+'){
-				newRegex.push_back('.');
-				newRegex.push_back(regex.at(i));
+			else if((*token) == '*' && (isSymbool(*(token+1)) || *(token+1)=='(') ){	//Als na ster een symbool of (
+				newRegex+="*";
+				newRegex+=".";
 			}
-			else if(i>0 and regex.at(i-1)==')'){
-				newRegex.push_back('.');
-				newRegex.push_back(regex.at(i));
-			}
-			else if(i>0 and regex.at(i-1)=='*'){
-				newRegex.push_back('.');
-				newRegex.push_back(regex.at(i));
+			else if((*token) == ')' && (isSymbool(*(token+1)) || *(token+1)=='(') ){	//Als na ) een symbool of (
+				newRegex+=")";
+				newRegex+=".";
 			}
 			else{
-				newRegex.push_back(regex.at(i));
+				newRegex+=*token;
 			}
+
 		}
-		else if(i>0 and regex.at(i-1)==')' and regex.at(i)=='(' ){
-			newRegex.push_back('.');
-			newRegex.push_back(regex.at(i));
-		}
-		else if(i>0 and regex.at(i-1)=='*' and regex.at(i)=='('){
-			newRegex.push_back('.');
-			newRegex.push_back(regex.at(i));
-		}
-		else{
-			newRegex.push_back(regex.at(i));
-		}
+
+
 	}
 	return newRegex;
 }
@@ -307,7 +292,6 @@ string infixToPostfix(string expression) {
 		}
 		else if(symbool=='*' or symbool=='+' or symbool=='.'){
 			while( !astack.empty() && (astack.top()!='(') && (getPrecedence(symbool)<=getPrecedence(astack.top())) ){
-				cout<<"in"<<endl;
 				postfix +=astack.top();
 				astack.pop();
 			}
@@ -325,13 +309,10 @@ string infixToPostfix(string expression) {
 }
 eNFA regexToeNFA(std::string regexBegin) {
 	stack<eNFA> astack;
-	string regex = regexBegin;
-	cout<<"setPoints "<<regex<<endl;
+	string regex = setPoints(regexBegin);
 	regex = infixToPostfix(regex);
-	cout<<"postfix "<<regex<<endl;
 	for(string::iterator symbool = regex.begin() ; symbool!=regex.end() ; symbool++){
 		char token = *symbool;
-		cout<<*symbool<<endl<<endl;
 		if(token!='*' and token!='.' and token!='+'){
 			astack.push(geteNFA(token));
 		}
@@ -355,6 +336,7 @@ eNFA regexToeNFA(std::string regexBegin) {
 			astack.push(next^top);
 		}
 	}
+	assert(astack.size()==1);
 	return astack.top();
 }
 
