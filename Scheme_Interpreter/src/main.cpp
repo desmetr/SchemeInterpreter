@@ -319,6 +319,28 @@ int main(int argc, char const* argv[]) {
 	testMinimization();*/
 	input(argc,argv);
 	//cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;
+	
+	set<char> alphabet = {'a', 'b'};
+    vector<State<char,int> > states(3);
+
+    /*
+    // A
+    states[0].acceptState = false;
+    states[0].transitions['a'] = 0;
+    states[0].transitions['b'] = 1;
+
+    // B
+    states[1].acceptState = true;
+    states[1].transitions['a'] = 0;
+    states[1].transitions['b'] = 1;
+
+    // C
+    states[2].acceptState = true;
+
+    DFA test(states, alphabet);
+    ofstream eNFAtoDFA;
+	eNFAtoDFA.open("eNFAtoDFA.dot");
+	eNFAtoDFA << test; */
 
 	cout<<"end"<<endl;
 	return 0;
