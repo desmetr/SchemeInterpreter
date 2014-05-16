@@ -76,3 +76,113 @@ Invoking: Cross G++ Linker
 g++  -o "Scheme_Interpreter"  ./Automaton.o ./DFA.o ./main.o   
 Finished building target: Scheme_Interpreter
  
+17:38:41 **** Incremental Build of configuration Debug for project Scheme_Interpreter ****
+make all 
+Building file: ../Automaton.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"Automaton.d" -MT"Automaton.d" -o "Automaton.o" "../Automaton.cpp"
+../Automaton.cpp:10:1: error: invalid use of template-name ‘Automaton’ without an argument list
+ Automaton::Automaton(std::vector<State> states, std::set<char> alphabet)
+ ^
+../Automaton.cpp:17:1: error: invalid use of template-name ‘Automaton’ without an argument list
+ Automaton::~Automaton() {
+ ^
+make: *** [Automaton.o] Error 1
+17:38:55 **** Incremental Build of configuration Debug for project Scheme_Interpreter ****
+make all 
+Building file: ../Automaton.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"Automaton.d" -MT"Automaton.d" -o "Automaton.o" "../Automaton.cpp"
+../Automaton.cpp:10:1: error: invalid use of template-name ‘Automaton’ without an argument list
+ Automaton::Automaton(std::vector<State> states, std::set<char> alphabet)
+ ^
+../Automaton.cpp:17:1: error: invalid use of template-name ‘Automaton’ without an argument list
+ Automaton::~Automaton() {
+ ^
+make: *** [Automaton.o] Error 1
+17:39:16 **** Incremental Build of configuration Debug for project Scheme_Interpreter ****
+make all 
+Building file: ../Automaton.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"Automaton.d" -MT"Automaton.d" -o "Automaton.o" "../Automaton.cpp"
+../Automaton.cpp:10:1: error: invalid use of template-name ‘Automaton’ without an argument list
+ Automaton::Automaton(std::vector<State> states, std::set<char> alphabet)
+ ^
+../Automaton.cpp:17:1: error: invalid use of template-name ‘Automaton’ without an argument list
+ Automaton::~Automaton() {
+ ^
+make: *** [Automaton.o] Error 1
+17:40:47 **** Incremental Build of configuration Debug for project Scheme_Interpreter ****
+make all 
+Building file: ../Automaton.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"Automaton.d" -MT"Automaton.d" -o "Automaton.o" "../Automaton.cpp"
+Finished building: ../Automaton.cpp
+ 
+Building file: ../DFA.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"DFA.d" -MT"DFA.d" -o "DFA.o" "../DFA.cpp"
+Finished building: ../DFA.cpp
+ 
+Building file: ../eNFA.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"eNFA.d" -MT"eNFA.d" -o "eNFA.o" "../eNFA.cpp"
+In file included from ../eNFA.cpp:8:0:
+../eNFA.h:15:30: error: expected class-name before ‘{’ token
+ class eNFA: public Automaton {
+                              ^
+../eNFA.h:20:30: error: type/value mismatch at argument 1 in template parameter list for ‘template<class _Tp, class _Alloc> class std::vector’
+  eNFA(const std::vector<State>& states, const std::set<char>& alphabet);
+                              ^
+../eNFA.h:20:30: error:   expected a type, got ‘State’
+../eNFA.h:20:30: error: template argument 2 is invalid
+../eNFA.h:23:36: error: invalid use of template-name ‘State’ without an argument list
+  static std::set<int> eclose(const State& theState);
+                                    ^
+../eNFA.h:23:43: error: ISO C++ forbids declaration of ‘theState’ with no type [-fpermissive]
+  static std::set<int> eclose(const State& theState);
+                                           ^
+make: *** [eNFA.o] Error 1
+17:41:07 **** Incremental Build of configuration Debug for project Scheme_Interpreter ****
+make all 
+Building file: ../eNFA.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"eNFA.d" -MT"eNFA.d" -o "eNFA.o" "../eNFA.cpp"
+Finished building: ../eNFA.cpp
+ 
+Building file: ../main.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"main.d" -MT"main.d" -o "main.o" "../main.cpp"
+Finished building: ../main.cpp
+ 
+Building target: Scheme_Interpreter
+Invoking: Cross G++ Linker
+g++  -o "Scheme_Interpreter"  ./Automaton.o ./DFA.o ./eNFA.o ./main.o   
+./DFA.o: In function `DFA::~DFA()':
+/home/ajay/Documents/UA/talen en automaten/toepassing/ta/Scheme_Interpreter/Debug/../DFA.cpp:16: undefined reference to `Automaton<char, int>::~Automaton()'
+./DFA.o:(.rodata._ZTV9AutomatonIciE[_ZTV9AutomatonIciE]+0x10): undefined reference to `Automaton<char, int>::~Automaton()'
+./DFA.o:(.rodata._ZTV9AutomatonIciE[_ZTV9AutomatonIciE]+0x18): undefined reference to `Automaton<char, int>::~Automaton()'
+collect2: error: ld returned 1 exit status
+make: *** [Scheme_Interpreter] Error 1
+17:41:37 **** Incremental Build of configuration Debug for project Scheme_Interpreter ****
+make all 
+Building file: ../Automaton.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"Automaton.d" -MT"Automaton.d" -o "Automaton.o" "../Automaton.cpp"
+Finished building: ../Automaton.cpp
+ 
+Building file: ../DFA.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"DFA.d" -MT"DFA.d" -o "DFA.o" "../DFA.cpp"
+Finished building: ../DFA.cpp
+ 
+Building file: ../main.cpp
+Invoking: Cross G++ Compiler
+g++ -O0 -g3 -Wall -c -fmessage-length=0 -std=c++11 -MMD -MP -MF"main.d" -MT"main.d" -o "main.o" "../main.cpp"
+Finished building: ../main.cpp
+ 
+Building target: Scheme_Interpreter
+Invoking: Cross G++ Linker
+g++  -o "Scheme_Interpreter"  ./Automaton.o ./DFA.o ./eNFA.o ./main.o   
+Finished building target: Scheme_Interpreter
+ 

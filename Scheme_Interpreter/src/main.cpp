@@ -7,6 +7,7 @@
 
 #include "DFA.h"
 #include "eNFA.h"
+#include "readInput.h"
 #include <iostream>
 #include <map>
 #include <utility>
@@ -263,8 +264,8 @@ void convertENFAtoDFA()	{
 
 }
 
-int main() {
-	checkregexPLUSregex();
+int main(int argc, char const* argv[]) {
+/*	checkregexPLUSregex();
 	
 	set<string> alph = {"a", "b", ""};
 	vector<State<string,set<int>> > states;
@@ -315,8 +316,10 @@ int main() {
 		cout << *it << endl;
 	}
 
-	testMinimization();
-	cout<<"end"<<endl;
+	testMinimization();*/
+	input(argc,argv);
+
+	cout<<"endd"<<endl;
 	return 0;
 
 }
