@@ -81,31 +81,7 @@ DFA eNFA::modSubCnstr() const {
 		}
 		return eclose(result);
 	};
-
-	for (const auto& state: qdSet) {
- 		transitions.insert(std::make_pair(state, map<string,set<int>>()));
-  			for (const string& s: alphabet)
-   				transitions.at(state).insert(std::make_pair(s, constructTransitionTarget(state,s)));
-  	}
-
-  	// O -> O => X -> int
-  	vector<State<char,int>> DFAStates(qdSet.size());
-  	
-  	map<set<int>,int> stateToIndexMap; //TODO: met ptrs of refs werken, dit is fucking traag
-  	set<int> startState = getStartStateDFA();
-  	
-  	int curIndex = 1;
-  	for (const auto& transition: transitions) {
-		if (transition.first == startState) {
-  			DFAStates[0] = State<char,int>();
-  			stateToIndexMap.insert(make_pair(transition.first, 0));
-  		}
-  		else {
-  			DFAStates[curIndex] = State<char, int>();
-  			stateToIndexMap.insert(make_pair(transition, curIndex));
-  		}
-  	}
-  	
+	
 	/*
 	for (int elem: subset)	{
 		if (states[elem].acceptState == true)	
@@ -121,9 +97,9 @@ DFA eNFA::modSubCnstr() const {
 
     // O -> O    =>    X -> int
     vector<State<char,int>> DFAStates(qdSet.size());
-    map<set<int>,int> stateToIndexMap; //TODO: met ptrs of refs werken, dit is fucking traag
+   	map<set<int>,int> stateToIndexMap; //TODO: met ptrs of refs werken, dit is fucking traag
     set<int> startState = getStartStateDFA();
-    curIndex = 1;
+    int curIndex = 1;
     for (const auto& transition: transitions) {
         if (transition.first == startState)
             stateToIndexMap.insert(make_pair(transition.first, 0));
@@ -138,20 +114,25 @@ DFA eNFA::modSubCnstr() const {
             //TODO: test opportunity, indien transitie niet naar zichzelf leidt, betekent dat dat we eerder een fout hebben gemaakt
             if (strSetPair.first == "") continue; 
             DFAStates[myIndex].transitions.insert(make_pair(strSetPair.first[0], 
-                                                  stateToIndexMap.at(strSetPair.second)));
-	   	
+            												stateToIndexMap.at(strSetPair.second)));
+	   		if (states[myIndex].acceptState == true)
+	   			DFAStates[myIndex].acceptState = true;
 	   	}
     }
-
+	
+	
+		
 	// Convert the alphabet of the eNFA (consisting of strings) to an alphabet for a DFA (consisting of chars).  	
-	const set<char> alphabetDFA;
-	for (const auto& alphElem: alphabet)	{
-		alphabetDFA.insert(alphElem[0]);
+	set<char> alphabetDFA;
+	
+	//for(set<string>::iterator alphElem = alphabet.begin(); alphElem != alphabet.end(); alphElem++){
+	for (const string& alphElem: alphabet)	{
+		alphabetDFA.insert(alphElem.at(0));
 	}
+	
 
 	DFA localDFA = DFA(DFAStates, alphabetDFA);
 	return localDFA;
-
 }
 
 eNFA eNFA::operator *() {
