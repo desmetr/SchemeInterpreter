@@ -319,11 +319,11 @@ int main(int argc, char const* argv[]) {
 	testMinimization();*/
 	input(argc,argv);
 	//cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;
-	
+
+	/*	
 	set<char> alphabet = {'a', 'b'};
     vector<State<char,int> > states(3);
 
-    /*
     // A
     states[0].acceptState = false;
     states[0].transitions['a'] = 0;

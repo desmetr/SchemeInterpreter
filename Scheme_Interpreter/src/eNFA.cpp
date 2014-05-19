@@ -15,6 +15,7 @@ eNFA::eNFA(vector<State<string, set<int> > >& states, set<string>& alphabet)
 eNFA::~eNFA() {
 }
 
+// Returns the eclosed states of a given state of the eNFA.
 set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) const {
 	if (indexesToIgnore.count(indexState))	return set<int>();
 
@@ -31,7 +32,7 @@ set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) const {
 	return localSet;
 }
 
-
+// Returns all the eclosed sets of a given subset of the eNFA.
 set<int> eNFA::eclose(set<int> subset) const {
 	set<int> result;
 	for (int elem: subset) {
@@ -43,7 +44,7 @@ set<int> eNFA::eclose(set<int> subset) const {
 	return result;
 }
 
-// Returns the eclosed subsets of the eNFA
+// Returns the eclosed subsets of the eNFA.
 set<set<int>> eNFA::getQD() const {
 	vector<int> indices;
 	for (int i = 0; i < states.size(); i++)
@@ -62,7 +63,10 @@ set<int> eNFA::getStartStateDFA() const {
 	return eclose(0, toIgnore);
 }
 
+// Returns a DFA after applying the modified subset construction on a eNFA.
+// See textbook page 77.
 DFA eNFA::modSubCnstr() const {
+	// Calculate all the subsets.
 	set<set<int>> qdSet = getQD();
 
 	typedef map< set<int> , map<char,set<int>> > TransitionType;
@@ -78,6 +82,37 @@ DFA eNFA::modSubCnstr() const {
 		}
 		return eclose(result);
 	};
+	
+	for (const auto& state: qdSet) {
+ 		transitions.insert(std::make_pair(state, {}));
+  			for (const string& s: alphabet)
+   				transitions.at(state).insert(std::make_pair(s, constructTransitionTarget(state,s)));
+  	}
+
+  	// O -> O => X -> int
+  	vector<State<char,int>> DFAStates(qdSet.size());
+  	
+  	map<set<int>,int> stateToIndexMap; //TODO: met ptrs of refs werken, dit is fucking traag
+  	set<int> startState = getStartStateDFA();
+  	
+  	int curIndex = 1;
+  	for (const auto& transition: transitions) {
+		if (transition.first == startState) {
+  			DFAStates[0] = State<char,int>();
+  			stateToIndexMap.insert(make_pair(transition.first, 0));
+  		}
+  		else {
+  			DFAStates[curIndex] = State<char, int>();
+  			stateToIndexMap.insert(make_pair(transition, curIndex));
+  		}
+  	}
+  	
+	/*
+	for (int elem: subset)	{
+		if (states[elem].acceptState == true)	
+			set<int> localSet = states[elem].transitions.at(s);
+		}
+	*/
 }
 
 eNFA eNFA::operator *() {
