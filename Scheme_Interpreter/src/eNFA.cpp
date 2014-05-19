@@ -82,13 +82,6 @@ DFA eNFA::modSubCnstr() const {
 		return eclose(result);
 	};
 	
-	/*
-	for (int elem: subset)	{
-		if (states[elem].acceptState == true)	
-			set<int> localSet = states[elem].transitions.at(s);
-		}
-	*/
-
     for (const auto& state: qdSet) {
         transitions.insert(make_pair(state, map<string,set<int>>()));
         for (const string& s: alphabet)
@@ -97,8 +90,10 @@ DFA eNFA::modSubCnstr() const {
 
     // O -> O    =>    X -> int
     vector<State<char,int>> DFAStates(qdSet.size());
+   
    	map<set<int>,int> stateToIndexMap; //TODO: met ptrs of refs werken, dit is fucking traag
     set<int> startState = getStartStateDFA();
+   
     int curIndex = 1;
     for (const auto& transition: transitions) {
         if (transition.first == startState)
@@ -107,7 +102,6 @@ DFA eNFA::modSubCnstr() const {
             stateToIndexMap.insert(make_pair(transition.first, curIndex++));
     }
 
-	//typedef map< set<int> , map<string,set<int>> > TransitionType;
     for (const auto& transition: transitions) {
         int myIndex = stateToIndexMap.at(transition.first);
         for (const auto& strSetPair: transition.second) {
@@ -120,17 +114,14 @@ DFA eNFA::modSubCnstr() const {
 	   	}
     }
 	
-	
-		
 	// Convert the alphabet of the eNFA (consisting of strings) to an alphabet for a DFA (consisting of chars).  	
 	set<char> alphabetDFA;
 	
-	//for(set<string>::iterator alphElem = alphabet.begin(); alphElem != alphabet.end(); alphElem++){
 	for (const string& alphElem: alphabet)	{
-		alphabetDFA.insert(alphElem.at(0));
+		if (alphElem == "")	continue;
+		alphabetDFA.insert(alphElem[0]);
 	}
 	
-
 	DFA localDFA = DFA(DFAStates, alphabetDFA);
 	return localDFA;
 }

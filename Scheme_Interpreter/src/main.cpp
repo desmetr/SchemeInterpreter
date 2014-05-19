@@ -265,7 +265,7 @@ void convertENFAtoDFA()	{
 }
 
 int main(int argc, char const* argv[]) {
-/*	checkregexPLUSregex();
+//	checkregexPLUSregex();
 	
 	set<string> alph = {"a", "b", ""};
 	vector<State<string,set<int>> > states;
@@ -300,8 +300,8 @@ int main(int argc, char const* argv[]) {
 	states[5].transitions[""] = set<int>();
 	states[5].acceptState = true;
 
-	eNFA eNFA(states, alph);
-
+	eNFA testENFA(states, alph);
+/*
     set<int> empty;
 	set<int> mySet = eNFA.eclose(0, empty);
 	// Doen allebei hetzelfde.
@@ -317,30 +317,11 @@ int main(int argc, char const* argv[]) {
 	}
 
 	testMinimization();*/
+	
+	DFA testdfa = testENFA.modSubCnstr();
+	
 	input(argc,argv);
 	//cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;
-
-	/*	
-	set<char> alphabet = {'a', 'b'};
-    vector<State<char,int> > states(3);
-
-    // A
-    states[0].acceptState = false;
-    states[0].transitions['a'] = 0;
-    states[0].transitions['b'] = 1;
-
-    // B
-    states[1].acceptState = true;
-    states[1].transitions['a'] = 0;
-    states[1].transitions['b'] = 1;
-
-    // C
-    states[2].acceptState = true;
-
-    DFA test(states, alphabet);
-    ofstream eNFAtoDFA;
-	eNFAtoDFA.open("eNFAtoDFA.dot");
-	eNFAtoDFA << test; */
 
 	cout<<"end"<<endl;
 	return 0;
