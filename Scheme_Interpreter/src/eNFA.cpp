@@ -65,11 +65,10 @@ set<int> eNFA::getStartStateDFA() const {
 DFA eNFA::modSubCnstr() const {
 	set<set<int>> qdSet = getQD();
 
-	typedef map< set<int> , map<char,set<int>> > TransitionType;
+	typedef map< set<int> , map<string,set<int>> > TransitionType;
 	TransitionType transitions;
 
-	auto constructTransitionTarget = [&](set<int>& subset, string s) 
-													-> set<int>
+	auto constructTransitionTarget = [&](const set<int>& subset, const string& s) -> set<int>
 	{
 		set<int> result;
 		for (int elem: subset) {
@@ -78,6 +77,35 @@ DFA eNFA::modSubCnstr() const {
 		}
 		return eclose(result);
 	};
+
+    for (const auto& state: qdSet) {
+        transitions.insert(make_pair(state, map<string,set<int>>()));
+        for (const string& s: alphabet)
+            transitions.at(state).insert(make_pair(s, constructTransitionTarget(state,s)));
+    }
+
+    // O -> O    =>    X -> int
+    vector<State<char,int>> DFAStates(qdSet.size());
+    map<set<int>,int> stateToIndexMap; //TODO: met ptrs of refs werken, dit is fucking traag
+    set<int> startState = getStartStateDFA();
+    int curIndex = 1;
+    for (const auto& transition: transitions) {
+        if (transition.first == startState)
+            stateToIndexMap.insert(make_pair(transition.first, 0));
+        else
+            stateToIndexMap.insert(make_pair(transition.first, curIndex++));
+    }
+
+	//typedef map< set<int> , map<string,set<int>> > TransitionType;
+    for (const auto& transition: transitions) {
+        int myIndex = stateToIndexMap.at(transition.first);
+        for (const auto& strSetPair: transition.second) {
+            //TODO: test opportunity, indien transitie niet naar zichzelf leidt, betekent dat dat we eerder een fout hebben gemaakt
+            if (strSetPair.first == "") continue; 
+            DFAStates[myIndex].transitions.insert(make_pair(strSetPair.first[0], 
+                                                  stateToIndexMap.at(strSetPair.second)));
+        }
+    }
 }
 
 eNFA eNFA::operator *() {
