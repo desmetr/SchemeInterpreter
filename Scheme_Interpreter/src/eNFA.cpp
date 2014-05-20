@@ -47,14 +47,15 @@ set<int> eNFA::eclose(set<int> subset) const {
 // Returns the eclosed subsets of the eNFA.
 set<set<int>> eNFA::getQD() const {
 	vector<int> indices;
-	for (int i = 0; i < states.size(); i++)
+	for (int i = 0; i < states.size(); i++)	{
 		indices.push_back(i);
-
+	}
+	
 	set<set<int>> subsets = getSubsets(indices);
 	set<set<int>> result;
-	for (auto& subset: subsets)
+	for (auto& subset: subsets)	{
 		result.insert(eclose(subset));
-
+	}
 	return result;
 }
 
@@ -76,44 +77,46 @@ DFA eNFA::modSubCnstr() const {
 	{
 		set<int> result;
 		for (int elem: subset) {
-			set<int> target = states[elem].transitions.at(s);
-			result.insert(target.begin(), target.end());
+			if (states[elem].transitions.count(s) == 1)	{
+				set<int> target = states[elem].transitions.at(s);
+				result.insert(target.begin(), target.end());
+			}
+			else	continue;
 		}
 		return eclose(result);
 	};
-	
     for (const auto& state: qdSet) {
         transitions.insert(make_pair(state, map<string,set<int>>()));
-        for (const string& s: alphabet)
+        for (const string& s: alphabet)	{
             transitions.at(state).insert(make_pair(s, constructTransitionTarget(state,s)));
+    	}
     }
-
     // O -> O    =>    X -> int
     vector<State<char,int>> DFAStates(qdSet.size());
-   
+	
    	map<set<int>,int> stateToIndexMap; //TODO: met ptrs of refs werken, dit is fucking traag
     set<int> startState = getStartStateDFA();
-   
+   	
     int curIndex = 1;
     for (const auto& transition: transitions) {
         if (transition.first == startState)
             stateToIndexMap.insert(make_pair(transition.first, 0));
         else
             stateToIndexMap.insert(make_pair(transition.first, curIndex++));
-    }
-
+   	}
     for (const auto& transition: transitions) {
         int myIndex = stateToIndexMap.at(transition.first);
         for (const auto& strSetPair: transition.second) {
             //TODO: test opportunity, indien transitie niet naar zichzelf leidt, betekent dat dat we eerder een fout hebben gemaakt
             if (strSetPair.first == "") continue; 
-            DFAStates[myIndex].transitions.insert(make_pair(strSetPair.first[0], 
-            												stateToIndexMap.at(strSetPair.second)));
+            if (stateToIndexMap.count(strSetPair.second) == 1)	{
+	            DFAStates[myIndex].transitions.insert(make_pair(strSetPair.first[0], 
+    	        												stateToIndexMap.at(strSetPair.second)));
+    	    }
 	   		if (states[myIndex].acceptState == true)
 	   			DFAStates[myIndex].acceptState = true;
 	   	}
     }
-	
 	// Convert the alphabet of the eNFA (consisting of strings) to an alphabet for a DFA (consisting of chars).  	
 	set<char> alphabetDFA;
 	
