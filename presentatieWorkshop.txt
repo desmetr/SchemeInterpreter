@@ -1,0 +1,102 @@
+Ons project is een Scheme interpreter. We zullen starten met een beetje achtergrondinformatie over Scheme. Scheme is een modern dialect van Lisp, een van de oudste nog gebruikte programmeertalen, die vandaag nog steeds vaak als een toonbeeld van elegantie en eenvoud wordt gezien. Onderzoek gerelateerd aan Lisp heeft geleid tot het bedenken van enkele centrale concepten in de moderne informatica, zoals recursie, boomstructuren, dynamic typing, garbage collection, conditionele expressies, functies van hogere orde enzovoorts.
+
+
+Het centrale concept van Lisp is de S-expressie. Algemeen is de S-expressie eenvoudig recursief te definieren als:
+    - Een atoom (basisgeval), of
+    - Een expressie van de vorm (x . y), verkort genoteerd als (x y), waarbij x en y S-expressies zijn, en . staat voor 'concatenatie'. Dit noemen we een lijst.
+Wat een atoom precies is hangt af van de context. In Scheme zijn onder andere de volgende uitdrukkingen atomen:
+    - Constante waarden zoals: 3, 46, 1.7
+    - Strings met letters uit het Latijns alfabet (en Arabische getallen en sommige leestekens): x, square, counter, isNegative? ; dit noemen we symbolen
+
+
+Functies worden in Lisp eenvoudigweg voorgesteld als lijsten, waarbij het eerste element de identifier van de functie zelf is, en de andere elementen in de lijst de parameters. Indien we aan de interpeter de lijst (+ 2 3) meegeven, zal die dat evalueren als "de toepassing van de functie '+' op de parameters 2 en 3", en als resultaat de waarde 5 teruggeven. Sommige expressies lijken op functies maar werken intern toch anders, bijvoorbeeld (define x 1) stelt x gelijk aan 1 binnen de huidige scope. Om het eenvoudig te houden kan je hieraan denken als een functie, maar de expressie wordt niet op dezelfde manier geevalueerd als andere functies. Deze expressies noemen we 'special forms'.
+
+
+Enkele voorbeelden van S-expressies zijn dan:
+    - 4             
+        -> Letterlijk de waarde 'vier'
+    - ()
+        -> De lege lijst
+    - (1 2 3)
+        -> Een lijst bestaande uit de letterlijke waarden 1, 2 en 3. Volgens de definitie van een S-expressie kunnen we dit zien als "[Een paar bestaande uit de letterlijke waarde 1 en [een paar bestaande uit de letterlijke waarde 2 en [een paar bestaande uit de letterlijke waarde 3 en de lege lijst]]]". Op deze manier wordt duidelijk dat S-expressies van nature uit te drukken zijn als bomen. In praktijk worden lijsten niet op deze manier geimplementeerd.
+    - square        
+        -> Een symbool dat verbonden zou kunnen zijn met een waarde, de naam suggereert dat die waarde de FUNCTIE zou kunnen zijn die het kwadraat van haar argument teruggeeft.
+    - (square)
+        -> Een lijst bestaande uit enkel het symbool square; volgens de letterlijke definitie 'een paar bestaande uit square en de lege lijst'
+    - (square 4)
+        -> Een lijst bestaande uit het symbool square en de letterlijke waarde 'vier'. Indien we dit aan de interpreter geven, zal deze expressie worden geinterpreteerd als een poging om de applicatie van de functie square op de letterlijke waarde 4 te evalueren
+
+
+Tot zover de introductie tot Scheme, nu gaan we over naar het ontwerp van onze interpreter. Het ontwerp is gebaseerd op een artikel door Peter Norvig getiteld "(How to Write a (Lisp) Interpreter (in Python))", waarbij wordt uitgelegd hoe je een vereenvoudigde versie van de taal kan interpreteren. Centraal in het programma staat de read-eval-print loop:
+
+read leest input in van een stream (zoals de command line of een bestand) en verwerkt de ruwe string van characters naar een interpreteerbare expressie; in dit deel van het programma gebruiken we automaten voor de lexicale analyse ('lexer'). De lexer maakt deel uit van de parser. De lexer is een automaat die verschillende regexes hanteert om het onderscheid te maken tussen symbolen, gehele getallen, kommagetallen en haakjes. De parser zelf heeft niet veel werk: diens enige taak is het oprollen van expressies tussen haakjes tot 1 'lijst' expressie, bestaande uit verschillende expressies.
+
+eval aanvaardt een expressie en evalueert die recursief binnen een bepaalde context ("omgeving", of scope);
+
+print aanvaardt een expressie en genereert een tekstuele representatie van de expressie als output
+
+Om beter te begrijpen hoe dit in zijn werk gaat, gaan we eens kijken hoe de interpreter steeds complexer wordende voorbeelden verwerkt.
+
+> 3
+read: Herkent dit als het atoom "het gehele getal 3", en geeft dus eenvoudigweg de expressie 3 terug
+eval: Evalueert de expressie "het gehele getal 3" in de globale scope; 3 is een constante letterlijke waarde, dus dit is een van de basisgevallen van eval, en eval geeft de waarde letterlijk terug.
+print: '3'
+
+> (+ 4 7)
+read: De lexer zet dit om naar de volgende lijst: [(, het symbool "+", het gehele getal 4, het gehele getal 7, )]. De parser rolt die lijst op tot 1 expressie: de lijst bestaande uit het symbool "+", ...
+eval: Aangezien de expressie een lijst is en het eerste element geen sleutelwoord van een special form is, zal de interpreter dit trachten te evalueren als een functie. Eerst wordt eval recursief uitgevoerd op alle deelexpressies:
+        -> eval +: eval zoekt de betekenis van het symbool '+' op in de globale omgeving en vindt deze, aangezien + ingebakken zit in de interpreter. De implementatie van de plus operator wordt opgehaald.
+        -> eval 4: 4
+        -> eval 7: 7
+    De +-functie krijgt dan als argumenten 4 en 7 doorgespeeld, en het resultaat (het geheel getal 11) wordt teruggegeven.
+print: 11
+
+> (* (+ 1 1) 2)
+read: lexer  -> [(, het symbool '*', (, het symbool '+', het geheel getal 1, het geheel getal 1, ), het geheel getal 2, )]
+      parser -> de lijst bestaande uit { het symbool '*', de lijst bestaande uit { het symbool '+', ...}, het geheel getal 2 }
+eval:
+        -> eval *: ingebouwde vermenigvuldigingsfunctie
+        -> eval (+ 1 1): op zich weer een functie applicatie, dus wordt eval weer recursief toegepast
+                -> eval +: ingebouwde somfunctie
+                -> eval 1: het geheel getal 1
+                -> eval 1: het geheel getal 1
+            Som van 1 en 1 -> geeft 2 terug
+        -> eval 2: geheel getal 2
+    Vermenigvuldiging van 2 en 2: geeft 4 terug.
+print: 4
+
+> x
+read: Herkent dit als 'het symbool x'
+eval: Aangezien x een symbool is, tracht eval de waarde ervan op te zoeken in de globale omgeving. We hebben x echter nog niet gedefinieerd, dus dit faalt.
+print: een error
+
+> (define x 4)
+read: De lexer zet dit om naar de volgende lijst: [(, het symbool "define", het symbool "x", het gehele getal 4, )]. De parser rolt die lijst op tot 1 expressie: de lijst bestaande uit het symbool "define", ...
+eval: Herkent de expressie als een "define" special form: een nieuw symbool "x" wordt toegevoegd aan de huidige omgeving (de globale). Het andere element in de lijst wordt geevalueerd (tot 4, natuurlijk), en toegekend aan x. 
+print: niets
+
+> (if (< x 0) (- x) x)
+eval: Special form 'if' (~test gevolg alternatief), nu worden niet alle subexpressies direct geevalueerd maar enkel de noodzakelijke. We beginnen met test
+        -> eval (< x 0): eenvoudige applicatie van de 'kleiner dan' operator op de argumenten x (recursief geevalueerd naar 4) en 0; geeft false terug
+    Aangezien de test negatief was, gaan we de evaluatie van het 'gevolg' (- x) negeren en onmiddellijk overgaan naar de evaluatie van het 'alternatief' x
+        -> eval x: 4
+print: 4
+
+> x
+eval: Zoekt x op in de globale omgeving, en vindt dat het verbonden is met het gehele getal 4
+print: 4
+
+> (lambda (x y) (if (> x y) x y))
+eval: Lambda is een special form die gebruikt wordt om nieuwe functies te definieren. Lees dit als: een functie die parameters x en y aanvaardt en ze invult in de expressie (if (> x y) x y). Dit is dus een maximumfunctie
+print: [interpreter-specifieke informatie over de functie]
+
+> ((lambda (x y) (if (> x y) x y)) 2 (* 3 2))
+eval: We krijgen een lijst bestaande uit 3 elementen: (lambda (x y) ... ) , 2 , en (* 3 2). Dit is een functietoepassing.
+        -> eval (lambda ...): evalueert tot een maximumfunctie
+        -> eval 2: 2
+        -> eval (* 3 2): 6
+    Nu wordt de functie toegepast op haar argumenten. Dit gebeurt door nog een invocatie van eval: de lambdafunctie roept eval op met als argumenten de expressie (if (> x y) x y) en een NIEUWE omgeving (scope) die de symbolen x en y bevat, respectievelijk verbonden met 2 en 6, evenals een referentie naar de globale scope. Alle symbolen in de expressie worden eerst gezocht in de meest lokale scope, en van daaruit wordt steeds de scope erboven aangesproken. Zo zullen de waarden van x en y uit de lokale scope worden gehaald (wat dus betekent dat x geen conflict veroorzaakt met de globaal gedefinieerde x=4), terwijl de > operator uit de globale scope wordt gehaald.
+print: 6
+
+> (define max (lambda (x y) (if (> x y) x y)))
+Op deze manier geven we de max functie een naam. Nu kunnen we binnen de globale scope de volgende uitdrukking gebruiken: (max 6 9) -> geeft 9 terug.
