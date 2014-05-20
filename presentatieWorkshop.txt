@@ -12,24 +12,16 @@ Wat een atoom precies is hangt af van de context. In Scheme zijn onder andere de
 Functies worden in Lisp eenvoudigweg voorgesteld als lijsten, waarbij het eerste element de identifier van de functie zelf is, en de andere elementen in de lijst de parameters. Indien we aan de interpeter de lijst (+ 2 3) meegeven, zal die dat evalueren als "de toepassing van de functie '+' op de parameters 2 en 3", en als resultaat de waarde 5 teruggeven. Sommige expressies lijken op functies maar werken intern toch anders, bijvoorbeeld (define x 1) stelt x gelijk aan 1 binnen de huidige scope. Om het eenvoudig te houden kan je hieraan denken als een functie, maar de expressie wordt niet op dezelfde manier geevalueerd als andere functies. Deze expressies noemen we 'special forms'.
 
 
-Enkele voorbeelden van S-expressies zijn dan:
-    - 4             
-        -> Letterlijk de waarde 'vier'
-    - ()
-        -> De lege lijst
-    - (1 2 3)
-        -> Een lijst bestaande uit de letterlijke waarden 1, 2 en 3. Volgens de definitie van een S-expressie kunnen we dit zien als "[Een paar bestaande uit de letterlijke waarde 1 en [een paar bestaande uit de letterlijke waarde 2 en [een paar bestaande uit de letterlijke waarde 3 en de lege lijst]]]". Op deze manier wordt duidelijk dat S-expressies van nature uit te drukken zijn als bomen. In praktijk worden lijsten niet op deze manier geimplementeerd.
-    - square        
-        -> Een symbool dat verbonden zou kunnen zijn met een waarde, de naam suggereert dat die waarde de FUNCTIE zou kunnen zijn die het kwadraat van haar argument teruggeeft.
-    - (square)
-        -> Een lijst bestaande uit enkel het symbool square; volgens de letterlijke definitie 'een paar bestaande uit square en de lege lijst'
-    - (square 4)
-        -> Een lijst bestaande uit het symbool square en de letterlijke waarde 'vier'. Indien we dit aan de interpreter geven, zal deze expressie worden geinterpreteerd als een poging om de applicatie van de functie square op de letterlijke waarde 4 te evalueren
-
-
 Tot zover de introductie tot Scheme, nu gaan we over naar het ontwerp van onze interpreter. Het ontwerp is gebaseerd op een artikel door Peter Norvig getiteld "(How to Write a (Lisp) Interpreter (in Python))", waarbij wordt uitgelegd hoe je een vereenvoudigde versie van de taal kan interpreteren. Centraal in het programma staat de read-eval-print loop:
 
-read leest input in van een stream (zoals de command line of een bestand) en verwerkt de ruwe string van characters naar een interpreteerbare expressie; in dit deel van het programma gebruiken we automaten voor de lexicale analyse ('lexer'). De lexer maakt deel uit van de parser. De lexer is een automaat die verschillende regexes hanteert om het onderscheid te maken tussen symbolen, gehele getallen, kommagetallen en haakjes. De parser zelf heeft niet veel werk: diens enige taak is het oprollen van expressies tussen haakjes tot 1 'lijst' expressie, bestaande uit verschillende expressies.
+###################
+read leest input in van een stream (zoals de command line of een bestand) en verwerkt de ruwe string van characters naar een interpreteerbare expressie. Dit deel van het programma wordt de parser genoemd. In de eerste stap van het parsen, de lexicale analyse, vindt de automatentheorie haar toepassing in ons project. In deze stap gaan we de inputstring verwerken tot een lijst van tokens. 
+
+Voor elke soort token maken we een automaat die gedefinieerd is aan de hand van een regex. Zo hebben we dus een automaat die alle geldige symbolen herkent (alles waar een latijnse letter in komt, met bepaalde leestekens uitgesloten), een die gehele getallen herkent (eender welke opeenvolging van cijfers, ononderbroken door komma's of letters), een die kommagetallen herkent (cijfers met exact 1 punt ertussen), en een die haakjes herkent. Wanneer we het product van die automaten nemen, bekomen we de lexer. Deze heeft verschillende eindstaten die nooit kunnen overlappen. Elk van deze eindstaten is verbonden met een soort token. Wanneer de lexer dus een eindstaat bereikt, geeft hij een token terug, met informatie over wat voor soort token het is.
+
+Voor de rest van de parser blijft niet veel werk over. Alles behalve de haakjes kan letterlijk worden geinterpreteerd door de eval functie. Wat de parser dan nog doet is de tokens vertalen tot expressies en de expressies die tussen haakjes staan groeperen in 'lijst'-expressies. Dan bekomen we dus 1 expressie, die al dan niet bestaat uit sub-expressies, die al dan niet bestaan uit sub-expressies, enzovoorts.
+
+##################
 
 eval aanvaardt een expressie en evalueert die recursief binnen een bepaalde context ("omgeving", of scope);
 
@@ -75,15 +67,15 @@ read: De lexer zet dit om naar de volgende lijst: [(, het symbool "define", het 
 eval: Herkent de expressie als een "define" special form: een nieuw symbool "x" wordt toegevoegd aan de huidige omgeving (de globale). Het andere element in de lijst wordt geevalueerd (tot 4, natuurlijk), en toegekend aan x. 
 print: niets
 
+> x
+eval: Zoekt x op in de globale omgeving, en vindt dat het verbonden is met het gehele getal 4
+print: 4
+
 > (if (< x 0) (- x) x)
 eval: Special form 'if' (~test gevolg alternatief), nu worden niet alle subexpressies direct geevalueerd maar enkel de noodzakelijke. We beginnen met test
         -> eval (< x 0): eenvoudige applicatie van de 'kleiner dan' operator op de argumenten x (recursief geevalueerd naar 4) en 0; geeft false terug
     Aangezien de test negatief was, gaan we de evaluatie van het 'gevolg' (- x) negeren en onmiddellijk overgaan naar de evaluatie van het 'alternatief' x
         -> eval x: 4
-print: 4
-
-> x
-eval: Zoekt x op in de globale omgeving, en vindt dat het verbonden is met het gehele getal 4
 print: 4
 
 > (lambda (x y) (if (> x y) x y))
