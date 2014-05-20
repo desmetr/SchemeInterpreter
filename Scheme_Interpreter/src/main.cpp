@@ -228,39 +228,30 @@ void testMinimization() {
 }
 
 void convertENFAtoDFA()	{
-	set<string> alph = {"a", "b", ""};
+	set<string> alph = {"0", "1", ""};
 	vector<State<string,set<int>> > states;
 	states.push_back(State<string,set<int>>());
-	set<int> set1 = {1,2};
-	states[0].transitions[""] = set1;
+	set<int> set0 = {0};
+	set<int> set1 = {1};
+	set<int> set2 = {2};
+	
+	states[0].transitions[""] = set0;
+	states[0].transitions["0"] = set1;
+	states[0].transitions["1"] = set2;
 	states[0].acceptState = false;
 
 	states.push_back(State<string,set<int>>());
-	set<int> set2 = {3};
-	states[1].transitions["a"] = set2;
-	states[1].transitions[""] = {5};
+	states[1].transitions[""] = set0;
+	states[1].transitions["0"] = set1;
+	states[1].transitions["1"] = set2;
 	states[1].acceptState = false;
 
 	states.push_back(State<string,set<int>>());
-	set<int> set3 = {4};
-	states[2].transitions["b"] = set3;
-	states[2].transitions[""] = set<int>();
-	states[2].acceptState = false;
-
-	states.push_back(State<string,set<int>>());
-	set<int> set4 = {5};
-	states[3].transitions[""] = set4;
-	states[3].acceptState = false;
-
-	states.push_back(State<string,set<int>>());
-	set<int> set5 = {5};
-	states[4].transitions[""] = set5;
-	states[4].acceptState = false;
-
-	states.push_back(State<string,set<int>>());
-	states[5].transitions[""] = set<int>();
-	states[5].acceptState = true;
-
+	states[2].transitions[""] = set0;
+	states[2].transitions["0"] = set1;
+	states[2].transitions["1"] = set2;
+	states[2].acceptState = true;
+	
 	eNFA testENFA(states, alph);
 	
 	DFA testDFA = testENFA.modSubCnstr();
@@ -276,7 +267,7 @@ int main(int argc, char const* argv[]) {
 
 //	testMinimization();
 	
-	convertENFAtoDFA();
+//	convertENFAtoDFA();
 	
 	input(argc,argv);
 //	cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;

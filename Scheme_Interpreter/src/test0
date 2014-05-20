@@ -1,0 +1,16 @@
+digraph eNFA {
+	rankdir=LR;
+
+	0 [shape=circle];
+	0 -> 2 [label="0"];
+
+	1 [shape=circle];
+	1 -> 2 [label="0"];
+	1 -> 0 [label="1"];
+	1 -> 1 [label="2"];
+
+	2 [shape=doublecircle];
+	2 -> 2 [label="ε"];
+	2 -> 0 [label="0"];
+
+}
