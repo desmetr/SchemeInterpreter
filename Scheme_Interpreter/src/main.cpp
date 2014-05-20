@@ -218,7 +218,7 @@ void testMinimization() {
 	ofstream output2;
 	output.open("unminimized.dot");
     DFA testMin(states2, alphabet);
-    output << testMin;
+    output << testMin; 
 	output2.open("minimized.dot");
     testMin.minimize();
     output2 << testMin;
