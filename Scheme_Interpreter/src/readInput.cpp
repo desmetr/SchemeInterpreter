@@ -86,7 +86,7 @@ void testProduct(const ini::Configuration& conf, string testNr) {
 
 void testRegex_Enfa(const ini::Configuration& conf, string testNr) {
 	string regex = conf[testNr]["regex"].as_string_or_die();
-	eNFA enfa = regexToeNFA(regex);
+	eNFA enfa = regexToeNFA(regex);;
 	ofstream ofStream3;
 	ofStream3.open(testNr.c_str());
 	ofStream3<<enfa;
@@ -98,9 +98,10 @@ void testRegex_Enfa(const ini::Configuration& conf, string testNr) {
 void testMod_Subset(const ini::Configuration& conf, string testNr) {
 	string eNfaNr = conf[testNr]["input"].as_string_or_die();
 	eNFA enfa = getEnfa(conf,eNfaNr);
+	DFA dfa = enfa.modSubCnstr();
 	ofstream ofStream3;
 	ofStream3.open(testNr.c_str());
-	ofStream3<<enfa;
+	ofStream3<<dfa;
 	ofStream3.close();
 	string command = "dot -Tjpg " + testNr + " -O";
 	system(command.c_str());

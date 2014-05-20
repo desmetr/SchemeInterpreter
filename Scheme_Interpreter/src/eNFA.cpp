@@ -261,6 +261,9 @@ string setPoints(string regex){
 			}
 
 		}
+		else{
+			newRegex+=*token;
+		}
 
 
 	}
@@ -317,11 +320,13 @@ eNFA regexToeNFA(std::string regexBegin) {
 			astack.push(geteNFA(token));
 		}
 		else if(token=='*'){
+			assert(astack.size()>=1);
 			eNFA top = astack.top();
 			astack.pop();
 			astack.push(*top);
 		}
 		else if(token=='+'){
+			assert(astack.size()>=2);
 			eNFA top = astack.top();
 			astack.pop();
 			eNFA next = astack.top();
@@ -329,6 +334,7 @@ eNFA regexToeNFA(std::string regexBegin) {
 			astack.push(next+top);
 		}
 		else if(token=='.'){
+			assert(astack.size()>=2);
 			eNFA top = astack.top();
 			astack.pop();
 			eNFA next = astack.top();
