@@ -22,10 +22,11 @@ set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) const {
 	set<int> localSet;
 	localSet.insert(indexState);
 	indexesToIgnore.insert(indexState);
-
-	for (int i : states[indexState].transitions.at(""))	{
-		for (int j : eclose(i, indexesToIgnore))	{
-			localSet.insert(j);
+	if(states[indexState].transitions.count("")==1) {
+		for (int i : states[indexState].transitions.at(""))	{
+			for (int j : eclose(i, indexesToIgnore))	{
+				localSet.insert(j);
+			}
 		}
 	}
 
@@ -50,7 +51,7 @@ set<set<int>> eNFA::getQD() const {
 	for (int i = 0; i < states.size(); i++)	{
 		indices.push_back(i);
 	}
-	
+
 	set<set<int>> subsets = getSubsets(indices);
 	set<set<int>> result;
 	for (auto& subset: subsets)	{
@@ -85,46 +86,46 @@ DFA eNFA::modSubCnstr() const {
 		}
 		return eclose(result);
 	};
-    for (const auto& state: qdSet) {
-        transitions.insert(make_pair(state, map<string,set<int>>()));
-        for (const string& s: alphabet)	{
-            transitions.at(state).insert(make_pair(s, constructTransitionTarget(state,s)));
-    	}
-    }
-    // O -> O    =>    X -> int
-    vector<State<char,int>> DFAStates(qdSet.size());
-	
-   	map<set<int>,int> stateToIndexMap; //TODO: met ptrs of refs werken, dit is fucking traag
-    set<int> startState = getStartStateDFA();
-   	
-    int curIndex = 1;
-    for (const auto& transition: transitions) {
-        if (transition.first == startState)
-            stateToIndexMap.insert(make_pair(transition.first, 0));
-        else
-            stateToIndexMap.insert(make_pair(transition.first, curIndex++));
-   	}
-    for (const auto& transition: transitions) {
-        int myIndex = stateToIndexMap.at(transition.first);
-        for (const auto& strSetPair: transition.second) {
-            //TODO: test opportunity, indien transitie niet naar zichzelf leidt, betekent dat dat we eerder een fout hebben gemaakt
-            if (strSetPair.first == "") continue; 
-            if (stateToIndexMap.count(strSetPair.second) == 1)	{
-	            DFAStates[myIndex].transitions.insert(make_pair(strSetPair.first[0], 
-    	        												stateToIndexMap.at(strSetPair.second)));
-    	    }
-	   		if (states[myIndex].acceptState == true)
-	   			DFAStates[myIndex].acceptState = true;
-	   	}
-    }
+	for (const auto& state: qdSet) {
+		transitions.insert(make_pair(state, map<string,set<int>>()));
+		for (const string& s: alphabet)	{
+			transitions.at(state).insert(make_pair(s, constructTransitionTarget(state,s)));
+		}
+	}
+	// O -> O    =>    X -> int
+	vector<State<char,int>> DFAStates(qdSet.size());
+
+	map<set<int>,int> stateToIndexMap; //TODO: met ptrs of refs werken, dit is fucking traag
+	set<int> startState = getStartStateDFA();
+
+	int curIndex = 1;
+	for (const auto& transition: transitions) {
+		if (transition.first == startState)
+			stateToIndexMap.insert(make_pair(transition.first, 0));
+		else
+			stateToIndexMap.insert(make_pair(transition.first, curIndex++));
+	}
+	for (const auto& transition: transitions) {
+		int myIndex = stateToIndexMap.at(transition.first);
+		for (const auto& strSetPair: transition.second) {
+			//TODO: test opportunity, indien transitie niet naar zichzelf leidt, betekent dat dat we eerder een fout hebben gemaakt
+			if (strSetPair.first == "") continue;
+			if (stateToIndexMap.count(strSetPair.second) == 1)	{
+				DFAStates[myIndex].transitions.insert(make_pair(strSetPair.first[0],
+						stateToIndexMap.at(strSetPair.second)));
+			}
+			if (states[myIndex].acceptState == true)
+				DFAStates[myIndex].acceptState = true;
+		}
+	}
 	// Convert the alphabet of the eNFA (consisting of strings) to an alphabet for a DFA (consisting of chars).  	
 	set<char> alphabetDFA;
-	
+
 	for (const string& alphElem: alphabet)	{
 		if (alphElem == "")	continue;
 		alphabetDFA.insert(alphElem[0]);
 	}
-	
+
 	DFA localDFA = DFA(DFAStates, alphabetDFA);
 	return localDFA;
 }

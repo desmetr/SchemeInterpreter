@@ -93,18 +93,40 @@ void testRegex_Enfa(const ini::Configuration& conf, string testNr) {
 	ofStream3.close();
 	string command = "dot -Tjpg " + testNr + " -O";
 	system(command.c_str());
+
+	DFA dfa2 = enfa.modSubCnstr();
+	dfa2.minimize();
+
+	ofstream ofStream2;
+	ofStream2.open("msc");
+	ofStream2<<dfa2;
+	ofStream2.close();
+	string command2 = "dot -Tjpg msc -O";
+	system(command2.c_str());
+
+
 }
 
 void testMod_Subset(const ini::Configuration& conf, string testNr) {
 	string eNfaNr = conf[testNr]["input"].as_string_or_die();
 	eNFA enfa = getEnfa(conf,eNfaNr);
+
+
+	ofstream ofStream1;
+	ofStream1.open("enfa1");
+	ofStream1<<enfa;
+	ofStream1.close();
+	string command1 = "dot -Tjpg enfa1 -O";
+	system(command1.c_str());
+
 	DFA dfa = enfa.modSubCnstr();
+
 	ofstream ofStream3;
 	ofStream3.open(testNr.c_str());
 	ofStream3<<dfa;
 	ofStream3.close();
-	string command = "dot -Tjpg " + testNr + " -O";
-	system(command.c_str());
+	string command2 = "dot -Tjpg " + testNr + " -O";
+	system(command2.c_str());
 }
 
 DFA getDFA(const ini::Configuration& conf, string dfaNr) {

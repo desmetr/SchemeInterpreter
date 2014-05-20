@@ -276,7 +276,7 @@ int main(int argc, char const* argv[]) {
 
 //	testMinimization();
 	
-	convertENFAtoDFA();
+//	convertENFAtoDFA();
 	
 	input(argc,argv);
 //	cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;
