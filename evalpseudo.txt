@@ -1,0 +1,23 @@
+Functie eval(Expressie x, Omgeving o) -> Expressie:
+    if x.type is Symbool:
+        return o.find(x)
+    else if x.type is not List:
+        return x
+    else:
+        if x ~ (if test gevolg alt):
+            if eval(test, o):
+                return eval(gevolg, o)
+            else:
+                return eval(alt, o)
+
+        else if x ~ (define varsym val):
+            o[varsym] = val
+
+        else if x ~ (lambda (paramsyms*) exp):
+            return Functie (paramvals*): 
+                eval(exp, Omgeving(paramsyms, paramvals, o))
+            
+        else if x ~ (func params*):
+            FUNC = eval(func, o)
+            PARAMLIST = [eval(param, o) for param in params]
+            return FUNC(PARAMLIST)
