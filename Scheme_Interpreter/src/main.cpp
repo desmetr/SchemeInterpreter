@@ -243,16 +243,13 @@ int main(int argc, char const* argv[]) {
 
 	//	convertENFAtoDFA();
 
-<<<<<<< HEAD
 //	testMinimization();
 	
 //	convertENFAtoDFA();
 	
 //	cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;
-=======
 	input(argc,argv);
 	//	cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;
->>>>>>> f40be679a0446b84e08a57efbd8c8e3a1d5e8d79
 
 	eNFA regexNFA = regexToeNFA("(a+b*)*");
 	//DFA test = regexToeNFA("baab").modSubCnstr();
