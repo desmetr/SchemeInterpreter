@@ -269,9 +269,24 @@ int main(int argc, char const* argv[]) {
 	
 //	convertENFAtoDFA();
 	
-	input(argc,argv);
 //	cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;
 
+	eNFA regexNFA = regexToeNFA("aab*b");
+	//DFA test = regexToeNFA("baab").modSubCnstr();
+	DFA test2 = regexNFA.modSubCnstr();
+	test2.minimize();
+
+	ofstream ofs1;
+	ofstream ofs2;
+	ofs1.open("regextest.dot");
+	ofs2.open("test2.dot");
+	ofs1 << regexNFA;
+	ofs2 << test2;
+	//cout << test.readString("aab") << endl;
+	//cout << test.readString("baab") << endl;
+	//cout << test.readString("abab") << endl;
+	//cout << test.readString("aabb") << endl;
+	//cout << test.readString("aaba") << endl;
 	cout << "end" << endl;
 	return 0;
 

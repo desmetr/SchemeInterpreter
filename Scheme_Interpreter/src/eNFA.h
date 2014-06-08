@@ -10,6 +10,7 @@
 
 #include <set>
 #include <string>
+#include <map>
 #include "Automaton.h"
 #include "DFA.h"
 #include <iostream>
@@ -30,12 +31,10 @@ public:
 	eNFA(std::vector<State<std::string, std::set<int> > >& states, std::set<std::string>& alphabet);
 	virtual ~eNFA();
 
-	//set<int> getSubset();
 	set<set<int>> getQD() const;
 	set<int> eclose(int indexState, std::set<int>& indexesToIgnore) const;
 	set<int> eclose(set<int> subset) const;
 	DFA modSubCnstr() const;
-	set<int> getStartStateDFA() const;
 
 	eNFA regexToeNFA(std::string regex);
 

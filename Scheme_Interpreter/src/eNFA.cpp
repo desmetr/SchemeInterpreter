@@ -49,91 +49,71 @@ set<int> eNFA::eclose(set<int> subset) const {
 	return result;
 }
 
-// Returns the eclosed subsets of the eNFA.
-set<set<int>> eNFA::getQD() const {
-	vector<int> indices;
-	for (int i = 0; i < states.size(); i++)	{
-		indices.push_back(i);
-	}
-
-	set<set<int>> subsets = getSubsets(indices);
-	set<set<int>> result;
-	for (auto& subset: subsets)	{
-		result.insert(eclose(subset));
-	}
-	return result;
-}
-
-set<int> eNFA::getStartStateDFA() const {
-	set<int> toIgnore;
-	return eclose(0, toIgnore);
-}
-
-// Returns a DFA after applying the modified subset construction on a eNFA.
-// See textbook page 77
 DFA eNFA::modSubCnstr() const {
-	// Calculate all the subsets.
-	set<set<int>> qdSet = getQD();
-
-	typedef map< set<int> , map<string,set<int>> > TransitionType;
-	TransitionType transitions;
-
-	auto constructTransitionTarget = [&](const set<int>& subset, const string& s) -> set<int>
+	auto eNFA_transition = [&](const set<int>& subset, const string& symbol) 
+		-> set<int>
 	{
 		set<int> result;
-		for (int elem: subset) {
-			if (states[elem].transitions.count(s) == 1)	{
-				set<int> target = states[elem].transitions.at(s);
-				result.insert(target.begin(), target.end());
-				return eclose(result);
-			}
-			else	continue;
-		}	
+		for (int stateIndex : subset) {
+			if (states[stateIndex].transitions.count(symbol) == 0) continue;
+			set<int> target = states[stateIndex].transitions.at(symbol);
+			result.insert(target.begin(), target.end());
+		}
+		result = eclose(result);
+		return result;
 	};
-	for (const auto& state: qdSet) {
-		transitions.insert(make_pair(state, map<string,set<int>>()));
-		for (const string& s: alphabet)	{
-			transitions.at(state).insert(make_pair(s, constructTransitionTarget(state,s)));
+
+	typedef map< set<int> , map<string,set<int>> > TransitionType;
+
+	// This map records for each reachable subset of eNFA states SBS and for each symbol SYM, 
+	//  the subset of eNFA states reached after transitioning from SBS over SYM
+	TransitionType transitions;
+
+	// This function recursively fills the 'transitions' map
+	function<void(const set<int>&)> constructTransitions = [&](const set<int>& subset)
+	{
+		transitions.insert(make_pair(subset, map<string,set<int>>()));
+		for (const string& symbol : alphabet) {
+			set<int> target = eclose(eNFA_transition(subset, symbol));
+			transitions.at(subset).insert(make_pair(symbol, target));
+			if (transitions.count(target) == 0)
+				constructTransitions(target);
 		}
-	}
-	// O -> O    =>    X -> int
-	vector<State<char,int>> DFAStates(qdSet.size());
+	};
+	constructTransitions(eclose({0}));
 
-	map<set<int>,int> stateToIndexMap; //TODO: met ptrs of refs werken, dit is fucking traag
-	set<int> startState = getStartStateDFA();
-
-	int curIndex = 1;
-	for (const auto& transition: transitions) {
-		if (transition.first == startState)
-			stateToIndexMap.insert(make_pair(transition.first, 0));
-		else
-			stateToIndexMap.insert(make_pair(transition.first, curIndex++));
-	}
-	for (const auto& transition: transitions) {
-		int myIndex = stateToIndexMap.at(transition.first);
-		for (const auto& strSetPair: transition.second) {
-			//TODO: test opportunity, indien transitie niet naar zichzelf leidt, betekent dat dat we eerder een fout hebben gemaakt
-			if (strSetPair.first == "") continue;
-			if (stateToIndexMap.count(strSetPair.second) == 1)	{
-				DFAStates[myIndex].transitions.insert(make_pair(strSetPair.first[0], stateToIndexMap.at(strSetPair.second)));
+	map<set<int>,int> stateToIndexMap;
+	vector<State<char,int>> DFA_States;
+	DFA_States.reserve(transitions.size());
+	function<void(const set<int>&)> constructDFA_States = [&](const set<int>& subset)
+	{
+		if (stateToIndexMap.count(subset) == 1) return;
+		DFA_States.push_back(State<char,int>());
+		unsigned int myIndex = DFA_States.size() - 1;
+		stateToIndexMap.insert(make_pair(subset, myIndex));
+		for (int stateIndex : subset) {
+			if (states[stateIndex].acceptState) {
+				DFA_States[myIndex].acceptState = true;
+				break;
 			}
-			else	{
-				DFAStates[myIndex].transitions.insert(make_pair(strSetPair.first[0], 100));		// 100 is to identify the dump state of the DFA.
-			}
-			if (states[myIndex].acceptState == true)
-				DFAStates[myIndex].acceptState = true;
 		}
-	}
-	// Convert the alphabet of the eNFA (consisting of strings) to an alphabet for a DFA (consisting of chars).  	
-	set<char> alphabetDFA;
+		
+		for (const string& symbol : alphabet) {
+			if (symbol == "") continue;
+			set<int> target = transitions.at(subset).at(symbol);
+			if (stateToIndexMap.count(target) == 0)
+				constructDFA_States(target);
+			DFA_States[myIndex].transitions.insert(make_pair(symbol[0], stateToIndexMap.at(target)));
+		}
+	};
 
-	for (const string& alphElem: alphabet)	{
-		if (alphElem == "")	continue;
-		alphabetDFA.insert(alphElem[0]);
-	}
+	constructDFA_States(eclose({0}));
 
-	DFA localDFA = DFA(DFAStates, alphabetDFA);
-	return localDFA;
+	set<char> DFA_Alphabet;
+	for (const string& symbol : alphabet)
+		if (symbol != "") DFA_Alphabet.insert(symbol[0]);
+
+	return DFA(DFA_States, DFA_Alphabet);
 }
 
 eNFA eNFA::operator *() {
