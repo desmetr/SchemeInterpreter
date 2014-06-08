@@ -7,6 +7,8 @@
 
 #include "DFA.h"
 //static int callctr = 0;
+DFA::DFA() : Automaton(states, alphabet){
+}
 DFA::DFA(const std::vector<State<char,int> >& states, const std::set<char>& alphabet)
 : Automaton(states, alphabet)
 {
@@ -28,9 +30,22 @@ bool DFA::readString(const std::string& theString) {
 	return accepted();
 }
 
-bool DFA::readUntilAccepted(const std::string& theString) {
-	for (char c : theString) if (readChar(c)) return true;
-	return false;
+bool DFA::readUntilAccepted( string& holeString, string& expressionString) {
+	string newString;
+	bool accept = false;
+
+	for (char c : holeString) {
+		newString += c;
+		if (readChar(c)) {
+			accept = true;
+			break;
+		}
+	}
+	if(accept){
+		expressionString = newString;
+		holeString = holeString.substr(expressionString.size()-1,string::npos);
+	}
+	return accept;
 }
 
 bool DFA::accepted() {
@@ -206,6 +221,8 @@ DFA operator *(const DFA& DFA1, const DFA& DFA2) {
 	}
 	return DFA(states,newAlph);
 }
+
+
 
 std::ostream& operator<< (std::ostream &out, DFA &dfa){
 	out<<"digraph DFA {"<<std::endl;

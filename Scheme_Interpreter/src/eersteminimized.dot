@@ -1,8 +1,0 @@
-digraph DFA {
-	rankdir=LR;	0 [shape=doublecircle];
-	0 -> 0 [label="0"];
-	0 -> 1 [label="1"];
-	1 [shape=circle];
-	1 -> 0 [label="0"];
-	1 -> 1 [label="1"];
-}

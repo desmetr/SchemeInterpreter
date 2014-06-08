@@ -27,10 +27,3 @@ public:
     }
 };
 
-int main() {
-    C c(3);
-    int i = 4;
-    char d = 'c';
-    Lambda(c, i, &d);
-
-}

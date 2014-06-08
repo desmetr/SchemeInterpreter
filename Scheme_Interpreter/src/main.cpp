@@ -13,63 +13,37 @@
 #include <utility>
 
 using namespace std;
+void checkReadUntilAccepted(){
+	set<char> alph2 = {'0','1'};
+	vector<State<char,int> > states2;
+	states2.push_back(State<char,int>());
+	states2[0].transitions['1'] = 0;
+	states2[0].transitions['0'] = 1;
+	states2[0].acceptState = false;
 
-void checkregexPLUSregex(){
-/*	eNFA enfa1 = geteNFA('a');
+	states2.push_back(State<char,int>());
+	states2[1].transitions['0'] = 2;
+	states2[1].transitions['1'] = 0;
+	states2[1].acceptState = false;
 
-	eNFA enfa2 = geteNFA('c');
+	states2.push_back(State<char,int>());
+	states2[2].transitions['0'] = 3;
+	states2[2].transitions['1'] = 0;
+	states2[2].acceptState = false;
 
+	states2.push_back(State<char,int>());
+	states2[3].transitions['0'] = 3;
+	states2[3].transitions['1'] = 3;
+	states2[3].acceptState = true;
 
-	eNFA enfa3 = enfa1+enfa2;
-	eNFA enfa4 = *enfa3;
-	eNFA enfa5 = enfa4^enfa1;
-	eNFA enfa6 = enfa5^enfa3;*/
-	eNFA enfa6 = regexToeNFA("(a+b)abbb*bdf*(uf*+h)");
+	DFA dfa2 = DFA(states2, alph2);
+	ofstream ofStream2;
+	ofStream2.open("dfa2.dot");
+	ofStream2<<dfa2;
+	ofStream2.close();
 
-
-	ofstream ofStream3;
-	ofStream3.open("regexToeNFA.dot");
-	ofStream3<<enfa6;
-	ofStream3.close();
-}
-
-void checkOutputEnfa(){
-	set<string> alph = {"a", "b", ""};
-	vector<State<string,set<int>> > states;
-	states.push_back(State<string,set<int>>());
-	set<int> set1 = {1,2};
-	states[0].transitions[""] = set1;
-	states[0].acceptState = false;
-
-	states.push_back(State<string,set<int>>());
-	set<int> set2 = {3};
-	states[1].transitions["a"] = set2;
-	states[1].acceptState = false;
-
-	states.push_back(State<string,set<int>>());
-	set<int> set3 = {4};
-	states[2].transitions["b"] = set3;
-	states[2].acceptState = false;
-
-	states.push_back(State<string,set<int>>());
-	set<int> set4 = {5};
-	states[3].transitions[""] = set4;
-	states[3].acceptState = false;
-
-	states.push_back(State<string,set<int>>());
-	set<int> set5 = {5};
-	states[4].transitions[""] = set5;
-	states[4].acceptState = false;
-
-	states.push_back(State<string,set<int>>());
-	states[5].acceptState = true;
-
-	eNFA eNFA(states, alph);
-
-	ofstream ofStream1;
-	ofStream1.open("eNFA1.dot");
-	ofStream1<<eNFA;
-	ofStream1.close();
+	string command2 = "dot -Tjpg dfa2.dot -O";
+	system(command2.c_str());
 
 }
 
@@ -132,99 +106,99 @@ void getProductautomaat(){
 
 void testMinimization() {
 
-    set<char> alphabet = {'0', '1'};
-    vector<State<char,int> > states(5);
+	set<char> alphabet = {'0', '1'};
+	vector<State<char,int> > states(5);
 
-    // A
-    states[0].acceptState = true;
-    states[0].transitions['0'] = 0;
-    states[0].transitions['1'] = 1;
+	// A
+	states[0].acceptState = true;
+	states[0].transitions['0'] = 0;
+	states[0].transitions['1'] = 1;
 
-    // B
-    states[1].acceptState = false;
-    states[1].transitions['0'] = 0;
-    states[1].transitions['1'] = 1;
+	// B
+	states[1].acceptState = false;
+	states[1].transitions['0'] = 0;
+	states[1].transitions['1'] = 1;
 
-    // C
-    states[2].acceptState = false;
-    states[2].transitions['0'] = 3;
-    states[2].transitions['1'] = 4;
+	// C
+	states[2].acceptState = false;
+	states[2].transitions['0'] = 3;
+	states[2].transitions['1'] = 4;
 
-    // D
-    states[3].acceptState = false;
-    states[3].transitions['0'] = 3;
-    states[3].transitions['1'] = 4;
+	// D
+	states[3].acceptState = false;
+	states[3].transitions['0'] = 3;
+	states[3].transitions['1'] = 4;
 
-    // E
-    states[4].acceptState = false;
-    states[4].transitions['0'] = 2;
-    states[4].transitions['1'] = 4;
+	// E
+	states[4].acceptState = false;
+	states[4].transitions['0'] = 2;
+	states[4].transitions['1'] = 4;
 
-    DFA test(states, alphabet);
-    ofstream eerste;
+	DFA test(states, alphabet);
+	ofstream eerste;
 	eerste.open("eerste.dot");
 	eerste << test;
 
-    test.minimize();
-    ofstream eersteminimized;
+	test.minimize();
+	ofstream eersteminimized;
 	eersteminimized.open("eersteminimized.dot");
 	eersteminimized << test;
 
 
 
-    vector<State<char,int> > states2(8);
+	vector<State<char,int> > states2(8);
 
-    // A
-    states2[0].acceptState = false;
-    states2[0].transitions['0'] = 1;
-    states2[0].transitions['1'] = 5;
+	// A
+	states2[0].acceptState = false;
+	states2[0].transitions['0'] = 1;
+	states2[0].transitions['1'] = 5;
 
-    // B
-    states2[1].acceptState = false;
-    states2[1].transitions['0'] = 6;
-    states2[1].transitions['1'] = 2;
+	// B
+	states2[1].acceptState = false;
+	states2[1].transitions['0'] = 6;
+	states2[1].transitions['1'] = 2;
 
-    // C
-    states2[2].acceptState = true;
-    states2[2].transitions['0'] = 0;
-    states2[2].transitions['1'] = 2;
+	// C
+	states2[2].acceptState = true;
+	states2[2].transitions['0'] = 0;
+	states2[2].transitions['1'] = 2;
 
-    // D
-    states2[3].acceptState = false;
-    states2[3].transitions['0'] = 2;
-    states2[3].transitions['1'] = 6;
+	// D
+	states2[3].acceptState = false;
+	states2[3].transitions['0'] = 2;
+	states2[3].transitions['1'] = 6;
 
-    // E
-    states2[4].acceptState = false;
-    states2[4].transitions['0'] = 7;
-    states2[4].transitions['1'] = 5;
+	// E
+	states2[4].acceptState = false;
+	states2[4].transitions['0'] = 7;
+	states2[4].transitions['1'] = 5;
 
-    // F
-    states2[5].acceptState = false;
-    states2[5].transitions['0'] = 2;
-    states2[5].transitions['1'] = 6;
-    
-    // G
-    states2[6].acceptState = false;
-    states2[6].transitions['0'] = 6;
-    states2[6].transitions['1'] = 4;
+	// F
+	states2[5].acceptState = false;
+	states2[5].transitions['0'] = 2;
+	states2[5].transitions['1'] = 6;
 
-    // H
-    states2[7].acceptState = false;
-    states2[7].transitions['0'] = 6;
-    states2[7].transitions['1'] = 2;
+	// G
+	states2[6].acceptState = false;
+	states2[6].transitions['0'] = 6;
+	states2[6].transitions['1'] = 4;
+
+	// H
+	states2[7].acceptState = false;
+	states2[7].transitions['0'] = 6;
+	states2[7].transitions['1'] = 2;
 
 	ofstream output;
 	ofstream output2;
 	output.open("unminimized.dot");
-    DFA testMin(states2, alphabet);
-    output << testMin; 
+	DFA testMin(states2, alphabet);
+	output << testMin;
 	output2.open("minimized.dot");
-    testMin.minimize();
-    output2 << testMin;
-    
+	testMin.minimize();
+	output2 << testMin;
 
-    // fuck yea het werkt
+
+	// fuck yea het werkt
 }
 
 void convertENFAtoDFA()	{
@@ -262,9 +236,9 @@ void convertENFAtoDFA()	{
 	states[5].acceptState = true;
 
 	eNFA testENFA(states, alph);
-	
+
 	DFA testDFA = testENFA.modSubCnstr();
-	
+
 	ofstream testDFAOutput;
 	testDFAOutput.open("convertENFAtoDFA.dot");
 	testDFAOutput << testDFA;
@@ -272,14 +246,14 @@ void convertENFAtoDFA()	{
 }
 
 int main(int argc, char const* argv[]) {
-//	checkregexPLUSregex();
+	//	checkregexPLUSregex();
 
-//	testMinimization();
-	
-//	convertENFAtoDFA();
-	
+	//	testMinimization();
+
+	//	convertENFAtoDFA();
+
 	input(argc,argv);
-//	cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;
+	//	cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;
 
 	cout << "end" << endl;
 	return 0;

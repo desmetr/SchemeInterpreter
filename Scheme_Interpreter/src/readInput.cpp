@@ -70,17 +70,19 @@ void testProduct(const ini::Configuration& conf, string testNr) {
 	system(command.c_str());
 
 	ofstream ofStream4;
-	ofStream4.open("Dfa1");
+	string naamDfa1 = "Dfa1"+testNr;
+	ofStream4.open(naamDfa1.c_str());
 	ofStream4<<dfa1;
 	ofStream4.close();
-	string command2 = "dot -Tjpg Dfa1 -O";
+	string command2 = "dot -Tjpg "+ naamDfa1 +" -O";
 	system(command2.c_str());
 
 	ofstream ofStream5;
-	ofStream5.open("Dfa2");
+	string naamDfa2 = "Dfa2"+testNr;
+	ofStream5.open(naamDfa2.c_str());
 	ofStream5<<dfa2;
 	ofStream5.close();
-	string command3 = "dot -Tjpg Dfa2 -O";
+	string command3 = "dot -Tjpg "+naamDfa2+" -O";
 	system(command3.c_str());
 }
 
@@ -93,17 +95,6 @@ void testRegex_Enfa(const ini::Configuration& conf, string testNr) {
 	ofStream3.close();
 	string command = "dot -Tjpg " + testNr + " -O";
 	system(command.c_str());
-
-	DFA dfa2 = enfa.modSubCnstr();
-	dfa2.minimize();
-
-	ofstream ofStream2;
-	ofStream2.open("msc");
-	ofStream2<<dfa2;
-	ofStream2.close();
-	string command2 = "dot -Tjpg msc -O";
-	system(command2.c_str());
-
 
 }
 

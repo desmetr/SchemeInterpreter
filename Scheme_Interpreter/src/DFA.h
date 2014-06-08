@@ -7,6 +7,7 @@
 
 #ifndef DFA_H_
 #define DFA_H_
+using namespace std;
 #include "Automaton.h"
 #include "generic.h"
 #include <iostream>
@@ -25,11 +26,12 @@ private:
 
 public:
 	DFA(const std::vector<State<char,int>>& states, const std::set<char>& alphabet);
+	DFA();
 	virtual ~DFA();
 
 	bool readChar(char theChar);
 	bool readString(const std::string& theString);
-	bool readUntilAccepted(const std::string& theString);
+	bool readUntilAccepted(string& holeString, string& newString);
 	bool accepted();
 	void reset();
     void eliminateUnreachableStates();

@@ -8,6 +8,7 @@
 #include "Expression.h"
 #include "Environment.h"
 #include "Lambda.h"
+#include "../src/DFA.h"
 
 // Interpretatie (uitgezonderd de parser/lexer) gebaseerd op de tutorial
 //      "(How to Write a (Lisp) Interpreter (in Python))"
@@ -87,8 +88,39 @@ Environment initGlobalEnvironment() {
     global.addSymbol("/", divide);
     return global;
 }
+void checkReadUntilAccepted(){
+	set<char> alph2 = {'0','1'};
+	vector<State<char,int> > states2;
+	states2.push_back(State<char,int>());
+	states2[0].transitions['1'] = 0;
+	states2[0].transitions['0'] = 1;
+	states2[0].acceptState = false;
+
+	states2.push_back(State<char,int>());
+	states2[1].transitions['0'] = 2;
+	states2[1].transitions['1'] = 0;
+	states2[1].acceptState = false;
+
+	states2.push_back(State<char,int>());
+	states2[2].transitions['0'] = 3;
+	states2[2].transitions['1'] = 0;
+	states2[2].acceptState = false;
+
+	states2.push_back(State<char,int>());
+	states2[3].transitions['0'] = 3;
+	states2[3].transitions['1'] = 3;
+	states2[3].acceptState = true;
+
+	DFA dfa2 = DFA(states2, alph2);
+	string hole = "0001";
+	string after;
+	cout<<"Accpeted: "<<dfa2.readUntilAccepted(hole,after)<<endl;
+	cout<<"hole "<<hole<<" after "<<after<<endl;
+
+}
 
 int main() {
+	/*
     Environment global = initGlobalEnvironment();
     Symbol plus = "+";
     Symbol multiply = "*";
@@ -130,5 +162,7 @@ int main() {
     std::cout << evaluate(std::list<Expression> {squareSym, var}, global).getAsInt() << std::endl;
 
     // (define factorial (lambda n (if (< n 3) 1 (* n (factorial (- n 1))))))
-    // TODO
+    // TODO*/
+	checkReadUntilAccepted();
+
 }
