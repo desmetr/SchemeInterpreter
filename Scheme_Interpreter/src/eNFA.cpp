@@ -22,15 +22,19 @@ set<int> eNFA::eclose(int indexState, set<int>& indexesToIgnore) const {
 	set<int> localSet;
 	localSet.insert(indexState);
 	indexesToIgnore.insert(indexState);
-	if(states[indexState].transitions.count("")==1) {
+	if(states[indexState].transitions.count("") == 1) {
 		for (int i : states[indexState].transitions.at(""))	{
 			for (int j : eclose(i, indexesToIgnore))	{
 				localSet.insert(j);
 			}
 		}
+		return localSet;	
 	}
-
-	return localSet;
+	else	{
+		set<int> dumpSet;
+		dumpSet.insert(indexState);
+		return dumpSet;
+	}
 }
 
 // Returns all the eclosed sets of a given subset of the eNFA.
@@ -81,10 +85,10 @@ DFA eNFA::modSubCnstr() const {
 			if (states[elem].transitions.count(s) == 1)	{
 				set<int> target = states[elem].transitions.at(s);
 				result.insert(target.begin(), target.end());
+				return eclose(result);
 			}
 			else	continue;
-		}
-		return eclose(result);
+		}	
 	};
 	for (const auto& state: qdSet) {
 		transitions.insert(make_pair(state, map<string,set<int>>()));
@@ -111,8 +115,10 @@ DFA eNFA::modSubCnstr() const {
 			//TODO: test opportunity, indien transitie niet naar zichzelf leidt, betekent dat dat we eerder een fout hebben gemaakt
 			if (strSetPair.first == "") continue;
 			if (stateToIndexMap.count(strSetPair.second) == 1)	{
-				DFAStates[myIndex].transitions.insert(make_pair(strSetPair.first[0],
-						stateToIndexMap.at(strSetPair.second)));
+				DFAStates[myIndex].transitions.insert(make_pair(strSetPair.first[0], stateToIndexMap.at(strSetPair.second)));
+			}
+			else	{
+				DFAStates[myIndex].transitions.insert(make_pair(strSetPair.first[0], 100));		// 100 is to identify the dump state of the DFA.
 			}
 			if (states[myIndex].acceptState == true)
 				DFAStates[myIndex].acceptState = true;
