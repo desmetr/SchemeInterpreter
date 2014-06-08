@@ -1,0 +1,18 @@
+3
+P Q R
+3
+0 1 ^
+P
+1
+R
+10
+P ^ P
+P 0 Q
+P 1 R
+Q 0 Q
+Q 0 R
+Q ^ P
+Q 1 Q
+R 0 Q
+R 1 R
+R ^ P

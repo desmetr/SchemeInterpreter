@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<enfa>
+	<alpha>
+		<name>0|1|2|</name>
+	</alpha>
+	<states>
+		<name>P|Q|R|</name>
+	</states>
+	<state x="P" y="normal" z="yes">
+		<label>0</label>
+		<states>R</states>
+	</state>
+	<state x="Q" y="normal" z="no">
+		<label>0</label>
+		<states>R</states>
+		
+		<label1>1</label1>
+		<states1>P</states1>
+
+		<label2>2</label2>
+		<states2>Q</states2>
+	</state>
+	<state x="R" y="accept" z="no">
+		<label>0</label>
+		<states>P</states>
+
+		<label1>e</label1>
+		<states1>R</states1>
+	</state> 
+</enfa>
