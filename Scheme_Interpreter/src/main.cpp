@@ -271,7 +271,7 @@ int main(int argc, char const* argv[]) {
 	
 //	cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;
 
-	eNFA regexNFA = regexToeNFA("aab*b");
+	eNFA regexNFA = regexToeNFA("(a+b*)*");
 	//DFA test = regexToeNFA("baab").modSubCnstr();
 	DFA test2 = regexNFA.modSubCnstr();
 	test2.minimize();
