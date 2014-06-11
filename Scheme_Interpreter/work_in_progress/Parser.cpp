@@ -67,3 +67,43 @@ bool isClosingParen(string& input) {
 	}
 	return false;
 }
+
+Expression parseList(string& input) {
+	std::list<Expression> result;
+	const string origInput = input;
+	while (input.good()) {
+		if (isClosingParen(input)) {
+			input = input.substr(1);
+			return Expression(result);
+		}
+		result.push_back(parse(input));
+	}
+	raise runtime_error("input + " is not a valid list");
+}
+
+Expression parseAtom(string& input) {
+	typedef function<bool(Expression&,string&)> Lexer;
+	const static set<Lexer> lexers {
+		lexFunc(isSymbol),
+		lexFunc(isInt),
+		lexFunc(isFloat),
+		lexFunc(isBooleanTrue),
+		lexFunc(isBooleanFalse)
+	};
+
+	Expression result;
+	const string origInput = input;
+	for (const Lexer& lexer : lexers) {
+		if (lexer(result, input)) return result;
+		input = origInput;
+	}
+	raise runtime_error("First element of " + input + " is not a valid atom");
+}
+
+Expression parse(string& input) {
+	const string origInput = input;
+	if (isOpeningParen(input))
+		return parseList(origInput.substr(1));
+	else
+		return parseAtom(origInput);
+}

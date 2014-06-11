@@ -5,8 +5,8 @@
  *      Author: ajay
  */
 
-#ifndef GETEXPRESSION_H_
-#define GETEXPRESSION_H_
+#ifndef PARSER_H_
+#define PARSER_H_
 using namespace std;
 #include <map>
 #include "Expression.h"
@@ -21,6 +21,10 @@ bool isBooleanFalse(Expression& ex, string& input);
 bool isOpeningParen(string& input);
 bool isClosingParen(string& input);
 
+Expression parseList(string& input);
+Expression parseAtom(string& input);
+Expression parse(string& input);
+
 namespace standardDFAs{
 	DFA checkSymbol;
 	DFA checkInteger;
@@ -34,4 +38,4 @@ namespace standardDFAs{
 
 
 
-#endif /* GETEXPRESSION_H_ */
+#endif /* PARSER_H_ */

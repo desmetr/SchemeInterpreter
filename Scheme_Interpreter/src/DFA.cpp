@@ -30,20 +30,18 @@ bool DFA::readString(const std::string& theString) {
 	return accepted();
 }
 
-bool DFA::readUntilAccepted( string& holeString, string& expressionString) {
-	string newString;
+bool DFA::readUntilAccepted( string& wholeString, string& expressionString) {
 	bool accept = false;
 
-	for (char c : holeString) {
-		newString += c;
+	for (char c : wholeString) {
+		expressionString += c;
 		if (readChar(c)) {
 			accept = true;
 			break;
 		}
 	}
 	if(accept){
-		expressionString = newString;
-		holeString = holeString.substr(expressionString.size()-1,string::npos);
+		wholeString = wholeString.substr(expressionString.size()-1,string::npos);
 	}
 	return accept;
 }

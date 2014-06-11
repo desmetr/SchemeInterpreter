@@ -31,11 +31,11 @@ public:
 
 	bool readChar(char theChar);
 	bool readString(const std::string& theString);
-	bool readUntilAccepted(string& holeString, string& newString);
+	bool readUntilAccepted(string& wholeString, string& newString);
 	bool accepted();
 	void reset();
-    void eliminateUnreachableStates();
-    void minimize();
+	void eliminateUnreachableStates();
+	void minimize();
 	friend DFA operator*(const DFA &DFA1, const DFA &DFA2);		//geeft de productautomaat terug van DFA1 en DFA2
 	friend std::ostream& operator<< (std::ostream &out, DFA &dfa);
 };
