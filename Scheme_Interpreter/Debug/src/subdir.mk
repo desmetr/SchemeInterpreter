@@ -8,7 +8,6 @@ CPP_SRCS += \
 ../src/DFA.cpp \
 ../src/eNFA.cpp \
 ../src/ini_configuration.cpp \
-../src/main.cpp \
 ../src/readInput.cpp 
 
 OBJS += \
@@ -16,7 +15,6 @@ OBJS += \
 ./src/DFA.o \
 ./src/eNFA.o \
 ./src/ini_configuration.o \
-./src/main.o \
 ./src/readInput.o 
 
 CPP_DEPS += \
@@ -24,7 +22,6 @@ CPP_DEPS += \
 ./src/DFA.d \
 ./src/eNFA.d \
 ./src/ini_configuration.d \
-./src/main.d \
 ./src/readInput.d 
 
 

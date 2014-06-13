@@ -5,11 +5,44 @@
  *      Author: ajay
  */
 
-#include "GetExpression.h"
+#include "Parser.h"
 
-bool isSymbol(Expression& ex, string& input) {
+namespace standardDFAs{
+
+	string regexAlphabet = "(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+u+v+w+x+y+z+A+B+C+D+E+F+G+H+I+J+K+L+M+N+O+P+Q+R+S+T+U+V+W+X+Y+Z)";
+	string regexNumbers = "(0+1+2+3+4+5+6+7+8+9)";
+	string allSymboles = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#().";
+
+	string symbol = " *" + regexAlphabet + regexAlphabet + "*( +\\()";
+	string BooleanTrue = " *#t( +\\()";
+	string BooleanFalse = " *#f( +\\()";
+	string closingParen = " *\\(";
+	string openingParen = " *\\)";
+	string floatt = " *" + regexNumbers + regexNumbers + "*\\." + regexNumbers + regexNumbers + "*( +\\()";
+	string integer = " *" + regexNumbers + regexNumbers + "*( +\\()";
+
+	DFA checkSymbol;
+//	makeDFA(symbol, allSymboles, checkSymbol);
+	DFA checkInteger;
+//	makeDFA(integer, allSymboles, checkInteger);
+	DFA checkFloat;
+//	makeDFA(floatt, allSymboles, checkFloat);
+	DFA checkBooleanTrue;
+//	makeDFA(BooleanTrue, allSymboles, checkBooleanTrue);
+	DFA checkBooleanFalse;
+//	makeDFA(BooleanFalse, allSymboles, checkBooleanFalse);
+	DFA checkOpeningParen;
+//	makeDFA(openingParen, allSymboles, checkOpeningParen);
+	DFA checkClosingParen;
+//	makeDFA(closingParen,allSymboles, checkClosingParen);
+
+};
+
+
+bool isSymbol(Expression& ex, std::string& input) {
 	string newString;
 	if(standardDFAs::checkSymbol.readUntilAccepted(input,newString)) {
+		cout<<"ExpressieString:"<<newString<<endl;
 		ex = Expression(newString);
 		return true;
 	}
@@ -19,6 +52,7 @@ bool isSymbol(Expression& ex, string& input) {
 bool isInt(Expression& ex, string& input) {
 	string newString;
 	if(standardDFAs::checkInteger.readUntilAccepted(input,newString)) {
+		cout<<"ExpressieString:"<<newString<<endl;
 		ex = Expression(stoi(newString));
 		return true;
 	}
@@ -28,6 +62,7 @@ bool isInt(Expression& ex, string& input) {
 bool isFloat(Expression& ex, string& input) {
 	string newString;
 	if(standardDFAs::checkFloat.readUntilAccepted(input,newString)) {
+		cout<<"ExpressieString:"<<newString<<endl;
 		ex = Expression(stof(newString));
 		return true;
 	}
@@ -37,6 +72,7 @@ bool isFloat(Expression& ex, string& input) {
 bool isBooleanTrue(Expression& ex, string& input) {
 	string newString;
 	if(standardDFAs::checkBooleanTrue.readUntilAccepted(input,newString)) {
+		cout<<"ExpressieString:"<<newString<<endl;
 		ex = Expression(true);
 		return true;
 	}
@@ -46,6 +82,7 @@ bool isBooleanTrue(Expression& ex, string& input) {
 bool isBooleanFalse(Expression& ex, string& input) {
 	string newString;
 	if(standardDFAs::checkBooleanFalse.readUntilAccepted(input,newString)) {
+		cout<<"ExpressieString:"<<newString<<endl;
 		ex = Expression(true);
 		return true;
 	}
@@ -67,6 +104,14 @@ bool isClosingParen(string& input) {
 	}
 	return false;
 }
+void makeDFA(string regex, string allSymboles,DFA& dfa){
+	eNFA eNFA = regexToeNFA(regex);
+	dfa = eNFA.modSubCnstr();
+	dfa.addSymbols(allSymboles);
+	dfa.minimize();
+}
+
+/*
 
 Expression parseList(string& input) {
 	std::list<Expression> result;
@@ -106,4 +151,8 @@ Expression parse(string& input) {
 		return parseList(origInput.substr(1));
 	else
 		return parseAtom(origInput);
+ }*/
+
+string getAlphabet() {
+	return "(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+u+v+w+x+y+z+A+B+C+D+E+F+G+H+I+J+K+L+M+N+O+P+Q+R+S+T+U+V+W+X+Y+Z)";
 }

@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <string>
 #include <map>
 #include <algorithm>
@@ -9,6 +11,8 @@
 #include "Environment.h"
 #include "Lambda.h"
 #include "../src/DFA.h"
+#include "../src/eNFA.h"
+#include "Parser.h"
 
 // Interpretatie (uitgezonderd de parser/lexer) gebaseerd op de tutorial
 //      "(How to Write a (Lisp) Interpreter (in Python))"
@@ -19,74 +23,74 @@
 // (define x 7)
 //
 Expression evaluate(const Expression& exp, Environment& env) {
-    if (exp.getType() == Sym) // variable reference
-        return env.find(exp.getAsSymbol());
-   
-    else if (exp.getType() != List) // constant literal
-        return exp;
-   
-    auto expAsList = exp.getAsList(); // std::list<Expression>&
-    auto expIt = expAsList.begin();
-    // ASSUMING FIRST ELEMENT IS A SYMBOL (TODO ACTUALLY CHECKING THAT)
-    if (expIt->getAsSymbol() == "quote") // (quote exp)
-        return *(++expIt);
-   
-    else if (expIt->getAsSymbol() == "if") { // (if test conseq alt)
-        auto& test = *(++expIt); auto& conseq= *(++expIt);
-        auto& alt= *(++expIt);
-        //return evaluate((evaluate(test,env) ? conseq : alt), env);
-    }
-    else if (expIt->getAsSymbol() == "set!") { // (set! symbol value)
-        auto& symbol = *(++expIt); auto& value = *(++expIt);
-        env.setSymbol(symbol.getAsSymbol(), evaluate(value, env));
-    } 
-    else if (expIt->getAsSymbol() == "define") { // (define symbol value)
-        auto& symbol = *(++expIt); auto& value = *(++expIt);
-        env.addSymbol(symbol.getAsSymbol(), evaluate(value, env));
-    }
-    else if (expIt->getAsSymbol() == "lambda") { // (lambda (paramSym*) opExp)
-        auto& paramSymbols = *(++expIt); auto& lambdaExp = *(++expIt);
-        Lambda l(lambdaExp, paramSymbols, &env);
-        return Expression(l);
-    }
-    // TODO: BEGIN
-    // (define square (lambda a (* a a))) -> 0 (square gedefineerd)
-    // (define multiplyBySelf square)
-    // (multiplyBySelf (+ 3 4)) -> (square 7)
-    else {
-        std::list<Expression> exps;
-        for (auto& e: expAsList)
-            exps.push_back(evaluate(e, env));
-        Expression function = exps.front();
-        exps.pop_front();
-        return function.getAsFunction()(exps);
-    }
-    return Expression();
+	if (exp.getType() == Sym) // variable reference
+		return env.find(exp.getAsSymbol());
+
+	else if (exp.getType() != List) // constant literal
+		return exp;
+
+	auto expAsList = exp.getAsList(); // std::list<Expression>&
+	auto expIt = expAsList.begin();
+	// ASSUMING FIRST ELEMENT IS A SYMBOL (TODO ACTUALLY CHECKING THAT)
+	if (expIt->getAsSymbol() == "quote") // (quote exp)
+		return *(++expIt);
+
+	else if (expIt->getAsSymbol() == "if") { // (if test conseq alt)
+		auto& test = *(++expIt); auto& conseq= *(++expIt);
+		auto& alt= *(++expIt);
+		//return evaluate((evaluate(test,env) ? conseq : alt), env);
+	}
+	else if (expIt->getAsSymbol() == "set!") { // (set! symbol value)
+		auto& symbol = *(++expIt); auto& value = *(++expIt);
+		env.setSymbol(symbol.getAsSymbol(), evaluate(value, env));
+	}
+	else if (expIt->getAsSymbol() == "define") { // (define symbol value)
+		auto& symbol = *(++expIt); auto& value = *(++expIt);
+		env.addSymbol(symbol.getAsSymbol(), evaluate(value, env));
+	}
+	else if (expIt->getAsSymbol() == "lambda") { // (lambda (paramSym*) opExp)
+		auto& paramSymbols = *(++expIt); auto& lambdaExp = *(++expIt);
+		Lambda l(lambdaExp, paramSymbols, &env);
+		return Expression(l);
+	}
+	// TODO: BEGIN
+	// (define square (lambda a (* a a))) -> 0 (square gedefineerd)
+	// (define multiplyBySelf square)
+	// (multiplyBySelf (+ 3 4)) -> (square 7)
+	else {
+		std::list<Expression> exps;
+		for (auto& e: expAsList)
+			exps.push_back(evaluate(e, env));
+		Expression function = exps.front();
+		exps.pop_front();
+		return function.getAsFunction()(exps);
+	}
+	return Expression();
 }
 
 Environment initGlobalEnvironment() {
-    Environment global;
-    // +
-    Lambda add(Ftype([](std::list<Expression>& params) {
-        return *(params.begin()) + *std::next(params.begin());
-    }), 2);
-    global.addSymbol("+", add);
-    // -
-    Lambda subtract(Ftype([](std::list<Expression>& params) {
-        return *(params.begin()) - *std::next(params.begin());
-    }), 2);
-    global.addSymbol("-", subtract);
-    // *
-    Lambda multiply(Ftype([](std::list<Expression>& params) {
-        return *(params.begin()) * *std::next(params.begin());
-    }), 2);
-    global.addSymbol("*", multiply);
-    // /
-    Lambda divide(Ftype([](std::list<Expression>& params) {
-        return *(params.begin()) / *std::next(params.begin());
-    }), 2);
-    global.addSymbol("/", divide);
-    return global;
+	Environment global;
+	// +
+	Lambda add(Ftype([](std::list<Expression>& params) {
+		return *(params.begin()) + *std::next(params.begin());
+	}), 2);
+	global.addSymbol("+", add);
+	// -
+	Lambda subtract(Ftype([](std::list<Expression>& params) {
+		return *(params.begin()) - *std::next(params.begin());
+	}), 2);
+	global.addSymbol("-", subtract);
+	// *
+	Lambda multiply(Ftype([](std::list<Expression>& params) {
+		return *(params.begin()) * *std::next(params.begin());
+	}), 2);
+	global.addSymbol("*", multiply);
+	// /
+	Lambda divide(Ftype([](std::list<Expression>& params) {
+		return *(params.begin()) / *std::next(params.begin());
+	}), 2);
+	global.addSymbol("/", divide);
+	return global;
 }
 void checkReadUntilAccepted(){
 	set<char> alph2 = {'0','1'};
@@ -163,6 +167,20 @@ int main() {
 
     // (define factorial (lambda n (if (< n 3) 1 (* n (factorial (- n 1))))))
     // TODO*/
-	checkReadUntilAccepted();
+	/*eNFA enfa = regexToeNFA(" *(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+u+v+w+x+y+z)*( +");
+	DFA dfa = enfa.modSubCnstr();
+	dfa.minimize();
 
+	string hole = " abfg juio iop";
+	string after;
+	cout<<"Accpeted:"<<dfa.readUntilAccepted(hole,after)<<endl;
+	cout<<"hole:"<<hole<<" after:"<<after<<endl;	after="";
+	cout<<"Accpeted:"<<dfa.readUntilAccepted(hole,after)<<endl;
+	cout<<"hole:"<<hole<<" after:"<<after<<endl;	after="";
+	cout<<"Accpeted: "<<dfa.readUntilAccepted(hole,after)<<endl;
+	cout<<"hole:"<<hole<<" after:"<<after<<endl;*/
+	string input = "(define x 3)";
+	Expression ex;
+	cout<<"IsSymbol:"<<isSymbol(ex,input)<<endl;
+	cout<<"input:"<<input<<endl;
 }

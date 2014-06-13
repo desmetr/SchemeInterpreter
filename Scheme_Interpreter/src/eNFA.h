@@ -14,6 +14,7 @@
 #include "Automaton.h"
 #include "DFA.h"
 #include <iostream>
+#include <algorithm>
 
 #include <assert.h>
 #include <stack>
@@ -48,5 +49,6 @@ eNFA geteNFA(std::string alphabet);
 eNFA geteNFA(char symbool);
 string setPoints(string regex);
 eNFA regexToeNFA(std::string regex);
+void replace(string& input);
 
 #endif /* ENFA_H_ */

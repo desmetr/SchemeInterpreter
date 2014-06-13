@@ -6,22 +6,25 @@
 CPP_SRCS += \
 ../work_in_progress/Environment.cpp \
 ../work_in_progress/Expression.cpp \
-../work_in_progress/GetExpression.cpp \
 ../work_in_progress/Lambda.cpp \
+../work_in_progress/Parser.cpp \
+../work_in_progress/main.cpp \
 ../work_in_progress/trash.cpp 
 
 OBJS += \
 ./work_in_progress/Environment.o \
 ./work_in_progress/Expression.o \
-./work_in_progress/GetExpression.o \
 ./work_in_progress/Lambda.o \
+./work_in_progress/Parser.o \
+./work_in_progress/main.o \
 ./work_in_progress/trash.o 
 
 CPP_DEPS += \
 ./work_in_progress/Environment.d \
 ./work_in_progress/Expression.d \
-./work_in_progress/GetExpression.d \
 ./work_in_progress/Lambda.d \
+./work_in_progress/Parser.d \
+./work_in_progress/main.d \
 ./work_in_progress/trash.d 
 
 

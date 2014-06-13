@@ -51,7 +51,7 @@ set<int> eNFA::eclose(set<int> subset) const {
 
 DFA eNFA::modSubCnstr() const {
 	auto eNFA_transition = [&](const set<int>& subset, const string& symbol) 
-		-> set<int>
+								-> set<int>
 	{
 		set<int> result;
 		for (int stateIndex : subset) {
@@ -71,7 +71,7 @@ DFA eNFA::modSubCnstr() const {
 
 	// This function recursively fills the 'transitions' map
 	function<void(const set<int>&)> constructTransitions = [&](const set<int>& subset)
-	{
+							{
 		transitions.insert(make_pair(subset, map<string,set<int>>()));
 		for (const string& symbol : alphabet) {
 			set<int> target = eclose(eNFA_transition(subset, symbol));
@@ -79,14 +79,14 @@ DFA eNFA::modSubCnstr() const {
 			if (transitions.count(target) == 0)
 				constructTransitions(target);
 		}
-	};
+							};
 	constructTransitions(eclose({0}));
 
 	map<set<int>,int> stateToIndexMap;
 	vector<State<char,int>> DFA_States;
 	DFA_States.reserve(transitions.size());
 	function<void(const set<int>&)> constructDFA_States = [&](const set<int>& subset)
-	{
+							{
 		if (stateToIndexMap.count(subset) == 1) return;
 		DFA_States.push_back(State<char,int>());
 		unsigned int myIndex = DFA_States.size() - 1;
@@ -97,7 +97,7 @@ DFA eNFA::modSubCnstr() const {
 				break;
 			}
 		}
-		
+
 		for (const string& symbol : alphabet) {
 			if (symbol == "") continue;
 			set<int> target = transitions.at(subset).at(symbol);
@@ -105,7 +105,7 @@ DFA eNFA::modSubCnstr() const {
 				constructDFA_States(target);
 			DFA_States[myIndex].transitions.insert(make_pair(symbol[0], stateToIndexMap.at(target)));
 		}
-	};
+							};
 
 	constructDFA_States(eclose({0}));
 
@@ -245,6 +245,10 @@ std::ostream& operator<< (std::ostream &out, eNFA &enfa){
 						out<<"\t"<<i<<" -> "<<(*index)<<" [label=\""<<"ε"<<"\"];"<<endl;
 
 					}
+					else if((*caracter)==" "){
+						out<<"\t"<<i<<" -> "<<(*index)<<" [label=\""<<"space"<<"\"];"<<endl;
+
+					}
 					else{
 						out<<"\t"<<i<<" -> "<<(*index)<<" [label=\""<<*caracter<<"\"];"<<endl;
 					}
@@ -271,34 +275,44 @@ eNFA geteNFA(char token) {
 	return enfa1;
 }
 
-bool isSymbool(char symbool){
-	return !(symbool == '(' || symbool == ')' || symbool == '+' || symbool == '*');
+bool isSymbool(string symbool){
+	if(symbool.at(0)=='\\'){
+		return true;
+	}
+	return !(symbool == "(" || symbool == ")" || symbool == "+" || symbool == "*");
 }
 
 string setPoints(string regex){
 	assert(regex.size()>0);
 	string newRegex;
 	for(string::iterator token = regex.begin() ; token != regex.end() ; ++token){
+		string first;
+		first += *token;
+		if(*token == '\\'){
+			first += *(++token);
+		}
 		if((token+1)!=regex.end()){
-			if(isSymbool(*token) && (isSymbool(*(token+1)) || *(token+1) == '(') ){		//twee symbolen naast elkaar of ( na een symbool
-				newRegex+=*token;
+			string next;
+			next+= *(token + 1);
+
+			if(isSymbool(first) && (isSymbool(next) || next == "(") ){		//twee symbolen naast elkaar of ( na een symbool
+				newRegex+= first;
 				newRegex+=".";
 			}
-			else if((*token) == '*' && (isSymbool(*(token+1)) || *(token+1)=='(') ){	//Als na ster een symbool of (
+			else if((*token) == '*' && (isSymbool(next) || next=="(") ){	//Als na ster een symbool of (
 				newRegex+="*";
 				newRegex+=".";
 			}
-			else if((*token) == ')' && (isSymbool(*(token+1)) || *(token+1)=='(') ){	//Als na ) een symbool of (
+			else if((*token) == ')' && (isSymbool(next) || next=="(") ){	//Als na ) een symbool of (
 				newRegex+=")";
 				newRegex+=".";
 			}
 			else{
-				newRegex+=*token;
+				newRegex+=first;
 			}
-
 		}
 		else{
-			newRegex+=*token;
+			newRegex+=first;
 		}
 
 
@@ -338,6 +352,9 @@ string infixToPostfix(string expression) {
 		}
 		else{
 			postfix +=symbool;
+			if(symbool == '\\'){
+				postfix += expression.at(++i);
+			}
 		}
 	}
 	while(!astack.empty()){
@@ -353,7 +370,13 @@ eNFA regexToeNFA(std::string regexBegin) {
 	for(string::iterator symbool = regex.begin() ; symbool!=regex.end() ; symbool++){
 		char token = *symbool;
 		if(token!='*' and token!='.' and token!='+'){
-			astack.push(geteNFA(token));
+			if(token=='\\'){
+				symbool++;
+				astack.push(geteNFA(*symbool));
+			}
+			else{
+				astack.push(geteNFA(token));
+			}
 		}
 		else if(token=='*'){
 			assert(astack.size()>=1);

@@ -21,7 +21,12 @@ DFA::~DFA() {
 
 
 bool DFA::readChar(char theChar) {
-	currentState = states.at(currentState).transitions.at(theChar);
+	if(this->alphabet.find(theChar) != this->alphabet.end()){
+		currentState = states.at(currentState).transitions.at(theChar);
+	}
+	else{
+		cout<<"\"" << theChar <<"\" maakt geen deel uit het alphabet"<<endl;
+	}
 	return accepted();
 }
 
@@ -32,17 +37,20 @@ bool DFA::readString(const std::string& theString) {
 
 bool DFA::readUntilAccepted( string& wholeString, string& expressionString) {
 	bool accept = false;
+	string next;
 
 	for (char c : wholeString) {
-		expressionString += c;
+		next += c;
 		if (readChar(c)) {
 			accept = true;
 			break;
 		}
 	}
 	if(accept){
-		wholeString = wholeString.substr(expressionString.size()-1,string::npos);
+		wholeString = wholeString.substr(next.size()-1,string::npos);
+		expressionString = next;
 	}
+	currentState = 0;
 	return accept;
 }
 
@@ -55,132 +63,132 @@ void DFA::reset() {
 }
 
 void DFA::eliminateUnreachableStates() {
-    // create a list of unreached states, add all states 
-    std::set<int> unreachedStates;
-    for (int i = 0; i < states.size(); i++)
-        unreachedStates.insert(i);
+	// create a list of unreached states, add all states
+	std::set<int> unreachedStates;
+	for (int i = 0; i < states.size(); i++)
+		unreachedStates.insert(i);
 
-    // remove states that can be reached from the starting state
-    std::function<void(int)> findReachableStates = [&](int index) -> void {
-        // if the current state has not been reached yet, investigate it 
-        // and all states that can be reached directly from it
-        if (unreachedStates.erase(index))
-            for (char c: alphabet) 
-                findReachableStates(states.at(index).transitions.at(c));
-        // if the state has already been reached, just ignore it
-        else return;
-    };
-    findReachableStates(0);
-    // now, we eliminate the states that couldn't be reached
-    //
-    // our first task is to identify the new indices the reachable states
-    //  will get
-    std::map<int,int> oldIndexToNewIndex;
-    int offset = 0;
-    for (int i = 0; i < states.size(); i++) {
-        if (unreachedStates.count(i))
-            offset++;
-        else
-            oldIndexToNewIndex.insert(std::make_pair(i, i-offset));
-    }
-    std::vector<State<char,int>> newStates;
-    for (int i = 0; i < states.size(); i++) {
-        if (! unreachedStates.count(i)) {
-            newStates.push_back(states[i]);
-            for (char c: alphabet) {
-                newStates.back().transitions.at(c) = 
-                    oldIndexToNewIndex.at(newStates.back().transitions.at(c));
-            }
-        }
-    }
-    states = newStates;
+	// remove states that can be reached from the starting state
+	std::function<void(int)> findReachableStates = [&](int index) -> void {
+		// if the current state has not been reached yet, investigate it
+		// and all states that can be reached directly from it
+		if (unreachedStates.erase(index))
+			for (char c: alphabet)
+				findReachableStates(states.at(index).transitions.at(c));
+		// if the state has already been reached, just ignore it
+		else return;
+	};
+	findReachableStates(0);
+	// now, we eliminate the states that couldn't be reached
+	//
+	// our first task is to identify the new indices the reachable states
+	//  will get
+	std::map<int,int> oldIndexToNewIndex;
+	int offset = 0;
+	for (int i = 0; i < states.size(); i++) {
+		if (unreachedStates.count(i))
+			offset++;
+		else
+			oldIndexToNewIndex.insert(std::make_pair(i, i-offset));
+	}
+	std::vector<State<char,int>> newStates;
+	for (int i = 0; i < states.size(); i++) {
+		if (! unreachedStates.count(i)) {
+			newStates.push_back(states[i]);
+			for (char c: alphabet) {
+				newStates.back().transitions.at(c) =
+						oldIndexToNewIndex.at(newStates.back().transitions.at(c));
+			}
+		}
+	}
+	states = newStates;
 }
 
 void DFA::minimize() {
-    // tests whether two indices refer to distinguishable states
-    // pairsToIgnore contains pairs that have been encountered but whose 
-    // distinguishability has not yet been determined (we ignore them to avoid
-    // entering an infinite recursion)
-    TestDistinguishabilityType testDistinguishability = memoize(
-        TestDistinguishabilityType([&](int i, int j, 
-                                   std::set< std::set<int> >& pairsToIgnore) 
-        {
-            if (i == j) {
-                //a state is equivalent with itself
-                pairsToIgnore.erase({i,j});
-                return false;
-            } else if (states[i].acceptState != states[j].acceptState) {
-                //an accepting state is always distinguishable from a 
-                // non-accepting state
-                pairsToIgnore.erase({i,j});
-                return true;
-            } else {
-                //if neither of the base cases apply, recursively search for a
-                // distinguishable pair that can be reached from the current states
-                // with an identical string; if no such pair can be found, the
-                // result is false, otherwise it is true
-                pairsToIgnore.insert({i,j});
-                bool result = any(alphabet, [&](char c) {
-                    int nextI = states[i].transitions.at(c);
-                    int nextJ = states[j].transitions.at(c);
-                    //if the next pair to examine has already been encountered
-                    //in this specific search, ignore this pair by returning
-                    //false without memoizing the result
-                    if (pairsToIgnore.find({nextI,nextJ}) 
-                            != pairsToIgnore.end()) return false;
-                    return testDistinguishability(nextI, nextJ, pairsToIgnore);
-                });
-                pairsToIgnore.erase({i,j});
-                return result;
-            }
-        }));
-    // first, we eliminate unreachable states
-    eliminateUnreachableStates();
+	// tests whether two indices refer to distinguishable states
+	// pairsToIgnore contains pairs that have been encountered but whose
+	// distinguishability has not yet been determined (we ignore them to avoid
+	// entering an infinite recursion)
+	TestDistinguishabilityType testDistinguishability = memoize(
+			TestDistinguishabilityType([&](int i, int j,
+					std::set< std::set<int> >& pairsToIgnore)
+					{
+		if (i == j) {
+			//a state is equivalent with itself
+			pairsToIgnore.erase({i,j});
+			return false;
+		} else if (states[i].acceptState != states[j].acceptState) {
+			//an accepting state is always distinguishable from a
+			// non-accepting state
+			pairsToIgnore.erase({i,j});
+			return true;
+		} else {
+			//if neither of the base cases apply, recursively search for a
+			// distinguishable pair that can be reached from the current states
+			// with an identical string; if no such pair can be found, the
+			// result is false, otherwise it is true
+			pairsToIgnore.insert({i,j});
+			bool result = any(alphabet, [&](char c) {
+				int nextI = states[i].transitions.at(c);
+				int nextJ = states[j].transitions.at(c);
+				//if the next pair to examine has already been encountered
+				//in this specific search, ignore this pair by returning
+				//false without memoizing the result
+				if (pairsToIgnore.find({nextI,nextJ})
+						!= pairsToIgnore.end()) return false;
+				return testDistinguishability(nextI, nextJ, pairsToIgnore);
+			});
+			pairsToIgnore.erase({i,j});
+			return result;
+		}
+					}));
+	// first, we eliminate unreachable states
+	eliminateUnreachableStates();
 
-    // then, we sort all equivalent states in equivalence classes
-    std::vector<std::set<int>> equivalenceClasses;
-    std::map<int,int> stateToEquivalenceClass;
-    for (int i = 0; i < states.size(); i++) {
-        if (stateToEquivalenceClass.find(i) != stateToEquivalenceClass.end())
-            continue;
-        //if the state we are currently examining has not yet been placed in an
-        // equivalence class, create a new equivalence class and find its members
-        // (otherwise, skip to the next state)
-        equivalenceClasses.push_back(std::set<int>({i}));
-        int ecIndex = equivalenceClasses.size() - 1;
-        stateToEquivalenceClass.insert(std::make_pair(i, ecIndex));
-        for (int j = i+1; j < states.size(); j++) {
-            std::set< std::set<int> > pairsToIgnore;
-            //if we find an equivalent state, place it in i's equivalence class
-            if (!testDistinguishability(i, j, pairsToIgnore)) {
-                equivalenceClasses.back().insert(j);
-                stateToEquivalenceClass.insert(std::make_pair(j, ecIndex));
-            }
-        }
-    }
-    //now we construct the new states from the equivalence classes
-    std::vector<State<char,int>> minimizedStates;
-    for (int ecIndex = 0; ecIndex < equivalenceClasses.size(); ecIndex++) {
-        minimizedStates.push_back(State<char,int>());
-        minimizedStates.back().acceptState = 
-            states[*(equivalenceClasses[ecIndex].begin())].acceptState;
-        //initialize the minimized state as one referring just to itself
-        //overwrite the transition for a given character if one of the states
-        // in the current equivalence class refers to a state in another
-        // equivalence class
-        for (char c: alphabet) {
-            minimizedStates.back().transitions[c] = ecIndex;
-            for (int stateIndex: equivalenceClasses[ecIndex]) {
-                int oldStateTransIndex = states[stateIndex].transitions[c];
-                int ecTransIndex = stateToEquivalenceClass[oldStateTransIndex];
-                if (ecTransIndex != ecIndex) {
-                    minimizedStates.back().transitions[c] = ecTransIndex;
-                    break;
-                }
-            }
-        }
-    }
-    states = minimizedStates;
+	// then, we sort all equivalent states in equivalence classes
+	std::vector<std::set<int>> equivalenceClasses;
+	std::map<int,int> stateToEquivalenceClass;
+	for (int i = 0; i < states.size(); i++) {
+		if (stateToEquivalenceClass.find(i) != stateToEquivalenceClass.end())
+			continue;
+		//if the state we are currently examining has not yet been placed in an
+		// equivalence class, create a new equivalence class and find its members
+		// (otherwise, skip to the next state)
+		equivalenceClasses.push_back(std::set<int>({i}));
+		int ecIndex = equivalenceClasses.size() - 1;
+		stateToEquivalenceClass.insert(std::make_pair(i, ecIndex));
+		for (int j = i+1; j < states.size(); j++) {
+			std::set< std::set<int> > pairsToIgnore;
+			//if we find an equivalent state, place it in i's equivalence class
+			if (!testDistinguishability(i, j, pairsToIgnore)) {
+				equivalenceClasses.back().insert(j);
+				stateToEquivalenceClass.insert(std::make_pair(j, ecIndex));
+			}
+		}
+	}
+	//now we construct the new states from the equivalence classes
+	std::vector<State<char,int>> minimizedStates;
+	for (int ecIndex = 0; ecIndex < equivalenceClasses.size(); ecIndex++) {
+		minimizedStates.push_back(State<char,int>());
+		minimizedStates.back().acceptState =
+				states[*(equivalenceClasses[ecIndex].begin())].acceptState;
+		//initialize the minimized state as one referring just to itself
+		//overwrite the transition for a given character if one of the states
+		// in the current equivalence class refers to a state in another
+		// equivalence class
+		for (char c: alphabet) {
+			minimizedStates.back().transitions[c] = ecIndex;
+			for (int stateIndex: equivalenceClasses[ecIndex]) {
+				int oldStateTransIndex = states[stateIndex].transitions[c];
+				int ecTransIndex = stateToEquivalenceClass[oldStateTransIndex];
+				if (ecTransIndex != ecIndex) {
+					minimizedStates.back().transitions[c] = ecTransIndex;
+					break;
+				}
+			}
+		}
+	}
+	states = minimizedStates;
 }
 
 DFA operator *(const DFA& DFA1, const DFA& DFA2) {
@@ -220,7 +228,22 @@ DFA operator *(const DFA& DFA1, const DFA& DFA2) {
 	return DFA(states,newAlph);
 }
 
-
+void DFA::addSymbols(string symbols) {
+	for(char sym : symbols){
+		if( this->alphabet.find(sym) == this->alphabet.end()){
+			cout<<sym<<endl;
+			this->alphabet.insert(sym);
+			for(auto &state : this->states){
+				state.transitions[sym] = this->states.size();
+			}
+		}
+	}
+	State<char,int> state;
+	for(char sym : this->alphabet){
+		state.transitions[sym] = this->states.size();
+	}
+	this->states.push_back(state);
+}
 
 std::ostream& operator<< (std::ostream &out, DFA &dfa){
 	out<<"digraph DFA {"<<std::endl;

@@ -36,6 +36,7 @@ public:
 	void reset();
 	void eliminateUnreachableStates();
 	void minimize();
+	void addSymbols(string symbols);
 	friend DFA operator*(const DFA &DFA1, const DFA &DFA2);		//geeft de productautomaat terug van DFA1 en DFA2
 	friend std::ostream& operator<< (std::ostream &out, DFA &dfa);
 };
