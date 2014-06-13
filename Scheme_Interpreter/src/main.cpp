@@ -1,18 +1,97 @@
-/*
- * main.cpp
- *
- *  Created on: Apr 10, 2014
- *      Author: ajay
- */
-
-#include "DFA.h"
-#include "eNFA.h"
-#include "readInput.h"
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
 #include <map>
-#include <utility>
+#include <algorithm>
+#include <list>
+#include <stdexcept>
 
-using namespace std;
+#include "Expression.h"
+#include "Environment.h"
+#include "Lambda.h"
+#include "../src/DFA.h"
+#include "../src/eNFA.h"
+#include "Parser.h"
+
+// Interpretatie (uitgezonderd de parser/lexer) gebaseerd op de tutorial
+//      "(How to Write a (Lisp) Interpreter (in Python))"
+//          (norvig.com/lispy.html)
+
+// (define y 4.5)
+// y
+// (define x 7)
+//
+Expression evaluate(const Expression& exp, Environment& env) {
+	if (exp.getType() == Sym) // variable reference
+		return env.find(exp.getAsSymbol());
+
+	else if (exp.getType() != List) // constant literal
+		return exp;
+
+	auto expAsList = exp.getAsList(); // std::list<Expression>&
+	auto expIt = expAsList.begin();
+	// ASSUMING FIRST ELEMENT IS A SYMBOL (TODO ACTUALLY CHECKING THAT)
+	if (expIt->getAsSymbol() == "quote") // (quote exp)
+		return *(++expIt);
+
+	else if (expIt->getAsSymbol() == "if") { // (if test conseq alt)
+		auto& test = *(++expIt); auto& conseq= *(++expIt);
+		auto& alt= *(++expIt);
+		//return evaluate((evaluate(test,env) ? conseq : alt), env);
+	}
+	else if (expIt->getAsSymbol() == "set!") { // (set! symbol value)
+		auto& symbol = *(++expIt); auto& value = *(++expIt);
+		env.setSymbol(symbol.getAsSymbol(), evaluate(value, env));
+	}
+	else if (expIt->getAsSymbol() == "define") { // (define symbol value)
+		auto& symbol = *(++expIt); auto& value = *(++expIt);
+		env.addSymbol(symbol.getAsSymbol(), evaluate(value, env));
+	}
+	else if (expIt->getAsSymbol() == "lambda") { // (lambda (paramSym*) opExp)
+		auto& paramSymbols = *(++expIt); auto& lambdaExp = *(++expIt);
+		Lambda l(lambdaExp, paramSymbols, &env);
+		return Expression(l);
+	}
+	// TODO: BEGIN
+	// (define square (lambda a (* a a))) -> 0 (square gedefineerd)
+	// (define multiplyBySelf square)
+	// (multiplyBySelf (+ 3 4)) -> (square 7)
+	else {
+		std::list<Expression> exps;
+		for (auto& e: expAsList)
+			exps.push_back(evaluate(e, env));
+		Expression function = exps.front();
+		exps.pop_front();
+		return function.getAsFunction()(exps);
+	}
+	return Expression();
+}
+
+Environment initGlobalEnvironment() {
+	Environment global;
+	// +
+	Lambda add(Ftype([](std::list<Expression>& params) {
+		return *(params.begin()) + *std::next(params.begin());
+	}), 2);
+	global.addSymbol("+", add);
+	// -
+	Lambda subtract(Ftype([](std::list<Expression>& params) {
+		return *(params.begin()) - *std::next(params.begin());
+	}), 2);
+	global.addSymbol("-", subtract);
+	// *
+	Lambda multiply(Ftype([](std::list<Expression>& params) {
+		return *(params.begin()) * *std::next(params.begin());
+	}), 2);
+	global.addSymbol("*", multiply);
+	// /
+	Lambda divide(Ftype([](std::list<Expression>& params) {
+		return *(params.begin()) / *std::next(params.begin());
+	}), 2);
+	global.addSymbol("/", divide);
+	return global;
+}
 void checkReadUntilAccepted(){
 	set<char> alph2 = {'0','1'};
 	vector<State<char,int> > states2;
@@ -37,237 +116,71 @@ void checkReadUntilAccepted(){
 	states2[3].acceptState = true;
 
 	DFA dfa2 = DFA(states2, alph2);
-	ofstream ofStream2;
-	ofStream2.open("dfa2.dot");
-	ofStream2<<dfa2;
-	ofStream2.close();
-
-	string command2 = "dot -Tjpg dfa2.dot -O";
-	system(command2.c_str());
+	string hole = "0001";
+	string after;
+	cout<<"Accpeted: "<<dfa2.readUntilAccepted(hole,after)<<endl;
+	cout<<"hole "<<hole<<" after "<<after<<endl;
 
 }
 
-void getProductautomaat(){
-	set<char> alph = {'0', '1'};
-	vector<State<char,int> > states;
-	states.push_back(State<char,int>());
-	states[0].transitions['0'] = 0;
-	states[0].transitions['1'] = 1;
-	states[0].acceptState = false;
+int main() {
+	/*
+    Environment global = initGlobalEnvironment();
+    Symbol plus = "+";
+    Symbol multiply = "*";
+    Symbol define = "define";
+    Symbol lambda = "lambda";
+    Symbol var = "var";
+    Expression plusSym(plus);
+    Expression multSym(multiply);
+    Expression LAMBDA(lambda);
+    Expression defineSym(define);
+    Expression varSym(var);
 
-	states.push_back(State<char,int>());
-	states[1].transitions['1'] = 0;
-	states[1].transitions['0'] = 1;
-	states[1].acceptState = true;
+    Expression three(3);
+    std::cout << evaluate(three, global).getAsInt() << std::endl; // 3
+    Expression four(4);
+    std::cout << evaluate(four, global).getAsInt() << std::endl; // 4
 
-	DFA dfa1 = DFA(states, alph);
+    Expression sumThreeFour(std::list<Expression> { // (+ 3 4)
+            plusSym, three, four});
+    std::cout << evaluate(sumThreeFour, global).getAsInt() << std::endl; // 7
 
-	ofstream ofStream1;
-	ofStream1.open("dfa1.dot");
-	ofStream1<<dfa1;
-	ofStream1.close();
+    Expression defineVarSeven(std::list<Expression> { // (define var (+ 3 4))
+        defineSym, varSym, sumThreeFour});
+    std::cout << evaluate(defineVarSeven, global) << std::endl;
+    std::cout << evaluate(varSym, global).getAsInt() << std::endl; // 7
 
+    // (define square (lambda a (* a a))
+    Symbol square = "square";
+    Symbol a = "a";
+    Expression squareSym(square);
+    Expression aSym(a);
+    Expression lambdaExp(std::list<Expression> {multSym, aSym, aSym});
+    evaluate(
+        std::list<Expression> 
+            {defineSym, squareSym, std::list<Expression> (
+                {LAMBDA, aSym, std::list<Expression>(
+                    {multSym, aSym, aSym})})}, global);
+    // (square var)
+    std::cout << evaluate(std::list<Expression> {squareSym, var}, global).getAsInt() << std::endl;
 
-	set<char> alph2 = {'0','1'};
-	vector<State<char,int> > states2;
-	states2.push_back(State<char,int>());
-	states2[0].transitions['1'] = 0;
-	states2[0].transitions['0'] = 1;
-	states2[0].acceptState = false;
+    // (define factorial (lambda n (if (< n 3) 1 (* n (factorial (- n 1))))))
+    // TODO*/
+	/*eNFA enfa = regexToeNFA(" *(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+u+v+w+x+y+z)*( +");
+	DFA dfa = enfa.modSubCnstr();
+	dfa.minimize();
 
-	states2.push_back(State<char,int>());
-	states2[1].transitions['0'] = 2;
-	states2[1].transitions['1'] = 0;
-	states2[1].acceptState = false;
-
-	states2.push_back(State<char,int>());
-	states2[2].transitions['0'] = 3;
-	states2[2].transitions['1'] = 0;
-	states2[2].acceptState = false;
-
-	states2.push_back(State<char,int>());
-	states2[3].transitions['0'] = 3;
-	states2[3].transitions['1'] = 3;
-	states2[3].acceptState = true;
-
-	DFA dfa2 = DFA(states2, alph2);
-	ofstream ofStream2;
-	ofStream2.open("dfa2.dot");
-	ofStream2<<dfa2;
-	ofStream2.close();
-
-	DFA dfa3 = dfa1*dfa2;
-	ofstream ofStream3;
-	ofStream3.open("productautomaat.dot");
-	ofStream3<<dfa3;
-	ofStream3.close();
-
-}
-
-void testMinimization() {
-
-	set<char> alphabet = {'0', '1'};
-	vector<State<char,int> > states(5);
-
-	// A
-	states[0].acceptState = true;
-	states[0].transitions['0'] = 0;
-	states[0].transitions['1'] = 1;
-
-	// B
-	states[1].acceptState = false;
-	states[1].transitions['0'] = 0;
-	states[1].transitions['1'] = 1;
-
-	// C
-	states[2].acceptState = false;
-	states[2].transitions['0'] = 3;
-	states[2].transitions['1'] = 4;
-
-	// D
-	states[3].acceptState = false;
-	states[3].transitions['0'] = 3;
-	states[3].transitions['1'] = 4;
-
-	// E
-	states[4].acceptState = false;
-	states[4].transitions['0'] = 2;
-	states[4].transitions['1'] = 4;
-
-	DFA test(states, alphabet);
-	ofstream eerste;
-	eerste.open("eerste.dot");
-	eerste << test;
-
-	test.minimize();
-	ofstream eersteminimized;
-	eersteminimized.open("eersteminimized.dot");
-	eersteminimized << test;
-
-
-
-	vector<State<char,int> > states2(8);
-
-	// A
-	states2[0].acceptState = false;
-	states2[0].transitions['0'] = 1;
-	states2[0].transitions['1'] = 5;
-
-	// B
-	states2[1].acceptState = false;
-	states2[1].transitions['0'] = 6;
-	states2[1].transitions['1'] = 2;
-
-	// C
-	states2[2].acceptState = true;
-	states2[2].transitions['0'] = 0;
-	states2[2].transitions['1'] = 2;
-
-	// D
-	states2[3].acceptState = false;
-	states2[3].transitions['0'] = 2;
-	states2[3].transitions['1'] = 6;
-
-	// E
-	states2[4].acceptState = false;
-	states2[4].transitions['0'] = 7;
-	states2[4].transitions['1'] = 5;
-
-	// F
-	states2[5].acceptState = false;
-	states2[5].transitions['0'] = 2;
-	states2[5].transitions['1'] = 6;
-
-	// G
-	states2[6].acceptState = false;
-	states2[6].transitions['0'] = 6;
-	states2[6].transitions['1'] = 4;
-
-	// H
-	states2[7].acceptState = false;
-	states2[7].transitions['0'] = 6;
-	states2[7].transitions['1'] = 2;
-
-	ofstream output;
-	ofstream output2;
-	output.open("unminimized.dot");
-	DFA testMin(states2, alphabet);
-	output << testMin;
-	output2.open("minimized.dot");
-	testMin.minimize();
-	output2 << testMin;
-
-
-	// fuck yea het werkt
-}
-
-void convertENFAtoDFA()	{
-	set<string> alph = {"0", "1", ""};
-	vector<State<string,set<int>> > states;
-	states.push_back(State<string,set<int>>());
-	set<int> set0 = {0};
-	set<int> set1 = {1};
-	set<int> set2 = {2};
-	
-	states[0].transitions[""] = set0;
-	states[0].transitions["0"] = set1;
-	states[0].transitions["1"] = set2;
-	states[0].acceptState = false;
-
-	states.push_back(State<string,set<int>>());
-	states[1].transitions[""] = set0;
-	states[1].transitions["0"] = set1;
-	states[1].transitions["1"] = set2;
-	states[1].acceptState = false;
-
-	states.push_back(State<string,set<int>>());
-	states[2].transitions[""] = set0;
-	states[2].transitions["0"] = set1;
-	states[2].transitions["1"] = set2;
-	states[2].acceptState = true;
-	
-	eNFA testENFA(states, alph);
-
-	DFA testDFA = testENFA.modSubCnstr();
-
-	ofstream testDFAOutput;
-	testDFAOutput.open("convertENFAtoDFA.dot");
-	testDFAOutput << testDFA;
-	testDFAOutput.close();
-}
-
-int main(int argc, char const* argv[]) {
-	//	checkregexPLUSregex();
-
-	//	testMinimization();
-
-	//	convertENFAtoDFA();
-
-//	testMinimization();
-	
-//	convertENFAtoDFA();
-	
-//	cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;
-	input(argc,argv);
-	//	cout<<setPoints("(a+b)*ol*(io+io(io*+o))(hj+b)*")<<endl;;
-
-	eNFA regexNFA = regexToeNFA("(a+b*)*");
-	//DFA test = regexToeNFA("baab").modSubCnstr();
-	DFA test2 = regexNFA.modSubCnstr();
-	test2.minimize();
-
-	ofstream ofs1;
-	ofstream ofs2;
-	ofs1.open("regextest.dot");
-	ofs2.open("test2.dot");
-	ofs1 << regexNFA;
-	ofs2 << test2;
-	//cout << test.readString("aab") << endl;
-	//cout << test.readString("baab") << endl;
-	//cout << test.readString("abab") << endl;
-	//cout << test.readString("aabb") << endl;
-	//cout << test.readString("aaba") << endl;
-	cout << "end" << endl;
-	return 0;
-
+	string hole = " abfg juio iop";
+	string after;
+	cout<<"Accpeted:"<<dfa.readUntilAccepted(hole,after)<<endl;
+	cout<<"hole:"<<hole<<" after:"<<after<<endl;	after="";
+	cout<<"Accpeted:"<<dfa.readUntilAccepted(hole,after)<<endl;
+	cout<<"hole:"<<hole<<" after:"<<after<<endl;	after="";
+	cout<<"Accpeted: "<<dfa.readUntilAccepted(hole,after)<<endl;
+	cout<<"hole:"<<hole<<" after:"<<after<<endl;*/
+	string input = "(define x 3)";
+	Expression ex;
+	cout<<"IsSymbol:"<<isSymbol(ex,input)<<endl;
+	cout<<"input:"<<input<<endl;
 }

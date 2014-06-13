@@ -39,7 +39,7 @@ namespace standardDFAs{
 };
 
 
-bool isSymbol(Expression& ex, std::string& input) {
+bool isSymbol(Expression& ex, string& input) {
 	string newString;
 	if(standardDFAs::checkSymbol.readUntilAccepted(input,newString)) {
 		cout<<"ExpressieString:"<<newString<<endl;
@@ -111,29 +111,27 @@ void makeDFA(string regex, string allSymboles,DFA& dfa){
 	dfa.minimize();
 }
 
-/*
-
 Expression parseList(string& input) {
 	std::list<Expression> result;
 	const string origInput = input;
-	while (input.good()) {
+	while (input.size() > 0) {
 		if (isClosingParen(input)) {
 			input = input.substr(1);
 			return Expression(result);
 		}
 		result.push_back(parse(input));
 	}
-	raise runtime_error("input + " is not a valid list");
+	throw runtime_error(input + " is not a valid list");
 }
 
 Expression parseAtom(string& input) {
 	typedef function<bool(Expression&,string&)> Lexer;
-	const static set<Lexer> lexers {
-		lexFunc(isSymbol),
-		lexFunc(isInt),
-		lexFunc(isFloat),
-		lexFunc(isBooleanTrue),
-		lexFunc(isBooleanFalse)
+	static vector<Lexer> lexers {
+		Lexer(&isSymbol),
+		Lexer(&isInt),
+		Lexer(&isFloat),
+		Lexer(&isBooleanTrue),
+		Lexer(&isBooleanFalse)
 	};
 
 	Expression result;
@@ -142,16 +140,18 @@ Expression parseAtom(string& input) {
 		if (lexer(result, input)) return result;
 		input = origInput;
 	}
-	raise runtime_error("First element of " + input + " is not a valid atom");
+	throw runtime_error("First element of " + input + " is not a valid atom");
 }
 
 Expression parse(string& input) {
-	const string origInput = input;
-	if (isOpeningParen(input))
-		return parseList(origInput.substr(1));
+	//const string origInput = input;
+	if (isOpeningParen(input)) {
+        input = input.substr(1);
+		return parseList(input);
+    }
 	else
-		return parseAtom(origInput);
- }*/
+		return parseAtom(input);
+ }
 
 string getAlphabet() {
 	return "(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+u+v+w+x+y+z+A+B+C+D+E+F+G+H+I+J+K+L+M+N+O+P+Q+R+S+T+U+V+W+X+Y+Z)";

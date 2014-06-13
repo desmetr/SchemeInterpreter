@@ -9,9 +9,10 @@
 #define PARSER_H_
 #include <map>
 #include "Expression.h"
-#include "../src/DFA.h"
-#include "../src/eNFA.h"
-#include <string.h>
+#include "DFA.h"
+#include "eNFA.h"
+#include <string>
+#include <vector>
 using namespace std;
 
 
