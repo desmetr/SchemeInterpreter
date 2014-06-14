@@ -2,7 +2,7 @@
  * DFA.cpp
  *
  *  Created on: Apr 10, 2014
- *      Author: ajay
+ *	  Author: ajay
  */
 
 #include "DFA.h"
@@ -33,25 +33,6 @@ bool DFA::readChar(char theChar) {
 bool DFA::readString(const std::string& theString) {
 	for (char c : theString) readChar(c);
 	return accepted();
-}
-
-bool DFA::readUntilAccepted( string& wholeString, string& expressionString) {
-	bool accept = false;
-	string next;
-
-	for (char c : wholeString) {
-		next += c;
-		if (readChar(c)) {
-			accept = true;
-			break;
-		}
-	}
-	if(accept){
-		wholeString = wholeString.substr(next.size()-1,string::npos);
-		expressionString = next;
-	}
-	currentState = 0;
-	return accept;
 }
 
 bool DFA::accepted() {

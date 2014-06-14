@@ -7,11 +7,12 @@
 #include <list>
 #include <stdexcept>
 
+#include "CharacterCategory.h"
 #include "Expression.h"
 #include "Environment.h"
 #include "Lambda.h"
-#include "../src/DFA.h"
-#include "../src/eNFA.h"
+#include "DFA.h"
+#include "eNFA.h"
 #include "Parser.h"
 
 // Interpretatie (uitgezonderd de parser/lexer) gebaseerd op de tutorial
@@ -92,36 +93,6 @@ Environment initGlobalEnvironment() {
 	global.addSymbol("/", divide);
 	return global;
 }
-void checkReadUntilAccepted(){
-	set<char> alph2 = {'0','1'};
-	vector<State<char,int> > states2;
-	states2.push_back(State<char,int>());
-	states2[0].transitions['1'] = 0;
-	states2[0].transitions['0'] = 1;
-	states2[0].acceptState = false;
-
-	states2.push_back(State<char,int>());
-	states2[1].transitions['0'] = 2;
-	states2[1].transitions['1'] = 0;
-	states2[1].acceptState = false;
-
-	states2.push_back(State<char,int>());
-	states2[2].transitions['0'] = 3;
-	states2[2].transitions['1'] = 0;
-	states2[2].acceptState = false;
-
-	states2.push_back(State<char,int>());
-	states2[3].transitions['0'] = 3;
-	states2[3].transitions['1'] = 3;
-	states2[3].acceptState = true;
-
-	DFA dfa2 = DFA(states2, alph2);
-	string hole = "0001";
-	string after;
-	cout<<"Accpeted: "<<dfa2.readUntilAccepted(hole,after)<<endl;
-	cout<<"hole "<<hole<<" after "<<after<<endl;
-
-}
 
 int main() {
 	/*
@@ -179,8 +150,4 @@ int main() {
 	cout<<"hole:"<<hole<<" after:"<<after<<endl;	after="";
 	cout<<"Accpeted: "<<dfa.readUntilAccepted(hole,after)<<endl;
 	cout<<"hole:"<<hole<<" after:"<<after<<endl;*/
-	string input = "(define x 3)";
-	Expression ex;
-	cout<<"IsSymbol:"<<isSymbol(ex,input)<<endl;
-	cout<<"input:"<<input<<endl;
 }

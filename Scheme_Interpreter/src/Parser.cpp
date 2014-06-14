@@ -2,24 +2,19 @@
  * GetExpression.cpp
  *
  *  Created on: Jun 6, 2014
- *      Author: ajay
+ *	  Author: ajay
  */
 
 #include "Parser.h"
 
-namespace standardDFAs{
-
-	string regexAlphabet = "(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+u+v+w+x+y+z+A+B+C+D+E+F+G+H+I+J+K+L+M+N+O+P+Q+R+S+T+U+V+W+X+Y+Z)";
-	string regexNumbers = "(0+1+2+3+4+5+6+7+8+9)";
-	string allSymboles = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#().";
-
-	string symbol = " *" + regexAlphabet + regexAlphabet + "*( +\\()";
-	string BooleanTrue = " *#t( +\\()";
-	string BooleanFalse = " *#f( +\\()";
-	string closingParen = " *\\(";
-	string openingParen = " *\\)";
-	string floatt = " *" + regexNumbers + regexNumbers + "*\\." + regexNumbers + regexNumbers + "*( +\\()";
-	string integer = " *" + regexNumbers + regexNumbers + "*( +\\()";
+namespace standardDFAs {
+	string delimiters = "( +\\()";
+	string anyWhitespace = " *";
+	string symbol = anyWhitespace + "aa*" + delimiters;
+	string closingParen = anyWhitespace + "\\(";
+	string openingParen = anyWhitespace + "\\)";
+	string floatt = anyWhitespace + "00*.00*" + delimiters;
+	string integer = anyWhitespace + "00*" + delimiters;
 
 	DFA checkSymbol;
 //	makeDFA(symbol, allSymboles, checkSymbol);
@@ -38,72 +33,31 @@ namespace standardDFAs{
 
 };
 
-
-bool isSymbol(Expression& ex, string& input) {
-	string newString;
-	if(standardDFAs::checkSymbol.readUntilAccepted(input,newString)) {
-		cout<<"ExpressieString:"<<newString<<endl;
-		ex = Expression(newString);
-		return true;
-	}
-	return false;
+StrIt isSymbol(Expression& ex, StrIt begin, StrIt end) {
+	return standardDFAs::checkSymbol.readUntilAccepted(
+		TransIt(begin, getCharacterCategory), end).getIt();
 }
 
-bool isInt(Expression& ex, string& input) {
-	string newString;
-	if(standardDFAs::checkInteger.readUntilAccepted(input,newString)) {
-		cout<<"ExpressieString:"<<newString<<endl;
-		ex = Expression(stoi(newString));
-		return true;
-	}
-	return false;
+StrIt isInt(Expression& ex, StrIt begin, StrIt end) {
+	return standardDFAs::checkInteger.readUntilAccepted(
+		TransIt(begin, getCharacterCategory), end).getIt();
 }
 
-bool isFloat(Expression& ex, string& input) {
-	string newString;
-	if(standardDFAs::checkFloat.readUntilAccepted(input,newString)) {
-		cout<<"ExpressieString:"<<newString<<endl;
-		ex = Expression(stof(newString));
-		return true;
-	}
-	return false;
+StrIt isFloat(Expression& ex, StrIt begin, StrIt end) {
+	return standardDFAs::checkFloat.readUntilAccepted(
+		TransIt(begin, getCharacterCategory), end).getIt();
 }
 
-bool isBooleanTrue(Expression& ex, string& input) {
-	string newString;
-	if(standardDFAs::checkBooleanTrue.readUntilAccepted(input,newString)) {
-		cout<<"ExpressieString:"<<newString<<endl;
-		ex = Expression(true);
-		return true;
-	}
-	return false;
+StrIt isOpeningParen(StrIt begin, StrIt end) {
+	return standardDFAs::checkOpeningParen.readUntilAccepted(
+		TransIt(begin, getCharacterCategory), end).getIt();
 }
 
-bool isBooleanFalse(Expression& ex, string& input) {
-	string newString;
-	if(standardDFAs::checkBooleanFalse.readUntilAccepted(input,newString)) {
-		cout<<"ExpressieString:"<<newString<<endl;
-		ex = Expression(true);
-		return true;
-	}
-	return false;
+StrIt isClosingParen(StrIt begin, StrIt end) {
+	return standardDFAs::checkClosingParen.readUntilAccepted(
+		TransIt(begin, getCharacterCategory), end).getIt();
 }
 
-bool isOpeningParen(string& input) {
-	string newString;
-	if(standardDFAs::checkOpeningParen.readUntilAccepted(input,newString)) {
-		return true;
-	}
-	return false;
-}
-
-bool isClosingParen(string& input) {
-	string newString;
-	if(standardDFAs::checkClosingParen.readUntilAccepted(input,newString)) {
-		return true;
-	}
-	return false;
-}
 void makeDFA(string regex, string allSymboles,DFA& dfa){
 	eNFA eNFA = regexToeNFA(regex);
 	dfa = eNFA.modSubCnstr();
@@ -111,21 +65,26 @@ void makeDFA(string regex, string allSymboles,DFA& dfa){
 	dfa.minimize();
 }
 
-Expression parseList(string& input) {
+StrIt parseList(Expression& ex, StrIt begin, StrIt end) {
 	std::list<Expression> result;
-	const string origInput = input;
-	while (input.size() > 0) {
-		if (isClosingParen(input)) {
-			input = input.substr(1);
-			return Expression(result);
+	auto it = begin;
+	while (it != end) {
+		auto newIt = isClosingParen(begin, end);
+		if (newIt != end) { // If closing paren detected
+			ex = Expression(result); // Wrap this function up
+			return next(newIt); // Return iterator past closing paren
 		}
-		result.push_back(parse(input));
+		else {
+			result.push_back(Expression());
+			it = parse(result.back(), it, end);
+				// Set it at the character that triggered the next accept state.
+		}
 	}
-	throw runtime_error(input + " is not a valid list");
+	throw runtime_error("parseList asked to parse invalid list");
 }
 
-Expression parseAtom(string& input) {
-	typedef function<bool(Expression&,string&)> Lexer;
+StrIt parseAtom(Expression& ex, StrIt begin, StrIt end) {
+	typedef function<StrIt(Expression&,StrIt,StrIt)> Lexer;
 	static vector<Lexer> lexers {
 		Lexer(&isSymbol),
 		Lexer(&isInt),
@@ -134,25 +93,29 @@ Expression parseAtom(string& input) {
 		Lexer(&isBooleanFalse)
 	};
 
-	Expression result;
-	const string origInput = input;
-	for (const Lexer& lexer : lexers) {
-		if (lexer(result, input)) return result;
-		input = origInput;
+	for (const auto& lexer : lexers) {
+		auto it = lexer(ex, begin, end);
+		if (it != end) // If the lexer accepts the string
+			return it; 
+				// Return an iterator to the character triggering the 
+				//  accept state
 	}
-	throw runtime_error("First element of " + input + " is not a valid atom");
+	// If the for loop failed, the string is invalid.
+	throw runtime_error("parseAtom asked to parse invalid atom");
 }
 
-Expression parse(string& input) {
-	//const string origInput = input;
-	if (isOpeningParen(input)) {
-        input = input.substr(1);
-		return parseList(input);
-    }
+StrIt parse(Expression& ex, StrIt begin, StrIt end) {
+	auto it = isOpeningParen(begin, end);
+	if (it != end)
+		return parseList(ex, next(it), end); 
+			// Start parsing from after opening paren
 	else
-		return parseAtom(input);
+		return parseAtom(ex, begin, end);
  }
 
-string getAlphabet() {
-	return "(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+u+v+w+x+y+z+A+B+C+D+E+F+G+H+I+J+K+L+M+N+O+P+Q+R+S+T+U+V+W+X+Y+Z)";
+Expression parse(string& s) {
+	Expression result;
+	parse(result, s.begin(), s.end());
+	return result;
 }
+

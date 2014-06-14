@@ -77,6 +77,28 @@ public:
 
 };
 
+template<typename ItType, typename UnaryOperation>
+class TransformingIterator {
+	typedef decltype(*(std::declval<ItType>())) ItDereferenceType;
+	typedef decltype(std::declval<UnaryOperation>()(std::declval<ItDereferenceType>())) ReturnType;
+	typedef std::function<ReturnType(ItDereferenceType)> UnaryOperationWrapper;
+	ItType it;
+	UnaryOperationWrapper op;
+
+public:
+	TransformingIterator(ItType it, UnaryOperation op):
+		it(it), op(UnaryOperationWrapper(op)) {}
+
+	ItType getIt() const {return it;}
+	ReturnType operator*() {return op(*it);}
+
+	TransformingIterator& operator++() {++it; return *this;}
+	TransformingIterator operator++(int) {TransformingIterator old(*this); ++*this; return old;}
+	bool operator==(ItType other) {return it == other;}
+	bool operator!=(ItType other) {return it != other;}
+	bool operator==(TransformingIterator other) {return it == other.it;}
+	bool operator!=(TransformingIterator other) {return it != other.it;}
+};
 
 //////////////////////////////////////////////////////////////////////
 class DisengagedMaybeException : public std::runtime_error {
