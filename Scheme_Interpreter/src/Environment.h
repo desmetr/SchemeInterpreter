@@ -4,6 +4,8 @@
 #include <list>
 #include <utility>
 
+#include <iostream>
+
 #include "Expression.h"
 // (define a 2)
 // (lambda (x y) (+ x y)) -> lokaal [x, y] -> globaal [a, +, * ...]

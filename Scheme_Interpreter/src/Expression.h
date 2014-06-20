@@ -47,17 +47,12 @@ public:
 
     operator bool() const;
 
-    Expression operator+(int i) const;
-    Expression operator+(double d) const;
     Expression operator+(const Expression& e) const;
-    Expression operator-(int i) const;
-    Expression operator-(double d) const;
     Expression operator-(const Expression& e) const;
-    Expression operator*(int i) const;
-    Expression operator*(double d) const;
     Expression operator*(const Expression& e) const;
-    Expression operator/(int i) const;
-    Expression operator/(double d) const;
     Expression operator/(const Expression& e) const;
+    Expression operator<(const Expression& e) const;
+    Expression operator>(const Expression& e) const;
+    Expression operator==(const Expression& e) const;
 };
 

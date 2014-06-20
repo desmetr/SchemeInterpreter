@@ -24,8 +24,6 @@
 // (define x 7)
 //
 Expression evaluate(const Expression& exp, Environment& env) {
-	std::cout << "evaluate called, type = " << exp.getType() << ", value = ";
-	exp.print(); std::cout << std::endl;
 	if (exp.getType() == Sym) // variable reference
 		return env.find(exp.getAsSymbol());
 
@@ -41,22 +39,26 @@ Expression evaluate(const Expression& exp, Environment& env) {
 	else if (expIt->getAsSymbol() == "if") { // (if test conseq alt)
 		auto& test = *(++expIt); auto& conseq= *(++expIt);
 		auto& alt= *(++expIt);
-		//return evaluate((evaluate(test,env) ? conseq : alt), env);
+		return evaluate((evaluate(test,env) ? conseq : alt), env);
 	}
 	else if (expIt->getAsSymbol() == "set!") { // (set! symbol value)
 		auto& symbol = *(++expIt); auto& value = *(++expIt);
 		env.setSymbol(symbol.getAsSymbol(), evaluate(value, env));
 	}
 	else if (expIt->getAsSymbol() == "define") { // (define symbol value)
-		std::cout << "defining new variable ";
 		auto& symbol = *(++expIt); auto& value = *(++expIt);
-		std::cout << "name = " << symbol.getAsSymbol() << std::endl;
 		env.addSymbol(symbol.getAsSymbol(), evaluate(value, env));
 	}
 	else if (expIt->getAsSymbol() == "lambda") { // (lambda (paramSym*) opExp)
 		auto& paramSymbols = *(++expIt); auto& lambdaExp = *(++expIt);
 		Lambda l(lambdaExp, paramSymbols, &env);
 		return Expression(l);
+	}
+	else if (expIt->getAsSymbol() == "list") { // (list e1 e2 ... en)
+		std::list<Expression> result;
+		while (++expIt != expAsList.end())
+			result.push_back(evaluate(*expIt, env));
+		return Expression(result);
 	}
 	// TODO: BEGIN
 	// (define square (lambda a (* a a))) -> 0 (square gedefineerd)
@@ -95,6 +97,27 @@ Environment initGlobalEnvironment() {
 		return *(params.begin()) / *std::next(params.begin());
 	}), 2);
 	global.addSymbol("/", divide);
+	// <
+	Lambda isSmaller(Ftype([](std::list<Expression>& params) {
+		return *(params.begin()) < *std::next(params.begin());
+	}), 2);
+	global.addSymbol("<", isSmaller);
+	// >
+	Lambda isGreater(Ftype([](std::list<Expression>& params) {
+		return *(params.begin()) > *std::next(params.begin());
+	}), 2);
+	global.addSymbol(">", isGreater);
+	// =
+	Lambda isEqual(Ftype([](std::list<Expression>& params) {
+		return *(params.begin()) == *std::next(params.begin());
+	}), 2);
+	global.addSymbol("=", isEqual);
+	// length
+	Lambda getLength(Ftype([](std::list<Expression>& params) {
+		return Expression(int(params.front().getAsList().size()));
+	}), 1);
+	global.addSymbol("length", isEqual);
+
 	return global;
 }
 
@@ -113,64 +136,12 @@ int main() {
 			std::cerr << "Parsing error: " << e.what() << std::endl;
 			continue;
 		}
-		//std::cout << "PARSED EXPRESSION: "; exp.print(); std::cout << std::endl;
 
-		evaluate(exp, global).print();
+		try {
+			evaluate(exp, global).print();
+		} catch (const std::exception e) {
+			std::cerr << "Evaluation error: " << e.what() << std::endl;
+			continue;
+		}
 	}
-	/*
-    Environment global = initGlobalEnvironment();
-    Symbol plus = "+";
-    Symbol multiply = "*";
-    Symbol define = "define";
-    Symbol lambda = "lambda";
-    Symbol var = "var";
-    
-	Expression plusSym(plus);
-    Expression multSym(multiply);
-    Expression LAMBDA(lambda);
-    Expression defineSym(define);
-    Expression varSym(var);
-
-    Expression three(3);
-    std::cout << evaluate(three, global).getAsInt() << std::endl; // 3
-    Expression four(4);
-    std::cout << evaluate(four, global).getAsInt() << std::endl; // 4
-
-    Expression sumThreeFour(std::list<Expression> { // (+ 3 4)
-            plusSym, three, four});
-    std::cout << evaluate(sumThreeFour, global).getAsInt() << std::endl; // 7
-
-    Expression defineVarSeven(std::list<Expression> { // (define var (+ 3 4))
-        defineSym, varSym, sumThreeFour});
-    std::cout << evaluate(defineVarSeven, global) << std::endl;
-    std::cout << evaluate(varSym, global).getAsInt() << std::endl; // 7
-
-    // (define square (lambda a (* a a))
-    Symbol square = "square";
-    Symbol a = "a";
-    Expression squareSym(square);
-    Expression aSym(a);
-    Expression lambdaExp(std::list<Expression> {multSym, aSym, aSym});
-    evaluate(
-        std::list<Expression> 
-            {defineSym, squareSym, std::list<Expression> (
-                {LAMBDA, aSym, std::list<Expression>(
-                    {multSym, aSym, aSym})})}, global);
-    // (square var)
-    std::cout << evaluate(std::list<Expression> {squareSym, var}, global).getAsInt() << std::endl;
-
-    // (define factorial (lambda n (if (< n 3) 1 (* n (factorial (- n 1))))))
-    // TODO*/
-	/*eNFA enfa = regexToeNFA(" *(a+b+c+d+e+f+g+h+i+j+k+l+m+n+o+p+q+r+s+t+u+v+w+x+y+z)*( +");
-	DFA dfa = enfa.modSubCnstr();
-	dfa.minimize();
-
-	string hole = " abfg juio iop";
-	string after;
-	cout<<"Accpeted:"<<dfa.readUntilAccepted(hole,after)<<endl;
-	cout<<"hole:"<<hole<<" after:"<<after<<endl;	after="";
-	cout<<"Accpeted:"<<dfa.readUntilAccepted(hole,after)<<endl;
-	cout<<"hole:"<<hole<<" after:"<<after<<endl;	after="";
-	cout<<"Accpeted: "<<dfa.readUntilAccepted(hole,after)<<endl;
-	cout<<"hole:"<<hole<<" after:"<<after<<endl;*/
 }

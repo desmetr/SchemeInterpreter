@@ -167,6 +167,8 @@ ExpressionType Expression::getType() const {
 int Expression::getAsInt() const {
     if (type == Int)
         return *((int*) expptr);
+	else if (type == Float)
+		return int(*((double*) expptr));
     else 
         throw std::runtime_error("getAsInt called on expression of type "); 
             //TODO
@@ -175,6 +177,8 @@ int Expression::getAsInt() const {
 double Expression::getAsFloat() const {
     if (type == Float)
         return *((double*) expptr);
+    else if (type == Int)
+        return double(*((int*) expptr));
     else 
         throw std::runtime_error("getAsFloat called on expression of type "); 
             //TODO
@@ -213,103 +217,51 @@ Expression::operator bool() const {
     else return false;
 }
 
-
-Expression Expression::operator+(int i) const {
-    if (type == Int)
-        return Expression(getAsInt() + i);
-    else
-        return Expression(getAsFloat() + float(i));
-            //TODO
-}
-Expression Expression::operator+(double d) const {
-    if (type == Int)
-        return Expression(float(getAsInt()) + d);
-    else 
-        return Expression(getAsFloat() + d);
-            //TODO
-}
 Expression Expression::operator+(const Expression& e) const {
-    if (type == Int)
-        return e + getAsInt();
-    else if (type == Float)
-        return e + getAsFloat();
-    else
-        throw std::runtime_error("operator+ called on expression of type ");
-            //TODO
+    if (type == Int && e.getType() == Int)
+        return getAsInt() + e.getAsInt();
+	else
+        return getAsFloat() + e.getAsFloat();
 }
 
-Expression Expression::operator-(int i) const {
-    if (type == Int)
-        return Expression(getAsInt() - i);
-    else
-        return Expression(getAsFloat() - float(i));
-            //TODO
-}
-Expression Expression::operator-(double d) const {
-    if (type == Int)
-        return Expression(float(getAsInt()) - d);
-    else 
-        return Expression(getAsFloat() - d);
-            //TODO
-}
 Expression Expression::operator-(const Expression& e) const {
-    if (type == Int)
-        return e - getAsInt();
-    else if (type == Float)
-        return e - getAsFloat();
-    else
-        throw std::runtime_error("operator+ called on expression of type ");
-            //TODO
+    if (type == Int && e.getType() == Int)
+        return getAsInt() - e.getAsInt();
+	else
+        return getAsFloat() - e.getAsFloat();
 }
 
-Expression Expression::operator*(int i) const {
-    if (type == Int)
-        return Expression(getAsInt() * i);
-    else
-        return Expression(getAsFloat() * float(i));
-            //TODO
-}
-Expression Expression::operator*(double d) const {
-    if (type == Int)
-        return Expression(float(getAsInt()) * d);
-    else 
-        return Expression(getAsFloat() * d);
-            //TODO
-}
 Expression Expression::operator*(const Expression& e) const {
-    if (type == Int)
-        return e * getAsInt();
-    else if (type == Float)
-        return e * getAsFloat();
-    else
-        throw std::runtime_error("operator+ called on expression of type ");
-            //TODO
+    if (type == Int && e.getType() == Int)
+        return getAsInt() * e.getAsInt();
+	else
+        return getAsFloat() * e.getAsFloat();
 }
 
-Expression Expression::operator/(int i) const {
-    if (type == Int)
-        return Expression(getAsInt() / i);
-    else
-        return Expression(getAsFloat() / float(i));
-            //TODO
-}
-Expression Expression::operator/(double d) const {
-    if (type == Int)
-        return Expression(float(getAsInt()) / d);
-    else 
-        return Expression(getAsFloat() / d);
-            //TODO
-}
 Expression Expression::operator/(const Expression& e) const {
-    if (type == Int)
-        return e / getAsInt();
-    else if (type == Float)
-        return e / getAsFloat();
-    else
-        throw std::runtime_error("operator+ called on expression of type ");
-            //TODO
+	return getAsFloat() / e.getAsFloat();
 }
 
+Expression Expression::operator<(const Expression& e) const {
+    if (type == Int && e.getType() == Int)
+        return getAsInt() < e.getAsInt();
+	else
+        return getAsFloat() < e.getAsFloat();
+}
+
+Expression Expression::operator>(const Expression& e) const {
+    if (type == Int && e.getType() == Int)
+        return getAsInt() > e.getAsInt();
+	else
+        return getAsFloat() > e.getAsFloat();
+}
+
+Expression Expression::operator==(const Expression& e) const {
+    if (type == Int && e.getType() == Int)
+        return getAsInt() == e.getAsInt();
+	else
+        return getAsFloat() == e.getAsFloat();
+}
 /////////////////// LAMBDA MEMORY STUFF ////////////////////////////////////////
 #include "Lambda.h"
 

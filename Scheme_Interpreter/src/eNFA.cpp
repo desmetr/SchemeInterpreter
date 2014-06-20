@@ -363,6 +363,7 @@ string infixToPostfix(string expression) {
 	}
 	return postfix;
 }
+
 eNFA regexToeNFA(std::string regexBegin) {
 	stack<eNFA> astack;
 	string regex = setPoints(regexBegin);
@@ -381,7 +382,7 @@ eNFA regexToeNFA(std::string regexBegin) {
 		else if(token=='*'){
 			assert(astack.size()>=1);
 			eNFA top = astack.top();
-			astack.pop();
+		astack.pop();
 			astack.push(*top);
 		}
 		else if(token=='+'){
@@ -404,4 +405,3 @@ eNFA regexToeNFA(std::string regexBegin) {
 	assert(astack.size()==1);
 	return astack.top();
 }
-

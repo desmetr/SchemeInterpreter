@@ -213,7 +213,6 @@ DFA operator *(const DFA& DFA1, const DFA& DFA2) {
 void DFA::addSymbols(set<char> symbols) {
 	for(char sym : symbols){
 		if( this->alphabet.find(sym) == this->alphabet.end()){
-			cout<<sym<<endl;
 			this->alphabet.insert(sym);
 			for(auto &state : this->states){
 				state.transitions[sym] = this->states.size();

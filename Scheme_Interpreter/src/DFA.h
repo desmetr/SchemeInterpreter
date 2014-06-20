@@ -45,10 +45,8 @@ public:
 	//  equivalent of end.
 	// Automatically resets the DFA.
 	ItType1 readUntilAccepted(ItType1 begin, ItType2 end) {
-		cout << "DFA now interpreting: " << string(begin.getIt(), end) << endl;
 		auto it = begin;
 		for (; it != end; it++) {
-			cout << "\t" << *it << endl;
 			if (readChar(*it)) break;
 		}
 		reset();
@@ -59,7 +57,6 @@ public:
 	// Identical to readUntilAccepted but triggers on the first character
 	//  that makes the DFA REJECT the string in stead.
 	ItType1 readUntilRejected(ItType1 begin, ItType2 end) {
-		cout << "DFA now interpreting: " << string(begin.getIt(), end) << endl;
 		auto it = begin;
 		for (; it != end; it++) {
 			if (!readChar(*it)) break;
@@ -76,6 +73,10 @@ public:
 
 inline DFA regexToDFA(string regex, set<char> alphabet) {
 	auto result = regexToeNFA(regex).modSubCnstr();
+	//if (regex == "\\(") {
+		//ofstream ofs("openingparen_eNFA.dot");
+		//ofs << enfa;
+	//}
 	result.addSymbols(alphabet);
 	return result;
 }
