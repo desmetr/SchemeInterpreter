@@ -12,7 +12,6 @@
 #include <string>
 #include <map>
 #include "Automaton.h"
-#include "DFA.h"
 #include <iostream>
 #include <algorithm>
 
@@ -20,9 +19,10 @@
 #include <stack>
 #include <utility>
 #include "generic.h"
-#include "DFA.h"
 
 using namespace std;
+
+class DFA;
 
 class eNFA: public Automaton< std::string,std::set<int> > {
 private:
@@ -45,10 +45,12 @@ public:
 	eNFA operator*();							//regex*
 };
 
-eNFA geteNFA(std::string alphabet);
+eNFA geteNFA(string alphabet);
 eNFA geteNFA(char symbool);
 string setPoints(string regex);
-eNFA regexToeNFA(std::string regex);
+eNFA regexToeNFA(string regexBegin);
 void replace(string& input);
+
+#include "DFA.h"
 
 #endif /* ENFA_H_ */

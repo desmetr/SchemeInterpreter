@@ -15,6 +15,10 @@ void* lambdaCopyCreator(void*);
 static const auto copyFunction
     = CopyCreator(&lambdaCopyCreator); 
 
+void* copyNone(void* ptr) {
+	return nullptr;
+}
+
 static const std::map<ExpressionType,CopyCreator> copyCreators =
     { 
         {Int      , copyT<int>    },
@@ -22,6 +26,7 @@ static const std::map<ExpressionType,CopyCreator> copyCreators =
         {Sym      , copyT<Symbol> },
         {List     , copyT<std::list<Expression>> },
         {Function , copyFunction  },
+        {None 	  , copyNone 	  },
     };
 
 
@@ -76,11 +81,41 @@ static const std::map<ExpressionType,TruthTest> truthTests =
 static const std::map<ExpressionType,std::string> typeToStringMap =
     {
         {Int      , "Int" },
-        {Float    , "Float"}, 
-        {Boolean  , "Boolean"}, 
-        {Sym      , "Sym"}, 
-        {List     , "List"}, 
-        {Function , "Function"}, 
+        {Float    , "Float"},
+        {Boolean  , "Boolean"},
+        {Sym      , "Sym"},
+        {List     , "List"},
+        {Function , "Function"},
+    };
+
+/////////////////// OUTPUT METHODS /////////////////////////////////////////////
+typedef std::function<void(void*)> Printer;
+
+static const auto printSymbol
+	= Printer([](void* ptr){std::cout << *((Symbol*) ptr);});
+static const auto printInt 
+	= Printer([](void* ptr) {std::cout << *((int*) ptr);});
+static const auto printFloat 
+	= Printer([](void* ptr) {std::cout << *((double*) ptr);});
+static const auto printList = Printer([](void* ptr) {
+	std::cout << "(";
+	for (const Expression& ex : *((std::list<Expression>*) ptr)) {
+		ex.print();
+		std::cout << " ";
+	}
+	std::cout << ")";
+});
+static const auto printNothing 
+	= Printer([](void* ptr) {});
+	
+static const std::map<ExpressionType,Printer> printers =
+    { 
+        {Int      , printInt       },
+        {Float    , printFloat 	   }, 
+        {Sym      , printSymbol    }, 
+        {List     , printList      }, 
+        {Function , printNothing   }, 
+        {None 	  , printNothing   }, 
     };
 
 /////////////////// CLASS METHODS //////////////////////////////////////////////
@@ -119,6 +154,10 @@ Expression::Expression(const Expression& v) {
 
 Expression::~Expression() {
     if (expptr) deallocators.at(type)(expptr);
+}
+
+void Expression::setType(ExpressionType t) {
+	type = t;
 }
 
 ExpressionType Expression::getType() const {
@@ -161,6 +200,10 @@ const std::list<Expression>& Expression::getAsList() const {
     else 
         throw std::runtime_error("getAsList called on expression of type "); 
             //TODO
+}
+
+void Expression::print() const {
+	printers.at(getType())(expptr);
 }
 
 /////////////////// OPERATORS //////////////////////////////////////////////////
@@ -266,7 +309,6 @@ Expression Expression::operator/(const Expression& e) const {
         throw std::runtime_error("operator+ called on expression of type ");
             //TODO
 }
-
 
 /////////////////// LAMBDA MEMORY STUFF ////////////////////////////////////////
 #include "Lambda.h"

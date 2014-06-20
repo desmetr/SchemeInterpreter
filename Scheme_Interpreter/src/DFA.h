@@ -35,7 +35,7 @@ public:
 	void reset();
 	void eliminateUnreachableStates();
 	void minimize();
-	void addSymbols(string symbols);
+	void addSymbols(set<char> symbols);
 
 	template<typename ItType1, typename ItType2>
 	// ItType should implement postfix increment operator and should 
@@ -43,15 +43,41 @@ public:
 	// Returns an ItType1 pointing to the element that triggered acceptance if
 	//  an accepting state was encountered. Otherwise, returns the ItType1
 	//  equivalent of end.
+	// Automatically resets the DFA.
 	ItType1 readUntilAccepted(ItType1 begin, ItType2 end) {
+		cout << "DFA now interpreting: " << string(begin.getIt(), end) << endl;
 		auto it = begin;
-		for (; it != end; it++)
+		for (; it != end; it++) {
+			cout << "\t" << *it << endl;
 			if (readChar(*it)) break;
+		}
+		reset();
+		return it;
+	}
+
+	template<typename ItType1, typename ItType2>
+	// Identical to readUntilAccepted but triggers on the first character
+	//  that makes the DFA REJECT the string in stead.
+	ItType1 readUntilRejected(ItType1 begin, ItType2 end) {
+		cout << "DFA now interpreting: " << string(begin.getIt(), end) << endl;
+		auto it = begin;
+		for (; it != end; it++) {
+			if (!readChar(*it)) break;
+		}
+		reset();
 		return it;
 	}
 	
 	friend DFA operator*(const DFA &DFA1, const DFA &DFA2);		//geeft de productautomaat terug van DFA1 en DFA2
 	friend std::ostream& operator<< (std::ostream &out, DFA &dfa);
 };
+
+#include "eNFA.h"
+
+inline DFA regexToDFA(string regex, set<char> alphabet) {
+	auto result = regexToeNFA(regex).modSubCnstr();
+	result.addSymbols(alphabet);
+	return result;
+}
 
 #endif /* DFA_H_ */

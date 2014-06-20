@@ -34,6 +34,9 @@ StrIt isOpeningParen(StrIt begin, StrIt end);
 // If true, returns a StrIt on the closing paren, if false, returns end;
 StrIt isClosingParen(StrIt begin, StrIt end);
 
+// Returns an iterator to the first non-whitespace character;
+StrIt trimWhitespace(StrIt begin, StrIt end);
+
 void makeDFA(string regex, string allSymboles, DFA& dfa);
 
 // Parses the first element of the string, assuming that this is a list.
@@ -45,7 +48,7 @@ StrIt parseAtom(Expression& ex, StrIt begin, StrIt end);
 // Parses the entire string and fills in an expression object.
 StrIt parse(Expression& ex, StrIt begin, StrIt end);
 
-// Parses the entire string and returns an expression object.
-Expression parse(string s);
+// Parses the entire string and fills in an expression object.
+Expression parse(Expression& result, string& s);
 
 #endif /* PARSER_H_ */

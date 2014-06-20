@@ -405,6 +405,3 @@ eNFA regexToeNFA(std::string regexBegin) {
 	return astack.top();
 }
 
-
-
-

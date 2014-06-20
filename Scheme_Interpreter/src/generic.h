@@ -203,7 +203,7 @@ auto getSubsets(const CtnrType<ValueType,CtnrArgTypes...>& ctnr)
                     sCopy.insert(v);
                     result.insert(sCopy);
                 }
-            } 
+            }
             return result;
         }
     };

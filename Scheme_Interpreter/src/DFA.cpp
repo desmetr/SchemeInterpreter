@@ -13,6 +13,7 @@ DFA::DFA(const std::vector<State<char,int> >& states, const std::set<char>& alph
 : Automaton(states, alphabet)
 {
 	currentState = 0;
+    minimize();
 }
 
 DFA::~DFA() {
@@ -93,7 +94,7 @@ void DFA::minimize() {
 	TestDistinguishabilityType testDistinguishability = memoize(
 			TestDistinguishabilityType([&](int i, int j,
 					std::set< std::set<int> >& pairsToIgnore)
-					{
+	{
 		if (i == j) {
 			//a state is equivalent with itself
 			pairsToIgnore.erase({i,j});
@@ -122,7 +123,7 @@ void DFA::minimize() {
 			pairsToIgnore.erase({i,j});
 			return result;
 		}
-					}));
+    }));
 	// first, we eliminate unreachable states
 	eliminateUnreachableStates();
 
@@ -209,7 +210,7 @@ DFA operator *(const DFA& DFA1, const DFA& DFA2) {
 	return DFA(states,newAlph);
 }
 
-void DFA::addSymbols(string symbols) {
+void DFA::addSymbols(set<char> symbols) {
 	for(char sym : symbols){
 		if( this->alphabet.find(sym) == this->alphabet.end()){
 			cout<<sym<<endl;

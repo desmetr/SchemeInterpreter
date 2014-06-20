@@ -24,6 +24,8 @@
 // (define x 7)
 //
 Expression evaluate(const Expression& exp, Environment& env) {
+	std::cout << "evaluate called, type = " << exp.getType() << ", value = ";
+	exp.print(); std::cout << std::endl;
 	if (exp.getType() == Sym) // variable reference
 		return env.find(exp.getAsSymbol());
 
@@ -46,7 +48,9 @@ Expression evaluate(const Expression& exp, Environment& env) {
 		env.setSymbol(symbol.getAsSymbol(), evaluate(value, env));
 	}
 	else if (expIt->getAsSymbol() == "define") { // (define symbol value)
+		std::cout << "defining new variable ";
 		auto& symbol = *(++expIt); auto& value = *(++expIt);
+		std::cout << "name = " << symbol.getAsSymbol() << std::endl;
 		env.addSymbol(symbol.getAsSymbol(), evaluate(value, env));
 	}
 	else if (expIt->getAsSymbol() == "lambda") { // (lambda (paramSym*) opExp)
@@ -95,6 +99,24 @@ Environment initGlobalEnvironment() {
 }
 
 int main() {
+	Environment global = initGlobalEnvironment();
+	while (true) {
+		std::cout << std::endl << "> ";
+		string input;
+		getline(cin, input);
+		input.push_back(' ');
+
+		Expression exp;
+		try {
+			parse(exp, input);
+		} catch (const std::runtime_error e) {
+			std::cerr << "Parsing error: " << e.what() << std::endl;
+			continue;
+		}
+		//std::cout << "PARSED EXPRESSION: "; exp.print(); std::cout << std::endl;
+
+		evaluate(exp, global).print();
+	}
 	/*
     Environment global = initGlobalEnvironment();
     Symbol plus = "+";
@@ -102,7 +124,8 @@ int main() {
     Symbol define = "define";
     Symbol lambda = "lambda";
     Symbol var = "var";
-    Expression plusSym(plus);
+    
+	Expression plusSym(plus);
     Expression multSym(multiply);
     Expression LAMBDA(lambda);
     Expression defineSym(define);

@@ -13,9 +13,9 @@
 #include <string>
 #include <fstream>
 
-template<typename keyType, typename valueType>
+template<typename KeyType, typename ValueType>
 struct State {
-	std::map<keyType, valueType> transitions;
+	std::map<KeyType, ValueType> transitions;
 	bool acceptState;
 	State(){
 		acceptState=false;
@@ -27,18 +27,20 @@ struct State {
 	bool acceptState;
 };*/
 
-template<typename keyType, typename valueType>
+template<typename KeyType, typename ValueType>
 class Automaton {
 protected:
 // Attributes used in subclasses.
-	std::vector<State<keyType,valueType> > states;
-	std::set<keyType> alphabet;
+	std::vector<State<KeyType,ValueType> > states;
+	std::set<KeyType> alphabet;
 
 public:
-	Automaton(std::vector<State<keyType,valueType> > states, std::set<keyType> alphabet)
+	Automaton(std::vector<State<KeyType,ValueType> > states, std::set<KeyType> alphabet)
 	: states(states)
 	, alphabet(alphabet)
 	{}
+
+	void setAlphabet(std::set<KeyType> newAlphabet) {alphabet = newAlphabet;}
 	virtual ~Automaton() {}
 };
 

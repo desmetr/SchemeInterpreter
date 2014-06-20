@@ -30,12 +30,20 @@ public:
     Expression(const Expression& v);
     ~Expression();
 
+    void setType(ExpressionType t);
+
+    template<typename ValueType>
+    void setVal(const ValueType& val) {
+        expptr = (void*) new ValueType(val);
+    }
+
     ExpressionType getType() const;
     int getAsInt() const;
     double getAsFloat() const;
     const Symbol& getAsSymbol() const;
     const Lambda& getAsFunction() const;
     const std::list<Expression>& getAsList() const;
+    void print() const;
 
     operator bool() const;
 
