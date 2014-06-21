@@ -2,9 +2,11 @@
 
 #include <functional>
 #include <list>
+#include <memory>
 
 #include "Expression.h"
 #include "Environment.h"
+#include "Evaluate.h"
 
 Expression evaluate(const Expression& exp, Environment& env); //main.cpp
 
@@ -18,7 +20,7 @@ class Lambda
 public:
     Lambda();
     Lambda(Expression& exp, Expression& symbols,
-           Environment* outer);
+           std::shared_ptr<Environment> outer);
     Lambda(Ftype f, int nArgsExpected);
 
     Expression operator()(std::list<Expression>& params) const;

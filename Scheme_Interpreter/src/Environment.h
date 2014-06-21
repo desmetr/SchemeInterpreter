@@ -3,22 +3,24 @@
 #include <map>
 #include <list>
 #include <utility>
+#include <memory>
 
 #include <iostream>
 
 #include "Expression.h"
+#include "Evaluate.h"
 // (define a 2)
 // (lambda (x y) (+ x y)) -> lokaal [x, y] -> globaal [a, +, * ...]
 class Environment 
 {
     std::map<Symbol,Expression> dict;
-    Environment* outer;
+    std::shared_ptr<Environment> outer;
 
 public:
     Environment();
     Environment(const std::list<Symbol>& symbols, 
                 const std::list<Expression>& values,
-                Environment* outer=nullptr);
+                std::shared_ptr<Environment> outer=nullptr);
     
     Expression& find(const Symbol& s);
     void addSymbol(const Symbol& s, const Expression& e);

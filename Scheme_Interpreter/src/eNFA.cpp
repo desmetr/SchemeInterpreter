@@ -280,6 +280,7 @@ eNFA geteNFA(char token) {
 	states1[0].transitions[symbool] = set1;
 	states1[0].acceptState = false;
 	states1.push_back(State<string,set<int>>());
+	states1[1].acceptState = true;
 	eNFA enfa1(states1,alph1);
 	return enfa1;
 }

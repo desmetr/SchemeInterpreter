@@ -2,7 +2,7 @@
 
 Lambda::Lambda() {}
 Lambda::Lambda(Expression& exp, Expression& symbols,
-               Environment* outer)
+               std::shared_ptr<Environment> outer)
 {
     std::list<Symbol> symbolList;
     if (symbols.getType() == List)
@@ -14,8 +14,9 @@ Lambda::Lambda(Expression& exp, Expression& symbols,
     nArgsExpected = symbolList.size();
 
     f = [=](std::list<Expression>& params) -> Expression {
-        Environment newEnvironment(symbolList, params, outer);
-        return evaluate(exp, newEnvironment);
+        std::shared_ptr<Environment> newEnvptr
+            (new Environment(symbolList, params, outer));
+        return evaluate(exp, newEnvptr);
     };
 }
 
