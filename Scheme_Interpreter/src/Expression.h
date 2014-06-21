@@ -29,6 +29,7 @@ public:
     Expression(Lambda& l);
     Expression(const Expression& v);
     ~Expression();
+    Expression& operator=(const Expression& other);
 
     void setType(ExpressionType t);
 

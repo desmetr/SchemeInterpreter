@@ -25,6 +25,13 @@ Expression evaluate(const Expression& exp, std::shared_ptr<Environment> envptr)
 			envptr->setSymbol(symbol.getAsSymbol(), evaluate(value, envptr));
             return Expression();
 		}
+        else if (expIt->getAsSymbol() == "let") { // (let symbol value exp)
+            auto& symbol = *(++expIt); auto& value = *(++expIt);
+            auto& exp = *(++expIt);
+            std::shared_ptr<Environment> local
+                (new Environment({symbol.getAsSymbol()}, {evaluate(value, envptr)}, envptr));
+            return evaluate(exp, local);
+        }
 		else if (expIt->getAsSymbol() == "define") { // (define symbol value)
 			auto& symbol = *(++expIt); auto& value = *(++expIt);
 			envptr->addSymbol(symbol.getAsSymbol(), evaluate(value, envptr));
@@ -41,8 +48,12 @@ Expression evaluate(const Expression& exp, std::shared_ptr<Environment> envptr)
 				result.push_back(evaluate(*expIt, envptr));
 			return Expression(result);
 		}
+        else if (expIt->getAsSymbol() == "do") {
+            while (++expIt != std::prev(expAsList.end()))
+                evaluate(*expIt, envptr);
+            return evaluate(expAsList.back(), envptr);
+        }
 	}
-	// TODO: BEGIN
 	// (define square (lambda a (* a a))) -> 0 (square gedefineerd)
 	// (define multiplyBySelf square)
 	// (multiplyBySelf (+ 3 4)) -> (square 7)

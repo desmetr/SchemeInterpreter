@@ -159,6 +159,13 @@ Expression::~Expression() {
     if (expptr) deallocators.at(type)(expptr);
 }
 
+Expression& Expression::operator=(const Expression& other) {
+    if (other.type > None) 
+        throw std::runtime_error("attempt to copy-construct from nonexistant type");
+    else type = other.type;
+    expptr = copyCreators.at(other.type)(other.expptr);
+}
+
 void Expression::setType(ExpressionType t) {
 	type = t;
 }
