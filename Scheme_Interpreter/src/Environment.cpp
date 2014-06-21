@@ -6,7 +6,7 @@ Environment::Environment()
 
 Environment::Environment(const std::list<std::string>& symbols, 
                          const std::list<Expression>& values,
-                         Environment* outer) 
+                         std::shared_ptr<Environment> outer) 
 : outer(outer)
 {
     static const auto makepair = [](const std::string& s, const Expression& v)

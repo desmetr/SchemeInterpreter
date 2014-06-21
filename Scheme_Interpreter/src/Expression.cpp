@@ -37,6 +37,8 @@ void lambdaDeallocator(void*);
 template<typename T>
 void deallocateT(void* ptr) {delete (T*) ptr;}
 
+void doNothing(void* ptr) {}
+
 static const auto deallocateFunction
     = Deallocator(&lambdaDeallocator); // Lambda.h
 
@@ -46,7 +48,8 @@ static const std::map<ExpressionType,Deallocator> deallocators =
         {Float      , deallocateT<double>                   },
         {Sym        , deallocateT<Symbol>                   },
         {List       , deallocateT<std::list<Expression>>    },
-        {Function   , deallocateFunction                    }
+        {Function   , deallocateFunction                    },
+        {None 		, doNothing								}
     };
 
 

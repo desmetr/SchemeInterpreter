@@ -1,6 +1,6 @@
 CXX		= g++-4.8
 CXXFLAGS	= -std=c++11 -ggdb
-EXECUTABLE  = KOENtest
+EXECUTABLE  = scheme_interpreter
 EXTENSION   = cpp
 SOURCES	 = $(basename $(shell find . -name '*.$(EXTENSION)'))
 
