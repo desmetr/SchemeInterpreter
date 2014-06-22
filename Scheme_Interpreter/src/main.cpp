@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <list>
 #include <stdexcept>
+#include <stack>
 
 #include "CharacterCategory.h"
 #include "Expression.h"
@@ -16,6 +17,43 @@
 #include "Parser.h"
 #include "Evaluate.h"
 
+void deleteTabAndExtraSpace(string& input){
+	string::iterator letter = input.begin();
+	int count = 0;
+	while( letter != input.end()){
+		if(*letter == '\t'){
+			letter = input.erase(letter);
+			count = 0;
+		}
+		else if(*letter == ' '){
+			++count;
+			++letter;
+		}
+		else{
+			if(count > 1){
+				letter = input.erase((letter-(count-1)),letter);
+			}
+			else{
+				++letter;
+			}
+			count = 0;
+		}
+	}
+}
+
+
+bool checkMatchingParen(string input){
+	stack<char> stackk;
+	for(char letter: input){
+		if(letter == '('){
+			stackk.push(letter);
+		}
+		else if(letter == ')'){
+			stackk.pop();
+		}
+	}
+	return stackk.empty();
+}
 void initGlobalEnvironment(Environment& global) {
 	// +
 	Lambda add(Ftype([](std::list<Expression>& params) {
@@ -66,7 +104,7 @@ void initGlobalEnvironment(Environment& global) {
 		return Expression(result);
 	}), 2);
 	global.addSymbol("cons", cons);
-	
+
 	// car
 	Lambda car(Ftype([](std::list<Expression>& params) {
 		return params.front().getAsList().front();
@@ -76,8 +114,8 @@ void initGlobalEnvironment(Environment& global) {
 	// cdr
 	Lambda cdr(Ftype([](std::list<Expression>& params) {
 		return Expression(std::list<Expression>(
-							std::next(params.front().getAsList().begin()), 
-							params.front().getAsList().end()));
+				std::next(params.front().getAsList().begin()),
+				params.front().getAsList().end()));
 	}), 1);
 	global.addSymbol("cdr", cdr);
 
@@ -99,9 +137,22 @@ int main(int argc, char* argv[]) {
 
 		if (infile.is_open() and infile.good())
 		{
-			string input = "";
-			while (getline(infile, input))
+			while (true)
 			{
+				string input = "";
+				string line = "";
+				bool a = false;
+				do{
+					if(!getline(infile, line)){
+						a = true;
+						break;
+					}
+					input += line;
+
+				}while(!checkMatchingParen(input));
+
+				if (a) break;
+				deleteTabAndExtraSpace(input);
 				try 
 				{
 					parse(exp, input);
@@ -129,8 +180,16 @@ int main(int argc, char* argv[]) {
 	}
 	while (true) {
 		std::cout << std::endl << "> ";
-		string input;
-		getline(cin, input);
+		string input = "";
+		string line = "";
+		do{
+
+			getline(cin, line);
+			input += line;
+
+		}while(!checkMatchingParen(input));
+
+		deleteTabAndExtraSpace(input);
 		input.push_back(' ');
 
 		Expression exp;
@@ -142,10 +201,10 @@ int main(int argc, char* argv[]) {
 		}
 
 		//try {
-			evaluate(exp, global_ptr).print();
+		evaluate(exp, global_ptr).print();
 		//} catch (const std::exception e) {
-			//std::cerr << "Evaluation error: " << e.what() << std::endl;
-			//continue;
+		//std::cerr << "Evaluation error: " << e.what() << std::endl;
+		//continue;
 		//}
 	}
 }
