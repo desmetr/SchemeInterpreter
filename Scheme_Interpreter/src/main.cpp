@@ -88,9 +88,45 @@ void initGlobalEnvironment(Environment& global) {
 	global.addSymbol("length", getLength);
 }
 
-int main() {
-    std::shared_ptr<Environment> global_ptr(new Environment);
-    initGlobalEnvironment(*global_ptr);
+int main(int argc, char* argv[]) {
+	std::shared_ptr<Environment> global_ptr(new Environment);
+	initGlobalEnvironment(*global_ptr);
+
+	if (argc > 1)	
+	{
+		Expression exp;
+		ifstream infile(argv[1]);
+
+		if (infile.is_open() and infile.good())
+		{
+			string input = "";
+			while (getline(infile, input))
+			{
+				try 
+				{
+					parse(exp, input);
+				} 
+				catch (const std::runtime_error e) 
+				{
+					std::cerr << "Parsing error: " << e.what() << std::endl;
+					continue;
+				}
+				try 
+				{
+					evaluate(exp, global_ptr).print();
+				} 
+				catch (const std::exception e) 
+				{
+					std::cerr << "Evaluation error: " << e.what() << std::endl;
+					continue;
+				}
+			}
+		}
+		else
+		{
+			cout << "Failed to open file." << endl;
+		}
+	}
 	while (true) {
 		std::cout << std::endl << "> ";
 		string input;
