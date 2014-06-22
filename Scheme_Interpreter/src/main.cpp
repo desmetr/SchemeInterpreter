@@ -105,11 +105,11 @@ int main() {
 			continue;
 		}
 
-		try {
+		//try {
 			evaluate(exp, global_ptr).print();
-		} catch (const std::exception e) {
-			std::cerr << "Evaluation error: " << e.what() << std::endl;
-			continue;
-		}
+		//} catch (const std::exception e) {
+			//std::cerr << "Evaluation error: " << e.what() << std::endl;
+			//continue;
+		//}
 	}
 }

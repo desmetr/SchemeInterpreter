@@ -1,0 +1,36 @@
+INTRODUCTIE
+
+Slide: Symbool van scheme (http://upload.wikimedia.org/wikipedia/commons/3/39/Lambda_lc.svg) en onze namen
+
+gewoon zeggen wat ons project is
+
+
+WAT IS SCHEME?
+
+We zullen starten met een beetje achtergrondinformatie over Scheme. Scheme is een dialect van Lisp, een van de oudste programmeertalen die vandaag nog in gebruik zijn, en een taal die nog steeds bekend staat om zijn elegantie en eenvoud. Onderzoek gerelateerd aan Lisp heeft geleid tot het bedenken van belangrijke concepten in de moderne informatica, zoals 
+    - recursie,
+    - boomstructuren,
+    - dynamic typing,
+    - garbage collection,
+    - conditionele expressies,
+    - functies van hogere orden enzovoorts
+
+Een Lisp programma is volledig opgebouwd uit S-expressies. Een S-expressie kan je eenvoudig recursief beschrijven als 
+    - Een atoom (basisgeval), of
+    - Stel dat x en y S-expressies zijn, dan is (x . y) ook een S-expressie, waarbij het punt staat voor 'concatenatie'. We verkorten deze notatie in Lisp: we schrijven "de lijst (x y z)" ipv (x . (y . (z . NULL))).
+
+Op deze manier kunnen we in Lisp en zijn dialecten complexe ideeen op een uniforme en eenvoudige manier uitdrukken. 
+
+Slide: onder elkaar de atomen 42, 12.54, pi, squareroot
+Getallen, symbolen (strings), functies, variabelen etc worden uitgedrukt als atomen.
+
+Slide: onder elkaar de lijsten (34 267 1 23), (+ 7 9), (define x 4), (define square (lambda a (* a a))), (square 4)
+Lijsten zullen we dan gebruiken om
+    - data te groeperen (eerste voorbeeld)
+    - functies toe te passen op parameters (tweede voorbeeld)
+    - speciale constructies van de taal aan te roepen (zoals 'define' en 'lambda', op het eerste zicht lijken deze op functieaanroepingen maar intern werken ze anders)
+
+Je ziet dus dat de syntax van Scheme opvallend eenvoudig is. De code wordt net als de data eenvoudigweg in lijsten geplaatst, Lisp maakt dus geen strikt onderscheid tussen wat code is en wat data is.
+
+
+work in progress...

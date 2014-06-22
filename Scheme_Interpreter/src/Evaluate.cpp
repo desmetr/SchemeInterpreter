@@ -2,7 +2,6 @@
 
 Expression evaluate(const Expression& exp, std::shared_ptr<Environment> envptr) 
 {
-	//std::cout << "Evaluating expression, type = " << exp.getType() << "; value = "; exp.print(); std::cout << std::endl;
 	if (exp.getType() == Sym) // variable reference
 		return envptr->find(exp.getAsSymbol());
 
@@ -54,16 +53,11 @@ Expression evaluate(const Expression& exp, std::shared_ptr<Environment> envptr)
             return evaluate(expAsList.back(), envptr);
         }
 	}
-	// (define square (lambda a (* a a))) -> 0 (square gedefineerd)
-	// (define multiplyBySelf square)
-	// (multiplyBySelf (+ 3 4)) -> (square 7)
+    // evaluate as a function call ~ (func arg1 arg2 ... argN)
 	std::list<Expression> exps;
 	for (auto& e: expAsList)
 		exps.push_back(evaluate(e, envptr));
 	Expression function = exps.front();
-	//std::cout << "TEST: " << function.getType() << std::endl;
 	exps.pop_front();
-	//std::cout << "function: ";
-	//function.print(); std::cout << std::endl;
 	return function.getAsFunction()(exps);
 }
