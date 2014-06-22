@@ -97,7 +97,7 @@ void initGlobalEnvironment(Environment& global) {
 	}), 2);
 	global.addSymbol("=", isEqual);
 
-	// cons
+	// cons: ~push_front - (cons 1 (list 2 3)) -> (1 2 3)
 	Lambda cons(Ftype([](std::list<Expression>& params) {
 		std::list<Expression> result = params.back().getAsList();
 		result.push_front(params.front());
@@ -105,13 +105,13 @@ void initGlobalEnvironment(Environment& global) {
 	}), 2);
 	global.addSymbol("cons", cons);
 
-	// car
+	// car: eerste element van een lijst opvragen - (car (list 1 2 3)) -> 1
 	Lambda car(Ftype([](std::list<Expression>& params) {
 		return params.front().getAsList().front();
 	}), 1);
 	global.addSymbol("car", car);
 
-	// cdr
+	// cdr: alles behalve eerste element van een lijst - (cdr (list 1 2 3)) -> (2 3)
 	Lambda cdr(Ftype([](std::list<Expression>& params) {
 		return Expression(std::list<Expression>(
 				std::next(params.front().getAsList().begin()),
@@ -149,9 +149,12 @@ int main(int argc, char* argv[]) {
 					}
 					input += line;
 
-				}while(!checkMatchingParen(input));
+				} while(!checkMatchingParen(input));
 
 				if (a) break;
+				if(line == ""){
+					continue;
+				}
 				deleteTabAndExtraSpace(input);
 				try 
 				{
@@ -188,7 +191,9 @@ int main(int argc, char* argv[]) {
 			input += line;
 
 		}while(!checkMatchingParen(input));
-
+		if(line == ""){
+			continue;
+		}
 		deleteTabAndExtraSpace(input);
 		input.push_back(' ');
 

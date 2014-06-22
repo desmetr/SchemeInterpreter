@@ -1,20 +1,13 @@
-/*
- * GetExpression.cpp
- *
- *  Created on: Jun 6, 2014
- *	  Author: ajay
- */
-
 #include "Parser.h"
 
 namespace standardDFAs {
 	string delimiters = "( +\\(+\\))";
 	string anyWhitespace = "( +\t+\n)*";
-	string symbol = "(a+_)(a+_)*" + delimiters;
-	string openingParen = anyWhitespace + "\\(";
-	string closingParen = anyWhitespace + "\\)";
+	string symbol = "(a+_)(a+_+0)*" + delimiters;
 	string floatt = "00*\\.00*" + delimiters;
 	string integer = "00*" + delimiters;
+	string openingParen = anyWhitespace + "\\(";
+	string closingParen = anyWhitespace + "\\)";
 	
 	DFA checkSymbol(regexToDFA(symbol, defaultAlphabet));
 	DFA checkInteger(regexToDFA(integer, defaultAlphabet));
@@ -126,8 +119,6 @@ StrIt parse(Expression& ex, StrIt begin, StrIt end) {
  }
 
 Expression parse(Expression& result, string& s) {
-	ofstream ofs("parentest.dot");
-	ofs << standardDFAs::checkOpeningParen;
 	parse(result, s.begin(), s.end());
 	return result;
 }
