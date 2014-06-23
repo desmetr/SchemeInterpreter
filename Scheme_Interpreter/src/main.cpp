@@ -127,6 +127,7 @@ void initGlobalEnvironment(Environment& global) {
 }
 
 int main(int argc, char* argv[]) {
+
 	std::shared_ptr<Environment> global_ptr(new Environment);
 	initGlobalEnvironment(*global_ptr);
 
@@ -142,6 +143,7 @@ int main(int argc, char* argv[]) {
 				string input = "";
 				string line = "";
 				bool a = false;
+				bool emptyLine = false;
 				do{
 					if(!getline(infile, line)){
 						a = true;
@@ -211,5 +213,6 @@ int main(int argc, char* argv[]) {
 		//std::cerr << "Evaluation error: " << e.what() << std::endl;
 		//continue;
 		//}
+
 	}
 }

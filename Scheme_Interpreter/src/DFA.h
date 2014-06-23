@@ -18,11 +18,12 @@ using namespace std;
 #include <functional>
 
 typedef std::function<bool(int,int,std::set<std::set<int>>&)> 
-    TestDistinguishabilityType;
+TestDistinguishabilityType;
 
 class DFA: public Automaton<char,int> {
 private:
 	int currentState;
+	vector<int> dumpStates;
 
 public:
 	DFA(const std::vector<State<char,int>>& states, const std::set<char>& alphabet);
@@ -36,6 +37,7 @@ public:
 	void eliminateUnreachableStates();
 	void minimize();
 	void addSymbols(set<char> symbols);
+	void setDumpStates();
 
 	template<typename ItType1, typename ItType2>
 	// ItType should implement postfix increment operator and should 
@@ -48,6 +50,11 @@ public:
 		auto it = begin;
 		for (; it != end; it++) {
 			if (readChar(*it)) break;
+
+			if(find(this->dumpStates.begin(),this->dumpStates.end(),this->currentState) != this->dumpStates.end()){
+				it = end;
+				break;
+			}
 		}
 		reset();
 		return it;
@@ -60,11 +67,14 @@ public:
 		auto it = begin;
 		for (; it != end; it++) {
 			if (!readChar(*it)) break;
+			if(find(this->dumpStates.begin(),this->dumpStates.end(),this->currentState) != this->dumpStates.end()){
+				break;
+			}
 		}
 		reset();
 		return it;
 	}
-	
+
 	friend DFA operator*(const DFA &DFA1, const DFA &DFA2);		//geeft de productautomaat terug van DFA1 en DFA2
 	friend std::ostream& operator<< (std::ostream &out, DFA &dfa);
 };
@@ -74,8 +84,8 @@ public:
 inline DFA regexToDFA(string regex, set<char> alphabet) {
 	auto result = regexToeNFA(regex).modSubCnstr();
 	//if (regex == "\\(") {
-		//ofstream ofs("openingparen_eNFA.dot");
-		//ofs << enfa;
+	//ofstream ofs("openingparen_eNFA.dot");
+	//ofs << enfa;
 	//}
 	result.addSymbols(alphabet);
 	return result;

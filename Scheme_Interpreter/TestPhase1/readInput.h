@@ -8,8 +8,8 @@
 #ifndef READINPUT_H_
 #define READINPUT_H_
 #include "ini_configuration.h"
-#include "DFA.h"
-#include "eNFA.h"
+#include "../src/DFA.h"
+#include "../src/eNFA.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
