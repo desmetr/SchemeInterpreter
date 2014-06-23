@@ -25,11 +25,13 @@ Op deze manier kunnen we in Lisp en zijn dialecten complexe ideeen op een unifor
 Slide: onder elkaar de atomen 42, 12.54, pi, squareroot[OK]
 Getallen, symbolen (strings), functies, variabelen etc worden uitgedrukt als atomen.
 
-Slide: onder elkaar de lijsten (34 267 1 23), (+ 7 9), (define x 4), (define square (lambda a (* a a))), (square 4)[OK]
+Slide: onder elkaar de lijsten (34 267 1 23), (+ 7 9), (define x 4), (define square (lambda a (* a a))), (square 4)
+    !!! EXTRA: suggestie van ajay: C++ equivalent er telkens naast zetten
 Lijsten zullen we dan gebruiken om
     - data te groeperen (eerste voorbeeld)
     - functies toe te passen op parameters (tweede voorbeeld)
     - speciale constructies van de taal aan te roepen (zoals 'define' en 'lambda', op het eerste zicht lijken deze op functieaanroepingen maar intern werken ze anders)
+!!! EXTRA SLIDE(s): vergelijking van enkele special forms met hun C++ equivalent (define, define lambda, if)
 
 
 
