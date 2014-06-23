@@ -15,10 +15,10 @@ We zullen starten met een beetje achtergrondinformatie over Scheme. Scheme is ee
     - conditionele expressies,
     - functies van hogere orden enzovoorts
 
-Slide met 3 puntjes: "Een atoom", "(x . y)" en "(x y z) ipv (x . (y . (z . NULL)))"
+Slide met 2 puntjes: "Een atoom", ""
 Een Lisp programma is volledig opgebouwd uit S-expressies. Een S-expressie kan je eenvoudig recursief beschrijven als 
     - Een atoom (basisgeval), of
-    - Stel dat x en y S-expressies zijn, dan is (x . y) ook een S-expressie, waarbij het punt staat voor 'concatenatie'. We verkorten deze notatie in Lisp: we schrijven "de lijst (x y z)" ipv (x . (y . (z . NULL))).
+    - Een lijst bestaande uit S-expressies.
 
 Op deze manier kunnen we in Lisp en zijn dialecten complexe ideeen op een uniforme en eenvoudige manier uitdrukken. 
 
@@ -31,10 +31,11 @@ Lijsten zullen we dan gebruiken om
     - functies toe te passen op parameters (tweede voorbeeld)
     - speciale constructies van de taal aan te roepen (zoals 'define' en 'lambda', op het eerste zicht lijken deze op functieaanroepingen maar intern werken ze anders)
 
-Je ziet dus dat de syntax van Scheme opvallend eenvoudig is. De code wordt net als de data eenvoudigweg in lijsten geplaatst, Lisp maakt dus geen strikt onderscheid tussen wat code is en wat data is.
 
 
 TOEPASSING VAN TALEN EN AUTOMATEN
+
+Je ziet dus dat de syntax van Scheme opvallend eenvoudig is. De code wordt net als de data eenvoudigweg in lijsten geplaatst, Lisp maakt dus geen strikt onderscheid tussen wat code is en wat data is.
 
 Een belangrijke stap in de interpretatie van een programmeertaal is het omzetten van de tekstuele voorstelling van de code naar een boomstructuur die de computer kan interpreteren. Dit is het werk van de parser. Voordat de parser de boomstructuur kan opbouwen moet hij eerst de code omzetten in een lijst van 'tokens'. Je kan dit zien als de omzetting van een string van karakters (de inputstring) naar een reeks van objecten die de interpreter kan begrijpen. Als je aan de interpreter de expressie (square 5) meegeeft, is de tokenizatie hiervan 'een open haakje', het symbool 'square', het geheel getal '5' en 'een sluitend haakje'. In deze procedure, ook wel 'lexicale analyse' genoemd, vindt de automatentheorie haar toepassing in ons programma.
 
