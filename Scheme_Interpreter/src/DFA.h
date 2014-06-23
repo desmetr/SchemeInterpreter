@@ -52,7 +52,7 @@ public:
 			if (readChar(*it)) break;
 
 			if(find(this->dumpStates.begin(),this->dumpStates.end(),this->currentState) != this->dumpStates.end()){
-				//it = end;
+				it = end;
 				break;
 			}
 		}
