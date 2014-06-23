@@ -98,6 +98,8 @@ public:
 	bool operator!=(ItType other) {return it != other;}
 	bool operator==(TransformingIterator other) {return it == other.it;}
 	bool operator!=(TransformingIterator other) {return it != other.it;}
+    TransformingIterator operator=(const ItType& otherIt) {it = otherIt;}
+    TransformingIterator operator=(const TransformingIterator& other) {it = other.it; op = other.op;}
 };
 
 //////////////////////////////////////////////////////////////////////

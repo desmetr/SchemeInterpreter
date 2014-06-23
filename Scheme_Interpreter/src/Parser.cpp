@@ -116,10 +116,9 @@ StrIt parse(Expression& ex, StrIt begin, StrIt end) {
 			// Start parsing from after opening paren
 	else
 		return parseAtom(ex, trueBegin, end);
- }
+}
 
 Expression parse(Expression& result, string& s) {
 	parse(result, s.begin(), s.end());
 	return result;
 }
-
