@@ -111,6 +111,8 @@ void initGlobalEnvironment(Environment& global) {
 	}), 1);
 	global.addSymbol("car", car);
 
+
+
 	// cdr
 	Lambda cdr(Ftype([](std::list<Expression>& params) {
 		return Expression(std::list<Expression>(
@@ -127,6 +129,7 @@ void initGlobalEnvironment(Environment& global) {
 }
 
 int main(int argc, char* argv[]) {
+
 	std::shared_ptr<Environment> global_ptr(new Environment);
 	initGlobalEnvironment(*global_ptr);
 
@@ -142,6 +145,7 @@ int main(int argc, char* argv[]) {
 				string input = "";
 				string line = "";
 				bool a = false;
+				bool emptyLine = false;
 				do{
 					if(!getline(infile, line)){
 						a = true;
@@ -150,8 +154,10 @@ int main(int argc, char* argv[]) {
 					input += line;
 
 				}while(!checkMatchingParen(input));
-
 				if (a) break;
+				if(line == ""){
+					continue;
+				}
 				deleteTabAndExtraSpace(input);
 				try 
 				{
@@ -206,5 +212,6 @@ int main(int argc, char* argv[]) {
 		//std::cerr << "Evaluation error: " << e.what() << std::endl;
 		//continue;
 		//}
+
 	}
 }
