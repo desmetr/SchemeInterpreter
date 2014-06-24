@@ -15,21 +15,23 @@ We zullen starten met een beetje achtergrondinformatie over Scheme. Scheme is ee
     - conditionele expressies,
     - functies van hogere orden enzovoorts
 
-Slide met 2 puntjes: "Een atoom", ""
+Slide met 2 puntjes: "Een atoom", ""[OK]
 Een Lisp programma is volledig opgebouwd uit S-expressies. Een S-expressie kan je eenvoudig recursief beschrijven als 
     - Een atoom (basisgeval), of
     - Een lijst bestaande uit S-expressies.
 
 Op deze manier kunnen we in Lisp en zijn dialecten complexe ideeen op een uniforme en eenvoudige manier uitdrukken. 
 
-Slide: onder elkaar de atomen 42, 12.54, pi, squareroot
+Slide: onder elkaar de atomen 42, 12.54, pi, squareroot[OK]
 Getallen, symbolen (strings), functies, variabelen etc worden uitgedrukt als atomen.
 
 Slide: onder elkaar de lijsten (34 267 1 23), (+ 7 9), (define x 4), (define square (lambda a (* a a))), (square 4)
+    !!! EXTRA: suggestie van ajay: C++ equivalent er telkens naast zetten
 Lijsten zullen we dan gebruiken om
     - data te groeperen (eerste voorbeeld)
     - functies toe te passen op parameters (tweede voorbeeld)
     - speciale constructies van de taal aan te roepen (zoals 'define' en 'lambda', op het eerste zicht lijken deze op functieaanroepingen maar intern werken ze anders)
+!!! EXTRA SLIDE(s): vergelijking van enkele special forms met hun C++ equivalent (define, define lambda, if)
 
 
 
@@ -39,39 +41,11 @@ Je ziet dus dat de syntax van Scheme opvallend eenvoudig is. De code wordt net a
 
 Een belangrijke stap in de interpretatie van een programmeertaal is het omzetten van de tekstuele voorstelling van de code naar een boomstructuur die de computer kan interpreteren. Dit is het werk van de parser. Voordat de parser de boomstructuur kan opbouwen moet hij eerst de code omzetten in een lijst van 'tokens'. Je kan dit zien als de omzetting van een string van karakters (de inputstring) naar een reeks van objecten die de interpreter kan begrijpen. Als je aan de interpreter de expressie (square 5) meegeeft, is de tokenizatie hiervan 'een open haakje', het symbool 'square', het geheel getal '5' en 'een sluitend haakje'. In deze procedure, ook wel 'lexicale analyse' genoemd, vindt de automatentheorie haar toepassing in ons programma.
 
-Slide: regexes voor symbol, int en float volledig uitgeschreven (dus delimiters er expliciet aan toevoegen) op een slide
-We gaan dus automaten gebruiken om strings om te zetten in makkelijker te verwerken objecten, waarbij we ook verschillende soorten objecten onderscheiden. Zo zal de lexer in staat zijn om gehele getallen, kommagetallen en symbolen van elkaar te onderscheiden. We doen dit door voor elk type object een regex te definieren, die we dan gebruiken om een DFA te genereren.
+# Slide: regexes voor symbol, int en float volledig uitgeschreven (dus delimiters er expliciet aan toevoegen) op een slide [OK]
+We gaan dus automaten gebruiken om strings om te zetten in makkelijker te verwerken objecten, waarbij we ook verschillende soorten objecten onderscheiden. Zo zal de lexer in staat zijn om gehele getallen, kommagetallen en symbolen van elkaar te onderscheiden. We doen dit door voor elk type object een regex te definieren, die we dan gebruiken om een DFA te genereren. Zo zal de integer DFA alle strings aanvaarden die uitsluitend uit cijfers bestaan (minstens 1), gevolgd door een of andere delimiter (een haakje of spatie).
 
+Slide: "test123+ -> aaaa000_"
+Om te vermijden dat de automaten enorm groot worden omdat ze alle letters van het alfabet, alle cijfers en dan nog enkele speciale karakters moeten herkennen, vereenvoudigen we eerst de strings alvorens ze door te geven aan de DFA's. Een DFA die alle geldige gehele getallen herkent, hecht geen belang aan welke cijfers er nu precies in de string staan, hij moet enkel onderscheid kunnen maken tussen getallen en andere symbolen. Daarom vereenvoudigen we de input naar een voorstelling die enkel de categorie waartoe de karakters behoren weergeeft. De string "test123+" wordt "aaaa000_", waarbij a eender welke letter voorstelt, 0 eender welk cijfer, en _ een speciaal karakter. Zo hoeven de automaten slechts een beperkt aantal karakters te herkennen.
 
-
-
-
-WORK IN PROGRESS: MOETEN HIER EENS OVER DISCUSSIEREN: VOORBEELD GEVEN GAAT PROLLY TE LANG DUREN, ZONDER VOORBEELD MSS WAT TE KORT.
-###########################
-Slide: 'parse (+ 6 (square 5))' met eerste haakje highlighted (bv rood gemaakt ofzo)
-Om duidelijker te maken hoe dit precies werkt zullen we eens doorlopen hoe het parsen van een specifiek voorbeeld verloopt.
-De functie parse neemt een string aan (dmv iteratoren) en verwerkt de eerste S-expressie erin tot een boomstructuur. Ze wordt geholpen door twee helperfuncties, parseAtom en parseList, die respectievelijk het eerste atoom van de string dan wel de eerste lijst van de string verwerken. De eerste taak van parse is dus beslissen of we te maken hebben met een atomaire expressie of met een lijst. Parse verwijdert eerst de whitespace vooraan de string, ook hiervoor wordt een DFA gebruikt die de string leest tot het eerste whitespace karakter dat hij tegenkomt, en dan een iterator naar dat karakter teruggeeft. In dit geval is er geen whitespace dus de whitespace DFA geeft een iterator terug naar het eerste open haakje. Daarna kijkt parse of het eerste karakter een open haakje is. Dit is het geval, dus geeft parse de string zonder het eerste haakje door aan parseList.
-
-    Slide: 'parseList (+ 6 (square 5))' met + highlighed en alles voor de highlight vanaf nu altijd grijs gemaakt, 
-            graphic van een boom met een lege knoop, die 1 kind heeft, met in die knoop een vraagteken. (mag over 2 slides 
-            zijn indien het niet op 1 past, geldt ook voor volgende slides)
-    parseList plaatst zijn iterator op het eerste karakter. De functie kijkt na of dit karakter een sluitend haakje is,
-    wat zou aangeven dat de lijst ten einde is. Dit is het niet, dus parseList roept op zijn beurt parse aan om te vragen
-    het eerste element in de lijst te parsen (dit is dus een mutuele recursie).
-
-        Slide: 'parse (+ 6 (square 5))' met + highlighted
-        parse zal dus, na whitespace te trimmen, kijken of het eerste element een open haakje is. Dat is het niet,
-        dus parse roept parseAtom aan vanaf +
-
-            Slide: parseAtom met idem vorige
-            parseAtom zal het eerste element van de string verwerken tot een blad van de boomstructuur. De DFA's voor 
-            integers en floats herkennen '+' niet, die voor symbolen wel, dus parseAtom geeft 'het symbool +' terug.
-            De symbool DFA erkent + als symbool op het moment dat die een delimiter tegenkomt, in dit geval een spatie.
-            parseAtom geeft een iterator naar die delimiter terug.
-
-    We komen terug aan bij parseList, die 'het symbool
-
-
-       ...
-
-###########################
+Slide: (+ (square 4) 3) -> boomstructuur: lege wortel met drie kinderen ['+', lege knoop met 2 kinderen ['square', 4], 3]
+Dan komen we aan het parsen zelf. De parse functie aanvaardt een string en parset er het eerste element van. Eerst wordt whitespace getrimd (met behulp van een whitespace herkennende DFA die een iterator teruggeeft naar het eerste niet-whitespace karakter), daarna wordt gekeken of het eerste karakter een open haakje is of niet. Aan de hand daarvan wordt beslist om het element als lijst of als atoom te parsen. De parseAtom functie gaat kijken welke DFA het eerste element in de string wilt aanvaarden (bv square en + worden aanvaard door de Symbols DFA, 4 en 3 door de integer DFA). Het verpakt het geidentificeerde element in een object en returnt een iterator naar het eerste karakter dat volgt op het element (een spatie of een haakje dus). parseList gaat eenvoudigweg parse telkens oproepen op het eerstvolgende element na de iterator, tot die een gesloten haakje tegenkomt, en bouwt zo de boomstructuur op.

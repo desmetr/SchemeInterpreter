@@ -113,13 +113,13 @@ StrIt parse(Expression& ex, StrIt begin, StrIt end) {
 	auto it = isOpeningParen(trueBegin, end);
 	if (it != end)
 		return parseList(ex, next(it), end); 
+
 			// Start parsing from after opening paren
 	else
 		return parseAtom(ex, trueBegin, end);
- }
+}
 
 Expression parse(Expression& result, string& s) {
 	parse(result, s.begin(), s.end());
 	return result;
 }
-

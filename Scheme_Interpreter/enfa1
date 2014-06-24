@@ -1,9 +1,14 @@
-digraph eNFA {
-	rankdir=LR;
+digraph trala{
 
-	0 [shape=circle];
-	0 -> 1 [label="a"];
-
-	1 [shape=doublecircle];
+	" " [shape=circle];
+	" " -> "+" ;
+	"+" [shape=circle];
+	" " -> "  ";
+	"  " [shape=circle]
+	" " -> 3;
+	3 [shape=circle]
+	"  " -> square;
+	"  " -> 4;
+	4 [shape=circle]
 
 }

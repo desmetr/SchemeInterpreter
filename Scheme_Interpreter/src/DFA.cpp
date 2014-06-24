@@ -20,6 +20,24 @@ DFA::~DFA() {
 	// TODO Auto-generated destructor stub
 }
 
+void DFA::setDumpStates() {
+	this->dumpStates = vector<int>();
+	int index = 0;
+	int count;
+	for(auto state : this->states){
+		count = 0;
+		for(auto next : state.transitions ){
+			if(next.second == index){
+				count++;
+			}
+		}
+		if(count == this->alphabet.size()){
+			this->dumpStates.push_back(index);
+		}
+		++index;
+	}
+}
+
 
 bool DFA::readChar(char theChar) {
 	if(this->alphabet.find(theChar) != this->alphabet.end()){
@@ -32,7 +50,12 @@ bool DFA::readChar(char theChar) {
 }
 
 bool DFA::readString(const std::string& theString) {
-	for (char c : theString) readChar(c);
+	for (char c : theString){
+		if(find(this->dumpStates.begin(),this->dumpStates.end(),this->currentState) != this->dumpStates.end()){
+			break;
+		}
+		readChar(c);
+	}
 	return accepted();
 }
 
@@ -225,6 +248,8 @@ void DFA::addSymbols(set<char> symbols) {
 	}
 	this->states.push_back(state);
 }
+
+
 
 std::ostream& operator<< (std::ostream &out, DFA &dfa){
 	out<<"digraph DFA {"<<std::endl;

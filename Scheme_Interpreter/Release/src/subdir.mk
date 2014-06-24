@@ -26,9 +26,7 @@ CPP_SRCS += \
 ../src/Lambda.cpp \
 ../src/Parser.cpp \
 ../src/eNFA.cpp \
-../src/ini_configuration.cpp \
 ../src/main.cpp \
-../src/readInput.cpp \
 ../src/trash.cpp 
 
 OBJS += \
@@ -40,9 +38,7 @@ OBJS += \
 ./src/Lambda.o \
 ./src/Parser.o \
 ./src/eNFA.o \
-./src/ini_configuration.o \
 ./src/main.o \
-./src/readInput.o \
 ./src/trash.o 
 
 CPP_DEPS += \
@@ -54,9 +50,7 @@ CPP_DEPS += \
 ./src/Lambda.d \
 ./src/Parser.d \
 ./src/eNFA.d \
-./src/ini_configuration.d \
 ./src/main.d \
-./src/readInput.d \
 ./src/trash.d 
 
 
