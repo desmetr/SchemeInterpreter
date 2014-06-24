@@ -252,6 +252,11 @@ Expression Expression::operator/(const Expression& e) const {
 	return getAsFloat() / e.getAsFloat();
 }
 
+Expression Expression::operator!() const {
+    if (expptr) return Expression(int(!truthTests.at(type)(expptr)));
+    else return Expression(1);
+}
+
 Expression Expression::operator<(const Expression& e) const {
     if (type == Int && e.getType() == Int)
         return getAsInt() < e.getAsInt();

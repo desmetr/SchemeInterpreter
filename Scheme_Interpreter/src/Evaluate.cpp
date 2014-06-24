@@ -24,12 +24,22 @@ Expression evaluate(const Expression& exp, std::shared_ptr<Environment> envptr)
 			envptr->setSymbol(symbol.getAsSymbol(), evaluate(value, envptr));
 			return Expression();
 		}
-		else if (expIt->getAsSymbol() == "let") { // (let symbol value exp)
+		else if (expIt->getAsSymbol() == "let") { // (let (symbol1 value1) ... (symbolN valueN) exp)
+			std::shared_ptr<Environment> local(new Environment({}, {}, envptr));
+			while (++expIt != std::prev(expAsList.end())) {
+				local->addSymbol(expIt->getAsList().front().getAsSymbol(), 
+								evaluate(expIt->getAsList().back(), local));
+			}
+			return evaluate(expAsList.back(), local);
+
+			
+			/*
 			auto& symbol = *(++expIt); auto& value = *(++expIt);
 			auto& exp = *(++expIt);
 			std::shared_ptr<Environment> local
 				(new Environment({symbol.getAsSymbol()}, {evaluate(value, envptr)}, envptr));
 			return evaluate(exp, local);
+			*/
 		}
 		else if (expIt->getAsSymbol() == "define") { // (define symbol value)
 			auto& symbol = *(++expIt); auto& value = *(++expIt);

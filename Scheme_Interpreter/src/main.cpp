@@ -79,6 +79,12 @@ void initGlobalEnvironment(Environment& global) {
 	}), 2);
 	global.addSymbol("/", divide);
 
+	// not
+	Lambda negate(Ftype([](std::list<Expression>& params) {
+		return !(params.front());
+	}), 1);
+	global.addSymbol("not", negate);
+
 	// <
 	Lambda isSmaller(Ftype([](std::list<Expression>& params) {
 		return *(params.begin()) < *std::next(params.begin());
@@ -209,12 +215,12 @@ int main(int argc, char* argv[]) {
 			continue;
 		}
 
-		//try {
-		evaluate(exp, global_ptr).print();
-		//} catch (const std::exception e) {
-		//std::cerr << "Evaluation error: " << e.what() << std::endl;
-		//continue;
-		//}
+		try {
+			evaluate(exp, global_ptr).print();
+		} catch (const std::exception e) {
+			std::cerr << "Evaluation error: " << e.what() << std::endl;
+			continue;
+		}
 
 	}
 }
