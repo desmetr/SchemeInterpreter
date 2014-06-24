@@ -89,11 +89,25 @@
 (define delete
   (lambda (comp equals?)
     (lambda (item node)
-      (let (nodeToDelete ((retrieveNode comp equals?) item node))
-
-
+      (if (not (equals? item (getItem node)))
+        (let (which (comp item (getItem node)))
+          (connectNodes
+            node
+            ((delete comp equals?) item (getChild node which))
+            which))
+        (let (children (getExistingChildren node))
+          (if (empty? children)
+            (list)
+            (if (= 1 (length children))
+              (car children)
+              (let (pairNewchildItem (popInorderSuccessor node))
+                (createNode
+                  (car (cdr pairNewchildItem))
+                  (getChild node 0)
+                  (car pairNewchildItem))))))))))
 
 (define test (list 50 30 40 70 90 80))
 (define insertInt (insert >))
 (define bst (fold insertInt (list) test)) 
 (define retrieveInt (retrieve > =))
+(define deleteInt (delete > =))
