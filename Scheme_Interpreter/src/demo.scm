@@ -81,9 +81,3 @@
                   (car (cdr pairNewchildItem))
                   (getChild node 0)
                   (car pairNewchildItem))))))))))
-
-(define test (list 50 30 40 70 90 80))
-(define insertInt (insert >))
-(define bst (fold insertInt (list) test)) 
-(define retrieveInt (retrieve > =))
-(define deleteInt (delete > =))

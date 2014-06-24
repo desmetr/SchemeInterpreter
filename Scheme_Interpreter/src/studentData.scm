@@ -6,13 +6,31 @@
 (define getFirstName (lambda student (car (cdr student))))
 (define getId (lambda student (car (cdr (cdr student)))))
 
-(define compById
-  (lambda (student1 student2)
-	(> (getId student1) (getId student2))))
+(define compIdAndStudent
+  (lambda (id student)
+    (> id (getId student))))
 
-(define idEqual?
+(define compStudentsById
   (lambda (student1 student2)
-	(= (getId student1) (getId student2))))
+    (compIdAndStudent (getId student1) student2)))
 
-(list
-  (createStudent (quote Pauwels) (quote Koen) 20103548))
+(define idMatch?
+  (lambda (id student)
+    (= id (getId student))))
+
+(define studentData
+  (list
+    (createStudent (quote DeSmet) (quote Rafael) 20131145)
+    (createStudent (quote Pauwels) (quote Koen) 20103548)
+    (createStudent (quote Adhikari) (quote Ajay) 20136247)
+    (createStudent (quote Deruyttere) (quote Thierry) 20130626)
+    (createStudent (quote Rys) (quote Arkadiusz) 20134579)
+    (createStudent (quote Bellemans) (quote Olivier) 20135536)
+))
+
+(define koen (createStudent (quote Pauwels) (quote Koen) 20103548))
+(define ajay (createStudent (quote Adhikari) (quote Ajay) 20136247))
+
+(define insertStudent (insert compStudentsById))
+(define retrieveStudent (retrieve compIdAndStudent idMatch?))
+(define deleteStudent (delete compIdAndStudent idMatch?))
