@@ -1,0 +1,42 @@
+DEZE CODE IS NIET OM IN TE LADEN MAAR ALS GEHEUGENSTEUN
+
+Enkele constant literals tonen (integer, float, string, lijst)
+
+Variabelen:
+Variabele intypen die nog niet is gedefinieerd
+Variabele definieren
+Die variabele opvragen
+
+Functies:
+Ingebouwde functies tonen: +, >, cons, car, cdr
+(define empty? (lambda l (= 0 (length l))))
+We kunnen ook de functie ter plekke definieren waar we ze nodig hebben: ((lambda a (* a a)) 5)
+Recursie:
+	(define range
+	  (lambda (bgn end)
+	    (if (= bgn end)
+		  (list)
+		  (cons bgn (range (+ bgn 1) end)))))
+	(define fib
+	  (lambda n
+		(if (< n 2)
+		  1
+		  (+ (fib (- n 1)) (fib (- n 2))))))
+	
+### vanaf hier de functies gewoon inladen, niet meer zelf typen (wel demonstreren) ###
+Higher order functies
+Functies die functies als parameter aanvaarden:
+
+(map fib (range 0 10))
+
+functies kunnen ook functies teruggeven, overgaan naar BST code
+
+Tonen dan insert curried is, eerst met integers:
+	(define insertInt (insert >))
+	(define bst (insertInt 50 (list)))
+	(insertInt 30 bst)
+
+Daarna complexer object: studenten
+	(define insertStudent (insert compById))
+	(define deleteStudent (delete compById idEqual?))
+	(define retrieveStudent (retrieve compById idEqual?))
