@@ -1,0 +1,31 @@
+In de output bestanden is staat0 altijd het begin staat.
+Elke input bestand om de algorithme die de product neemt van 2 automaten ziet er vb. als volgt uit:
+
+[General]
+nTests = 1		;aantal te uitvoeren tests
+
+[test0]
+type = "product"
+input0 = "dfa0"		;eerste dfa waarmet men het product wil nemen
+input1 = "dfa1"		;tweede dfa waarmet men het product wil nemen
+
+[dfa0]			;eerste dfa
+nStates = 2		;aantal staten van de dfa
+nChars = 1		;aantal symbolen van de dfa
+char0 = "a"
+
+state0Meta = 1		;elke staat is uniek met zijn nummer beginnend van 0. Met symbool a gaat men van staat 0 naar staat 1
+state1Meta = 0		;met symbool a gaat de automaat van staat1 naar staat0
+
+acceptStates = (0)	;verzameling van acceptstaten, als er meerdere zijn dan met komma scheiden bv. (2,0,1)
+
+
+[dfa1]			;tweede dfa
+nStates = 2
+nChars = 1
+char0 = "i"
+
+state0Meti = 1
+state1Meti = 1
+
+acceptStates = (1)

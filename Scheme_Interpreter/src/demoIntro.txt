@@ -11,18 +11,8 @@ Functies:
 Ingebouwde functies tonen: +, >, cons, car, cdr
 (define empty? (lambda l (= 0 (length l))))
 We kunnen ook de functie ter plekke definieren waar we ze nodig hebben: ((lambda a (* a a)) 5)
-Recursie:
-	(define range
-	  (lambda (bgn end)
-	    (if (= bgn end)
-		  (list)
-		  (cons bgn (range (+ bgn 1) end)))))
-	(define fib
-	  (lambda n
-		(if (< n 2)
-		  1
-		  (+ (fib (- n 1)) (fib (- n 2))))))
-	
+Recursie: range en fib
+		
 ### vanaf hier de functies gewoon inladen, niet meer zelf typen (wel demonstreren) ###
 Higher order functies
 Functies die functies als parameter aanvaarden:
