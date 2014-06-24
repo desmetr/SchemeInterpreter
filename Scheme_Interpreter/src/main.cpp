@@ -133,54 +133,56 @@ int main(int argc, char* argv[]) {
 
 	if (argc > 1)	
 	{
-		Expression exp;
-		ifstream infile(argv[1]);
+		for(int i = 1; i < argc; ++i){
+			Expression exp;
+			ifstream infile(argv[i]);
 
-		if (infile.is_open() and infile.good())
-		{
-			while (true)
+			if (infile.is_open() and infile.good())
 			{
-				string input = "";
-				string line = "";
-				bool a = false;
-				bool emptyLine = false;
-				do{
-					if(!getline(infile, line)){
-						a = true;
-						break;
+				while (true)
+				{
+					string input = "";
+					string line = "";
+					bool a = false;
+					bool emptyLine = false;
+					do{
+						if(!getline(infile, line)){
+							a = true;
+							break;
+						}
+						input += line;
+
+					} while(!checkMatchingParen(input));
+
+					if (a) break;
+					if(line == ""){
+						continue;
 					}
-					input += line;
-
-				} while(!checkMatchingParen(input));
-
-				if (a) break;
-				if(line == ""){
-					continue;
-				}
-				deleteTabAndExtraSpace(input);
-				try 
-				{
-					parse(exp, input);
-				} 
-				catch (const std::runtime_error e) 
-				{
-					std::cerr << "Parsing error: " << e.what() << std::endl;
-					continue;
-				}
-				try 
-				{
-					evaluate(exp, global_ptr).print();
-				} 
-				catch (const std::exception e) 
-				{
-					std::cerr << "Evaluation error: " << e.what() << std::endl;
-					continue;
+					deleteTabAndExtraSpace(input);
+					try
+					{
+						parse(exp, input);
+					}
+					catch (const std::runtime_error e)
+					{
+						std::cerr << "Parsing error: " << e.what() << std::endl;
+						continue;
+					}
+					try
+					{
+						evaluate(exp, global_ptr).print();
+					}
+					catch (const std::exception e)
+					{
+						std::cerr << "Evaluation error: " << e.what() << std::endl;
+						continue;
+					}
 				}
 			}
-		}
-		else
-		{
-			cout << "Failed to open file." << endl;
+			else
+			{
+				cout << "Failed to open file." << endl;
+			}
 		}
 	}
 	while (true) {
