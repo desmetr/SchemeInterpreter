@@ -52,6 +52,7 @@ public:
     Expression operator-(const Expression& e) const;
     Expression operator*(const Expression& e) const;
     Expression operator/(const Expression& e) const;
+	Expression operator!() const;
     Expression operator<(const Expression& e) const;
     Expression operator>(const Expression& e) const;
     Expression operator==(const Expression& e) const;
